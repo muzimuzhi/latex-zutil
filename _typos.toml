@@ -1,0 +1,4 @@
+# https://github.com/crate-ci/typos/blob/master/docs/reference.md
+
+[default.extend-identifiers]
+OT1 = "OT1"

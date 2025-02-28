@@ -36,6 +36,12 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    # doc https://github.com/crate-ci/typos/blob/master/docs/github-action.md
+    # `wget` required, see https://github.com/crate-ci/typos/issues/1191
+    # no `v1` tag, see https://github.com/crate-ci/typos/issues/857
+    - name: Check spelling
+      uses: crate-ci/typos@v1.29.10
+
     - name: Delete TeX Live cache(s)
       if: github.event_name == 'schedule' || inputs.update-cache
       continue-on-error: true
