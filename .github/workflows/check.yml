@@ -40,6 +40,7 @@ jobs:
     # `wget` required, see https://github.com/crate-ci/typos/issues/1191
     # no `v1` tag, see https://github.com/crate-ci/typos/issues/857
     - name: Check spelling
+      if: matrix.config == 'build'
       uses: crate-ci/typos@v1.29.10
 
     - name: Delete TeX Live cache(s)
