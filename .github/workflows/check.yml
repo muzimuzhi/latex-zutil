@@ -41,7 +41,7 @@ jobs:
     # no `v1` tag, see https://github.com/crate-ci/typos/issues/857
     - name: Check spelling
       if: matrix.config == 'build'
-      uses: crate-ci/typos@v1.29.10
+      uses: crate-ci/typos@v1.30.0
 
     - name: Delete TeX Live cache(s)
       if: github.event_name == 'schedule' || inputs.update-cache
