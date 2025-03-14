@@ -25,6 +25,11 @@
 % TODO: check dep versions: latex2e, l3kernel, zutil...
 %       Any warnings/errors are less helpful than a "polyfill"
 %       (borrowed from js world).
+\cs_if_exist:NF \tl_trim_left_spaces:n
+  {
+    \msg_error:nneee { tabularray } { dep-too-old }
+      { l3kernel } { \ExplLoaderFileDate } { 2025-03-10 }
+  }
 
 \RequirePackage{zutil}
 
@@ -2879,7 +2884,7 @@
     \exp_args:Ne \__tblr_extract_table_commands:n
       % trim spaces after a table command
       % \tl_trim_spaces:o works too and is only one or two expansions slower
-      { \zutil_tl_trim_leading_spaces:o { #1 \q__tblr_stop } }
+      { \tl_trim_left_spaces:o { #1 \q__tblr_stop } }
   }
 
 \cs_new_protected:Npn \__tblr_extract_one_table_command:N #1
