@@ -60,9 +60,7 @@ jobs:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Setup TeX Live
-      # v3.3.4 is too sensitive to cache update
-      # https://github.com/teatimeguest/setup-texlive-action/issues/329#issuecomment-2518562909
-      uses: teatimeguest/setup-texlive-action@v3.3.3
+      uses: teatimeguest/setup-texlive-action@v3
       with:
         package-file: .github/tl_packages
         update-all-packages: true
