@@ -218,7 +218,7 @@
 \cs_new_protected:Npn \__zutil_debug_decr_level:
   {
     \int_decr:N \l__zutil_debug_level_int
-    \int_compare:nNnT \l__zutil_debug_level_int < 0
+    \int_compare:nNnT \l__zutil_debug_level_int < \c_zero_int % noqa: w302
       {
         \msg_error:nn { zutil } { debug/negative-level }
         \int_zero:N \l__zutil_debug_level_int
