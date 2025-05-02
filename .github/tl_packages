@@ -37,7 +37,6 @@ functional
 fp          # one of "diagbox" dependencies
 geometry
 hyperref    # also provides needed nameref.sty
-l3build
 lm          # provides needed lmodern.sty
 mathtools
 multirow
@@ -50,3 +49,8 @@ zref
 xcolor
 xetex
 luatex
+##
+## tools
+##
+expltools
+l3build
