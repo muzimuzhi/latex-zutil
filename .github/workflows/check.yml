@@ -36,12 +36,6 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    # doc https://github.com/crate-ci/typos/blob/master/docs/github-action.md
-    # `wget` required, see https://github.com/crate-ci/typos/issues/1191
-    - name: Check spelling
-      if: matrix.config == 'build'
-      uses: crate-ci/typos@v1
-
     - name: Delete TeX Live cache(s)
       if: github.event_name == 'schedule' || inputs.update-cache
       continue-on-error: true
@@ -112,3 +106,26 @@ jobs:
         path: |
           build/**/*.diff
           build/**/*.diff.png
+  
+  linters:
+    name: "Linters"
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup TeX Live
+      uses: teatimeguest/setup-texlive-action@v3
+      with:
+        package-file: .github/tl_packages
+        update-all-packages: true
+
+    # doc https://github.com/crate-ci/typos/blob/master/docs/github-action.md
+    # `wget` required, see https://github.com/crate-ci/typos/issues/1191
+    - name: Check spelling
+      uses: crate-ci/typos@v1
+    
+    - name: Lint expl3 code
+      run: |
+        explcheck support/*.cfg
+        explcheck zutil/*.sty zutil/*.tex
+        explcheck --ignored-issues=s103,s204,w302 tabularray/tabularray.sty
