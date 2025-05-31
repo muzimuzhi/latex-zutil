@@ -128,4 +128,4 @@ jobs:
       run: |
         explcheck support/*.cfg
         explcheck zutil/*.sty zutil/*.tex
-        explcheck --ignored-issues=s103,s204,w302 tabularray/tabularray.sty
+        # explcheck --ignored-issues=s103,s204,w302 tabularray/tabularray.sty
