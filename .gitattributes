@@ -7,5 +7,7 @@
 *.cfg linguist-language=tex
 *.lvt linguist-language=tex
 *.pvt linguist-language=tex
-tabularray-doc/** linguist-documentation
-*.html linguist-generated
+
+# tabularray related
+tabularray/doc/** linguist-documentation
+tabularray/**/*.html linguist-generated
