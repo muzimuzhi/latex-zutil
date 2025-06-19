@@ -13,14 +13,10 @@ set ignore-comments := true
 
 # variables
 
-[private]
-_set_style := BOLD + BLUE
-[private]
-_reset_style := NORMAL
-[private]
-_info := "echo " + _set_style + "'===>' "
-[private]
-_end_info := _reset_style
+set_style := BOLD + BLUE
+reset_style := NORMAL
+info := "echo " + set_style + "'===>' "
+end_info := reset_style
 
 
 # default recipe
@@ -51,22 +47,26 @@ tabularray: && (l3build-check "tabularray" "build") \
 
 [group('lint')]
 typos:
-    @{{ _info }}Checking for typos...{{ _end_info }}
+    @{{ info }}Checking for typos...{{ end_info }}
     typos
 
 [group('lint')]
 explcheck:
-    @{{ _info }}Checking for expl3 issues...{{ _end_info }}
+    @{{ info }}Checking for expl3 issues...{{ end_info }}
     explcheck support/*.cfg
     explcheck zutil/*.sty zutil/*.tex
     # explcheck --ignored-issues=s103,s204,w302 tabularray/tabularray.sty
 
 [group('test')]
 l3build-check package="" config="" +options="":
-    @{{ _info }}'Running {{ package }} tests\
+    @{{ info }}'Running {{ package }} tests\
         {{ if config != "" { ', config "' + config + '"' } else { "" } }}...'\
-        {{ _end_info }}
+        {{ end_info }}
     cd {{ package }} && \
         l3build check -q --show-saves \
             {{ if config != "" { "-c\"" + config + "\"" } else { "" } }} {{ options }}
-    {{ if package == "tabularray" { if config == "config-old" { "cd " + package + " && texlua buildend.lua" } else { "" } } else { "" } }}
+    {{ if package == "tabularray" { \
+        if config == "config-old" { \
+            "cd " + package + " && texlua buildend.lua" \
+        } else { "" } \
+    } else { "" } }}
