@@ -78,7 +78,7 @@ jobs:
       env:
         L3BUILD_CHECK_OPTIONS: "--halt-on-error --show-saves"
 
-    - name: Run tabularray tests
+    - name: Run tabularray tests, config "${{ matrix.config }}"
       run: |
         just tabularray "${{ matrix.config }}" ${{ matrix.options }}
       env:
