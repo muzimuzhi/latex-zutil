@@ -10,6 +10,7 @@
 
 set ignore-comments := true
 
+
 # variables
 
 [private]
@@ -21,10 +22,12 @@ _info := "echo " + _set_style + "'===>' "
 [private]
 _end_info := _reset_style
 
+
 # default recipe
 
 default:
     just --list
+
 
 # meta recipes
 
@@ -42,6 +45,7 @@ zutil: && (l3build-check "zutil")
 [group('test')]
 tabularray: && (l3build-check "tabularray" "build") \
     (l3build-check "tabularray" "config-old")
+
 
 # simple recipes
 
