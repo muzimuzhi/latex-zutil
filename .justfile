@@ -1,7 +1,9 @@
 # settings
+
 set ignore-comments := true
 
 # variables
+
 _typos := require("typos")
 _explcheck := require("explcheck")
 
@@ -14,10 +16,12 @@ _info := "echo " + _set_style
 _end_info := _reset_style
 
 # default recipe
+
 default:
     just --list
 
 # meta recipes
+
 all: lint-all test-all
 
 [group('lint')]
@@ -33,6 +37,7 @@ test-zutil: (test "zutil")
 test-tabularray: (test "tabularray" "build") (test "tabularray" "config-old")
 
 # recipes
+
 [group('lint')]
 typos:
     @{{_info}}"Checking for typos..."{{_end_info}}
