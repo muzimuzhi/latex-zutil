@@ -119,6 +119,9 @@ jobs:
         package-file: .github/tl_packages
         update-all-packages: true
 
+    - name: Install just
+      uses: extractions/setup-just@v2
+
     # doc https://github.com/crate-ci/typos/blob/master/docs/github-action.md
     # `wget` required, see https://github.com/crate-ci/typos/issues/1191
     - name: Check spelling
@@ -126,6 +129,4 @@ jobs:
     
     - name: Lint expl3 code
       run: |
-        explcheck support/*.cfg
-        explcheck zutil/*.sty zutil/*.tex
-        # explcheck --ignored-issues=s103,s204,w302 tabularray/tabularray.sty
+        just lint-explcheck
