@@ -25,10 +25,10 @@ jobs:
         config: ["build", "config-old"]
         # TODO: find a way to handle different testfiles when checking
         #       with latex and latex-dev
-        # option: ["", "--dev"]
-        option: [""]
+        # options: ["", "--dev"]
+        options: [""]
     name: "Tests: ${{ matrix.config }}\
-      ${{ matrix.option != '' && ' (latex-dev)' || '' }}"
+      ${{ matrix.options != '' && ' (latex-dev)' || '' }}"
     runs-on: ubuntu-latest
     permissions:
       actions: write # for "gh cache delete"
@@ -59,6 +59,9 @@ jobs:
         package-file: .github/tl_packages
         update-all-packages: true
 
+    - name: Install just
+      uses: extractions/setup-just@v2
+
     # imagemagick is pre-installed on Ubuntu 22.04 image
     # https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2204-Readme.md#installed-apt-packages
     - name: Install ppmcheckpdf dependencies
@@ -71,23 +74,15 @@ jobs:
     - name: Run zutil tests
       if: matrix.config == 'build'
       run: |
-        cd zutil
-        l3build check \
-          --halt-on-error --show-saves \
-          ${{ matrix.option }}
+        just zutil ${{ matrix.options }}
+      env:
+        L3BUILD_CHECK_OPTIONS: "--halt-on-error --show-saves"
 
     - name: Run tabularray tests
       run: |
-        cd tabularray
-        l3build check \
-          -c${{ matrix.config }} --halt-on-error --show-saves \
-          ${{ matrix.option }}
-
-    - name: Check tabularray tests with ppmcheckpdf
-      if: matrix.config == 'config-old'
-      run: |
-        cd tabularray
-        texlua buildend.lua
+        just tabularray "${{ matrix.config }}" ${{ matrix.options }}
+      env:
+        L3BUILD_CHECK_OPTIONS: "--halt-on-error --show-saves"
 
     # TODO: generate a list of files related to failed tests, then
     # upload all of them (.tex, .log, .pdf, .png, .md5, etc.)
@@ -102,11 +97,11 @@ jobs:
         #   - tblr-diffs-config-old-dev
         name: "tblr-diffs\
           ${{ matrix.config != '' && format('-{0}', matrix.config) || '' }}\
-          ${{ matrix.option != '' && '-dev' || '' }}"
+          ${{ matrix.options != '' && '-dev' || '' }}"
         path: |
           build/**/*.diff
           build/**/*.diff.png
-  
+
   linters:
     name: "Linters"
     runs-on: ubuntu-latest
@@ -119,13 +114,14 @@ jobs:
         package-file: .github/tl_packages
         update-all-packages: true
 
+    - name: Install just
+      uses: extractions/setup-just@v2
+
     # doc https://github.com/crate-ci/typos/blob/master/docs/github-action.md
     # `wget` required, see https://github.com/crate-ci/typos/issues/1191
     - name: Check spelling
       uses: crate-ci/typos@v1
-    
+
     - name: Lint expl3 code
       run: |
-        explcheck support/*.cfg
-        explcheck zutil/*.sty zutil/*.tex
-        # explcheck --ignored-issues=s103,s204,w302 tabularray/tabularray.sty
+        just explcheck
