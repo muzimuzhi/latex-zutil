@@ -129,4 +129,4 @@ jobs:
     
     - name: Lint expl3 code
       run: |
-        just lint-explcheck
+        just explcheck

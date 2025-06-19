@@ -18,50 +18,45 @@ default:
     just --list
 
 # meta recipes
-all: lint test
+all: lint-all test-all
 
-lint: typos explcheck
+[group('lint')]
+lint-all: typos explcheck
 
-test: test-zutil test-tabularray-all
+[group('test')]
+test-all: (test "zutil") test-tabularray
 
-test-tabularray-all: test-tabularray test-tabularray-old
+[group('test')]
+test-zutil: (test "zutil")
+
+[group('test')]
+test-tabularray: (test "tabularray" "build") (test "tabularray" "config-old")
 
 # recipes
+[group('lint')]
 typos:
     @{{_info}}"Checking for typos..."{{_end_info}}
     {{_debug}} typos
 
+[group('lint')]
 explcheck:
     @{{_info}}"Checking for expl3 issues..."{{_end_info}}
     {{_debug}} explcheck support/*.cfg
     {{_debug}} explcheck zutil/*.sty zutil/*.tex
     # {{_debug}} explcheck --ignored-issues=s103,s204,w302 tabularray/tabularray.sty
 
-_l3build-check package="" config="" +options="":
-    @{{_info}}"Running" {{package}} "l3build tests"\
+[group('test')]
+test package="" config="" +options="":
+    @{{_info}}"Running" {{package}} "tests"\
         {{ if config != "" { ', config \"' + config + '\"' } else {""} }}"..."\
         {{_end_info}}
-    cd {{join(justfile_dir(), package)}} && \
+    {{_debug}} cd {{join(justfile_dir(), package)}} && \
         {{_debug}} l3build check -q --show-saves \
         {{ if config != "" { "-c" + config } else {""} }} \
         {{options}}
-
-test-zutil options="" tests="": (_l3build-check "zutil" "" options tests)
-
-# _test-tabularray config="" option="":
-#     @{{_info}}"Running tabularray l3build tests" \
-#         {{ if config != "" { ", config \"" + config + ".lua\"..." } \
-#            else { "" } }} \
-#         {{_end_info}}
-#     cd {{justfile_dir()}}/tabularray && \
-#         {{_debug}} l3build check -q --show-saves -c"{{config}}" {{option}}
-#     @{{ if config == "config-old" \
-#             { "cd " + justfile_dir() + "/tabularray && " + \
-#                 _debug + " texlua buildend.lua" } \
-#         else { "" } }}
-
-test-tabularray +options="": (_l3build-check "tabularray" "build" options)
-
-test-tabularray-old +options="": (_l3build-check "tabularray" "config-old" options)
-    cd {{join(justfile_dir(), "tabularray")}} && \
-        {{_debug}} texlua buildend.lua
+    {{ if package == "tabularray" { \
+        if config == "config-old" { \
+            _debug + " cd " + join(justfile_dir(), package) + " && " + \
+                _debug + " texlua buildend.lua" \
+        } else { "" } \
+    } else { "" } }}
