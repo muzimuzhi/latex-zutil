@@ -1,0 +1,21 @@
+name: Scheduled checks
+
+on:
+  schedule:
+    # at 12:21 UTC (20:21 CST/UTC +8) on every Friday
+    # https://crontab.guru/#21_12_*_*_5
+    - cron: "21 12 * * 5"
+
+jobs:
+  tests:
+    name: "Dispatch checks"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Dispatch workflow runs
+        run:
+          for os in ubuntu-latest macos-latest windows-latest; do
+            gh workflow run -R muzimuzhi/tabularray-dev check.yml \
+              --runs-on "$os" \
+              --update-cache true;
+          done

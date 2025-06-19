@@ -7,14 +7,20 @@ on:
       # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#pull_request
       [opened, ready_for_review, reopened, synchronize]
   push:
-  schedule:
-    # at 12:21 UTC (20:21 CST/UTC +8) on every Friday
-    # https://crontab.guru/#21_12_*_*_5
-    - cron: "21 12 * * 5"
   workflow_dispatch:
     inputs:
+      runs-on:
+        description: "Image to run on"
+        required: false
+        type: choice
+        options:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
+        default: ubuntu-latest
       update-cache:
         description: "If update the TeX live cache"
+        required: false
         type: boolean
         default: false
 
@@ -29,7 +35,7 @@ jobs:
         options: [""]
     name: "Tests: ${{ matrix.config }}\
       ${{ matrix.options != '' && ' (latex-dev)' || '' }}"
-    runs-on: ubuntu-latest
+    runs-on: ${{ github.event_name == 'workflow_dispatch' && inputs.runs-on || 'ubuntu-latest' }}
     permissions:
       actions: write # for "gh cache delete"
 
@@ -37,7 +43,7 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Delete TeX Live cache(s)
-      if: github.event_name == 'schedule' || inputs.update-cache
+      if: inputs.update-cache
       continue-on-error: true
       # https://cli.github.com/manual/gh_cache_list
       # https://cli.github.com/manual/gh_cache_delete
@@ -64,12 +70,24 @@ jobs:
 
     # imagemagick is pre-installed on Ubuntu 22.04 image
     # https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2204-Readme.md#installed-apt-packages
-    - name: Install ppmcheckpdf dependencies
-      if: matrix.config == 'config-old'
+    - name: Install ppmcheckpdf dependencies (ubuntu)
+      if: runner.os == 'Linux' && matrix.config == 'config-old'
       # actively maintained
       uses: gerlero/apt-install@v1
       with:
         packages: imagemagick poppler-utils
+
+    # imagemagick is pre-installed on the current windows-latest image
+    # https://github.com/actions/runner-images/blob/main/images/windows/Windows2022-Readme.md
+    - name: Install ppmcheckpdf dependencies (windows)
+      if: runner.os == 'Windows' && matrix.config == 'config-old'
+      run: |
+        tlmgr install wintools.windows
+
+    - name: Install ppmcheckpdf dependencies (macos)
+      if: runner.os == 'macOS' && matrix.config == 'config-old'
+      run: |
+        brew install imagemagick poppler
 
     - name: Run zutil tests
       if: matrix.config == 'build'
@@ -104,7 +122,8 @@ jobs:
 
   linters:
     name: "Linters"
-    runs-on: ubuntu-latest
+    runs-on: ${{ github.event_name == 'workflow_dispatch' && inputs.runs-on || 'ubuntu-latest' }}
+
     steps:
     - uses: actions/checkout@v4
 
@@ -117,8 +136,13 @@ jobs:
     - name: Install just
       uses: extractions/setup-just@v2
 
-    # doc https://github.com/crate-ci/typos/blob/master/docs/github-action.md
-    # `wget` required, see https://github.com/crate-ci/typos/issues/1191
+    # https://github.com/crate-ci/typos/pull/1192/files
+    - name: Install wget for Windows
+      if: runner.os == 'Windows'
+      run: choco install wget --no-progress
+
+    # https://github.com/crate-ci/typos/blob/master/docs/github-action.md
+    # `wget` required
     - name: Check spelling
       uses: crate-ci/typos@v1
 
