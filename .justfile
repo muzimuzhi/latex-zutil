@@ -37,10 +37,10 @@ lint-all: && typos explcheck
 test-all: && (zutil) (tabularray "build") (tabularray "config-old")
 
 [group('test')]
-zutil +options="": && (test "zutil" "" options)
+zutil *options="": && (test "zutil" "" options)
 
 [group('test')]
-tabularray config="build" +options="": && (test "tabularray" config options)
+tabularray config="build" *options="": && (test "tabularray" config options)
 
 # simple recipes
 
@@ -57,7 +57,7 @@ explcheck:
     # explcheck --ignored-issues=s103,s204,w302 tabularray/tabularray.sty
 
 [group('test')]
-test package="" config="" +options="":
+test package="" config="" *options="":
     @{{ info }}'Running {{ package }} tests\
         {{ if config != "" { ', config "' + config + '"' } else { "" } }}...'\
         {{ end_info }}
