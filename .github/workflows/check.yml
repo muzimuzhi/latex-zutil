@@ -1,4 +1,6 @@
 name: Test suite
+# whitespace-only `run-name` will fall back to the default value
+run-name: ${{ github.event_name == 'workflow_dispatch' && (inputs.event-name != 'workflow_dispatch' && format('Test suits ({0}, {1})', inputs.event-name, inputs.runs-on) || format('Test suits ({0})', inputs.runs-on)) || '' }}
 
 on:
   pull_request:
@@ -9,6 +11,11 @@ on:
   push:
   workflow_dispatch:
     inputs:
+      event-name:
+        description: "Event name, used by dispatched scheduled runs"
+        required: false
+        type: string
+        default: "workflow_dispatch"
       runs-on:
         description: "Image to run on"
         required: false
