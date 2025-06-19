@@ -1,5 +1,7 @@
-\ProvidesExplPackage {zutil} {2024-12-14} {0.3}
+\ProvidesExplPackage {zutil} {2025-06-19} {0.4}
   {Z's utilities}
+
+% TODO: add package options for loading module families
 
 
 % shared temp variables
@@ -42,4 +44,6 @@
 \@onlypreamble \zutil_load_module:n
 
 \zutil_load_module:n { l3extras } % noqa: w302
+                                  % W302 unbraced n-type function call argument
 \zutil_load_module:n { debug }
+\zutil_load_module:n { softerror }

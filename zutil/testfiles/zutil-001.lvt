@@ -1,3 +1,8 @@
+\makeatletter
+% zutil would be loaded in regression-test.cfg
+\AddToHook{file/regression-test.cfg/before}{\disable@package@load{zutil}{}}
+\AddToHook{file/regression-test.cfg/after}{\reenable@package@load{zutil}}
+\makeatother
 \input{regression-test}
 \documentclass{article}
 

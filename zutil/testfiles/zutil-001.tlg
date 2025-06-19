@@ -10,6 +10,8 @@ File: zutil-l3extras.code.tex ....-..-.. v... Z's utilities, the l3kernel extras
 ) (zutil-debug.code.tex
 File: zutil-debug.code.tex ....-..-.. v... Z's utilities, the debugging module
 \l__zutil_debug_level_int=\count...
+) (zutil-softerror.code.tex
+File: zutil-softerror.code.tex ....-..-.. v... Z's utilities, the softerror module
 ))
 ============================================================
 ***************
