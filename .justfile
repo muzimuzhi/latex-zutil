@@ -18,6 +18,7 @@ reset_style := NORMAL
 info := "echo " + set_style + "'===>' "
 end_info := reset_style
 
+L3BUILD_CHECK_OPTIONS := env('L3BUILD_CHECK_OPTIONS') || "-q --show-saves"
 
 # default recipe
 
@@ -63,7 +64,7 @@ l3build-check package="" config="" +options="":
         {{ if config != "" { ', config "' + config + '"' } else { "" } }}...'\
         {{ end_info }}
     cd {{ package }} && \
-        l3build check -q --show-saves \
+        l3build check {{ L3BUILD_CHECK_OPTIONS }} \
             {{ if config != "" { "-c\"" + config + "\"" } else { "" } }} {{ options }}
     {{ if package == "tabularray" { \
         if config == "config-old" { \
