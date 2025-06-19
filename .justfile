@@ -18,7 +18,7 @@ reset_style := NORMAL
 info := "echo " + set_style + "'===>' "
 end_info := reset_style
 
-L3BUILD_CHECK_OPTIONS := env('L3BUILD_CHECK_OPTIONS') || "-q --show-saves"
+L3BUILD_CHECK_OPTIONS := env('L3BUILD_CHECK_OPTIONS', '-q --show-saves')
 
 # default recipe
 
