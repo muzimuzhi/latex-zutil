@@ -1,4 +1,4 @@
-name: Scheduled checks
+name: Schedule
 
 on:
   schedule:

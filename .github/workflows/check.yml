@@ -1,6 +1,9 @@
-name: Test suite
-# whitespace-only `run-name` will fall back to the default value
-run-name: ${{ github.event_name == 'workflow_dispatch' && (inputs.event-name != 'workflow_dispatch' && format('Test suits ({0}, {1})', inputs.event-name, inputs.runs-on) || format('Test suits ({0})', inputs.runs-on)) || '' }}
+name: Checks
+# example `run-name`s:
+#     - Checks (ubuntu-latest)
+#     - Checks (schedule, windows-latest)
+#     - <empty>, which falls back to the default value
+run-name: ${{ github.event_name == 'workflow_dispatch' && (inputs.event-name != 'workflow_dispatch' && format('Checks ({0}, {1})', inputs.event-name, inputs.runs-on) || format('Checks ({0})', inputs.runs-on)) || '' }}
 
 on:
   pull_request:
