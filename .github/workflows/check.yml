@@ -25,10 +25,10 @@ jobs:
         config: ["build", "config-old"]
         # TODO: find a way to handle different testfiles when checking
         #       with latex and latex-dev
-        # option: ["", "--dev"]
-        option: [""]
+        # options: ["", "--dev"]
+        options: [""]
     name: "Tests: ${{ matrix.config }}\
-      ${{ matrix.option != '' && ' (latex-dev)' || '' }}"
+      ${{ matrix.options != '' && ' (latex-dev)' || '' }}"
     runs-on: ubuntu-latest
     permissions:
       actions: write # for "gh cache delete"
@@ -74,13 +74,13 @@ jobs:
     - name: Run zutil tests
       if: matrix.config == 'build'
       run: |
-        just test zutil "" ${{ matrix.option }}
+        just zutil ${{ matrix.options }}
       env:
         L3BUILD_CHECK_OPTIONS: "--halt-on-error --show-saves"
 
     - name: Run tabularray tests
       run: |
-        just test tabularray "${{ matrix.config }}" ${{ matrix.option }}
+        just tabularray "${{ matrix.config }}" ${{ matrix.options }}
       env:
         L3BUILD_CHECK_OPTIONS: "--halt-on-error --show-saves"
 
@@ -97,7 +97,7 @@ jobs:
         #   - tblr-diffs-config-old-dev
         name: "tblr-diffs\
           ${{ matrix.config != '' && format('-{0}', matrix.config) || '' }}\
-          ${{ matrix.option != '' && '-dev' || '' }}"
+          ${{ matrix.options != '' && '-dev' || '' }}"
         path: |
           build/**/*.diff
           build/**/*.diff.png

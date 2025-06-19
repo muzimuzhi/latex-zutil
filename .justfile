@@ -34,15 +34,13 @@ all: && lint-all test-all
 lint-all: && typos explcheck
 
 [group('test')]
-test-all: && zutil tabularray
+test-all: && (zutil) (tabularray "build") (tabularray "config-old")
 
 [group('test')]
-zutil: && (l3build-check "zutil")
+zutil +options="": && (test "zutil" "" options)
 
 [group('test')]
-tabularray: && (l3build-check "tabularray" "build") \
-    (l3build-check "tabularray" "config-old")
-
+tabularray config="build" +options="": && (test "tabularray" config options)
 
 # simple recipes
 
@@ -59,7 +57,7 @@ explcheck:
     # explcheck --ignored-issues=s103,s204,w302 tabularray/tabularray.sty
 
 [group('test')]
-l3build-check package="" config="" +options="":
+test package="" config="" +options="":
     @{{ info }}'Running {{ package }} tests\
         {{ if config != "" { ', config "' + config + '"' } else { "" } }}...'\
         {{ end_info }}
