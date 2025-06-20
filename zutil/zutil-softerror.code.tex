@@ -4,15 +4,14 @@
 % This module provides a new l3msg message level "softerror".
 % Softerror is a combination of "warning" and "error":
 % - Its message is formed like warning, using an error header;
-% - It always uses <more text> of a message, but it does not interrupt
-%   the processing, nor prompt for user input.
+% - Like error, it uses both the <text> and <more text> of a message, but
+%    it does not interrupt the processing, nor prompt for user input.
 % By producing engine-neutral compact message, softerror is most suitable
 % for log-based testing.
 
 % new message level "softerror"
 \cs_new_protected:Npn \__msg_softerror_code:nnnnnn #1#2#3#4#5#6 % noqa: w401
   {
-    \socket_use:n { test/error-count }
     \__msg_softerror_aux:NNnnnnnn \iow_term:n \msg_softerror_text:n
       {#1} {#2} {#3} {#4} {#5} {#6}
   }

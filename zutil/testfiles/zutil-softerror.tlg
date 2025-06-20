@@ -23,7 +23,17 @@ more text [arg1][arg2][arg3][arg4]
 [test] 3 error(s) encountered in this test.
 ============================================================
 ============================================================
-TEST: soft error
+TEST: softerror
+============================================================
+! Package __test Error: text
+! Package __test Error: text
+(__test)                more text
+! Package __test Error: text [arg1][arg2][arg3][arg4]
+(__test)                more text [arg1][arg2][arg3][arg4]
+[test] 3 error(s) encountered in this test.
+============================================================
+============================================================
+TEST: softerror, redirected
 ============================================================
 ! Package __test Error: text
 ! Package __test Error: text
@@ -33,4 +43,4 @@ TEST: soft error
 [test] 3 error(s) encountered in this test.
 ============================================================
 ***************
-[test] 6 error(s) encountered.
+[test] 9 error(s) encountered.

@@ -20,11 +20,17 @@
   \msg_error:nnnnnn { __test } { 4-arg } { arg1 } { arg2 } { arg3 } { arg4 }
 }
 
+\TEST{softerror}{
+  \zutil_msg_softerror:nn { __test } { short }
+  \zutil_msg_softerror:nn { __test } { long }
+  \zutil_msg_softerror:nnnnnn { __test } { 4-arg } { arg1 } { arg2 } { arg3 } { arg4 }
+}
+
 \OMIT
 \msg_redirect_module:nnn { __test } { error } { softerror }
 \TIMO
 
-\TEST{soft~error}{
+\TEST{softerror,~redirected}{
   \msg_error:nn { __test } { short }
   \msg_error:nn { __test } { long }
   \msg_error:nnnnnn { __test } { 4-arg } { arg1 } { arg2 } { arg3 } { arg4 }
