@@ -29,29 +29,34 @@ default:
 
 # meta recipes
 
+[group('*meta')]
 all: && lint-all test-all
 
-[group('lint')]
+[group('*meta')]
 lint-all: && typos explcheck
 
 alias lint := lint-all
 
-[group('test')]
+[group('*meta')]
 test-all: && (zutil) (tabularray "build") (tabularray "config-old")
 
+# Run zutil tests
 [group('test')]
 zutil *options="": && (test "zutil" "" options)
 
+# Run tabularray tests
 [group('test')]
 tabularray config="build" *options="": && (test "tabularray" config options)
 
 # simple recipes
 
+# Check typos
 [group('lint')]
 typos:
     @{{ info }}Checking for typos...{{ end_info }}
     typos
 
+# Check for expl3 issues
 [group('lint')]
 explcheck:
     @{{ info }}Checking for expl3 issues...{{ end_info }}
@@ -59,6 +64,7 @@ explcheck:
     explcheck zutil/*.sty zutil/*.tex
     # explcheck --ignored-issues=s103,s204,w302 tabularray/tabularray.sty
 
+# Run l3build tests
 [group('test')]
 test package="" config="" *options="":
     @{{ info }}'Running {{ package }} tests\
@@ -75,6 +81,7 @@ test package="" config="" *options="":
 
 alias check := test
 
+# Save l3build test results
 [group('test')]
 save package="" config="" *options="":
     @{{ info }}'Running {{ package }} tests\
