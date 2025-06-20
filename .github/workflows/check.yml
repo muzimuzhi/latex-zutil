@@ -47,7 +47,9 @@ jobs:
       ${{ matrix.options != '' && ' (latex-dev)' || '' }}"
     runs-on: ${{ github.event_name == 'workflow_dispatch' && inputs.runs-on || 'ubuntu-latest' }}
     permissions:
-      actions: write # for "gh cache delete"
+      # required for for "gh cache delete"
+      # https://docs.github.com/en/rest/actions/cache?apiVersion=2022-11-28#delete-a-github-actions-cache-for-a-repository-using-a-cache-id
+      actions: write
 
     steps:
     - uses: actions/checkout@v4
@@ -58,7 +60,7 @@ jobs:
       # https://cli.github.com/manual/gh_cache_list
       # https://cli.github.com/manual/gh_cache_delete
       run: |
-        # to find why 'cache_keys' might contain dup items
+        # TODO: find why 'cache_keys' might contain dup items
         set -x
         cache_keys=$(\
             gh cache list --key setup-texlive --json key --jq '.[].key')
