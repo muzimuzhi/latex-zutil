@@ -38,12 +38,12 @@ jobs:
   tests:
     strategy:
       matrix:
-        config: ["build", "config-old"]
+        tblr-config: ["build", "config-old"]
         # TODO: find a way to handle different testfiles when checking
         #       with latex and latex-dev
         # options: ["", "--dev"]
         options: [""]
-    name: "Tests: ${{ matrix.config }}\
+    name: "Tests: ${{ matrix.tblr-config }}\
       ${{ matrix.options != '' && ' (latex-dev)' || '' }}"
     runs-on: ${{ github.event_name == 'workflow_dispatch' && inputs.runs-on || 'ubuntu-latest' }}
     permissions:
@@ -81,7 +81,7 @@ jobs:
     # imagemagick is pre-installed on Ubuntu 22.04 image
     # https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2204-Readme.md#installed-apt-packages
     - name: Install ppmcheckpdf dependencies (ubuntu)
-      if: runner.os == 'Linux' && matrix.config == 'config-old'
+      if: runner.os == 'Linux' && matrix.tblr-config == 'config-old'
       # actively maintained
       uses: gerlero/apt-install@v1
       with:
@@ -90,25 +90,25 @@ jobs:
     # imagemagick is pre-installed on the current windows-latest image
     # https://github.com/actions/runner-images/blob/main/images/windows/Windows2022-Readme.md
     - name: Install ppmcheckpdf dependencies (windows)
-      if: runner.os == 'Windows' && matrix.config == 'config-old'
+      if: runner.os == 'Windows' && matrix.tblr-config == 'config-old'
       run: |
         tlmgr install wintools.windows
 
     - name: Install ppmcheckpdf dependencies (macos)
-      if: runner.os == 'macOS' && matrix.config == 'config-old'
+      if: runner.os == 'macOS' && matrix.tblr-config == 'config-old'
       run: |
         brew install imagemagick poppler
 
     - name: Run zutil tests
-      if: matrix.config == 'build'
+      if: matrix.tblr-config == 'build'
       run: |
         just zutil ${{ matrix.options }}
       env:
         L3BUILD_CHECK_OPTIONS: "--halt-on-error --show-saves"
 
-    - name: Run tabularray tests, config "${{ matrix.config }}"
+    - name: Run tabularray tests, config "${{ matrix.tblr-config }}"
       run: |
-        just tabularray "${{ matrix.config }}" ${{ matrix.options }}
+        just test tabularray "${{ matrix.tblr-config }}" ${{ matrix.options }}
       env:
         L3BUILD_CHECK_OPTIONS: "--halt-on-error --show-saves"
 
@@ -124,7 +124,7 @@ jobs:
         #   - tblr-diffs-config-old
         #   - tblr-diffs-config-old-dev
         name: "tblr-diffs\
-          ${{ matrix.config != '' && format('-{0}', matrix.config) || '' }}\
+          ${{ matrix.tblr-config != '' && format('-{0}', matrix.tblr-config) || '' }}\
           ${{ matrix.options != '' && '-dev' || '' }}"
         path: |
           build/**/*.diff
