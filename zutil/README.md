@@ -8,6 +8,7 @@
       - for now, all modules are loaded automatically
 
   - `l3extras` module
+    - addition to standard `l3kernel` functions
     - `l3prg` extras
       - `\zutil_cs_if_defined:N(TF) ⟨cs⟩ {⟨true code⟩} {⟨false code⟩}`
         - variant `c`
@@ -28,3 +29,45 @@
         - `gset` version `\zutil_seq_gset_split_keep_braces:Nnn`
         - variants `NnV`
         - like `\seq_set_split(_keep_spaces):Nnn` but only trims surrounding spaces only, any outer braces are retained. Errors on empty `⟨delimiter⟩`.
+
+  - `debug` module
+    adding debugging info to log
+    - main functions
+      - `\zutil_debug:nn {⟨debug options⟩} {⟨debug text⟩}`
+        - adds debug info; `⟨debug text⟩` is used as string
+        - example: `\zutil_debug:nn {label=a} {\ERROR}` adds `! debug [a] >>\ERROR <<` to log, using default settings
+      - `\zutil_debug:nN {⟨debug options⟩} ⟨debug token⟩`
+        - adds debug info; uses meaning of `⟨debug token⟩` as debug text
+        - variant `eN`, `nc`, `ec`
+      - `\zutil_debug:n {⟨debug text⟩}`
+        - variant `e`
+      - `\zutil_debug:N {⟨debug text⟩}`
+        - variant `c`
+    - LaTeX2e interfaces
+      - `\ZutilDebug [⟨debug options 1⟩] {⟨debug text⟩} [⟨debug options 2⟩]`
+        - equivalent to `\zutil_debug:nn {⟨debug options 1⟩,⟨debug options 2⟩} {⟨debug text⟩}`
+      - `\ZutilDebugCmd [⟨debug options 1⟩] {⟨debug token⟩} [⟨debug options 2⟩]`
+        - equivalent to `\zutil_debug:nN {⟨debug options 1⟩, ⟨debug options 2⟩} ⟨debug token⟩`
+    - the option-setting function
+      - `\zutil_debug_set:n {⟨debug options⟩}`
+    - debug options
+      - label family
+        - `label=⟨label⟩`: converts  to string and adds the result as label
+        - `e=⟨label⟩`: fully expands `⟨label⟩` and adds the result as label
+        - `reset-labels`: clear all labels
+        - `reset-label`: alias of `reset-labels`
+        - unknown keys are treated as passed to `label`
+      - level family
+        - `+`: increases indent level by 1
+        - `-`: decreases indent level by 1
+      - misc
+        - `if=⟨bool expr⟩`: only add debugging info if `⟨bool expr⟩` evaluates to true
+      - `tabularray` integration
+        - `tblr`: short for `lable={⟨row⟩, ⟨column⟩}`
+    - decorator functions
+      - `\zutil_debug_if:n {⟨bool expr⟩} \zutil_debug:...`
+        - used as a easy-to-comment decorator/prefix of `\zutil_debug:...`; an alternative way of setting `if` option
+      - `\zutil_debug_safe_if:n {⟨bool expr⟩}`
+        - similar to `\zutil_debug_if:n` and safe in expansion-only circumtances
+    - [unstable] helper function
+      - `\zutil_debug_generate_variant:Nn`
