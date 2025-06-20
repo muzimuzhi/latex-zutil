@@ -1,4 +1,4 @@
-\ProvidesExplPackage {zutil} {2025-06-19} {0.4}
+\ProvidesExplPackage {zutil} {2025-06-20} {0.5}
   {Z's utilities}
 
 % TODO: add package options for loading module families
@@ -36,7 +36,8 @@
         \xdef\@currname{zutil-#1.code.tex} % noqa: s204
         \makeatletter
         \ExplSyntaxOff
-        \exp_args:No \file_input:n { \@currname }
+        % \file_input:n doesn't use file hooks
+        \input { \@currname }
         \@popfilename
       }
   }
