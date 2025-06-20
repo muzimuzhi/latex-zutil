@@ -1,4 +1,4 @@
-# Experimental LaTeX utility macros
+# Z's utilities, experimental LaTeX macros
 
 - `zutil` package
 
@@ -8,7 +8,7 @@
       - for now, all modules are loaded automatically
 
   - `l3extras` module
-    - addition to standard `l3kernel` functions
+    - additions to standard `l3kernel` functions
     - `l3prg` extras
       - `\zutil_cs_if_defined:N(TF) ⟨cs⟩ {⟨true code⟩} {⟨false code⟩}`
         - variant `c`
@@ -31,7 +31,7 @@
         - like `\seq_set_split(_keep_spaces):Nnn` but only trims surrounding spaces only, any outer braces are retained. Errors on empty `⟨delimiter⟩`.
 
   - `debug` module
-    adding debugging info to log
+    - adding debugging info to log
     - main functions
       - `\zutil_debug:nn {⟨debug options⟩} {⟨debug text⟩}`
         - adds debug info; `⟨debug text⟩` is used as string
@@ -71,3 +71,27 @@
         - similar to `\zutil_debug_if:n` and safe in expansion-only circumtances
     - [unstable] helper function
       - `\zutil_debug_generate_variant:Nn`
+
+  - `softerror` module
+    - new `l3msg` message level `softerror`
+      - like `error`, it uses both `⟨text⟩` and `⟨more text⟩` of a message
+      - like `warning`, it doesn't interupt processing nor prompting for user input, thus produces portable and compact messages
+      - it's most suitable for log-based tests
+    - full example
+      ```tex
+      \msg_new:nnnn { mypkg } { msg } { text } { more text }
+      \zutil_msg_softerror:nn { mypkg } { msg }
+      ```
+      generates
+      ```
+      ! Package mypkg Error: text
+      (mypkg)                more text
+      ```
+    - `\zutil_msg_softerror:nnnnnn`
+      - variant `nneeee`
+    - `\zutil_msg_softerror:nnnnn`
+      - variant `nnnee`, `nneee`
+    - `\zutil_msg_softerror:nnnn`
+      - variant `nnVV`, `nnVn`, `nnnV`, `nnne`, `nnee`
+    - `\zutil_msg_softerror:nnn`
+      - variant `nnV`, `nne`
