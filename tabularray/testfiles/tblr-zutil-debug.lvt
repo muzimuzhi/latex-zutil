@@ -23,6 +23,10 @@
   \zutil_debug:nn { end } { text }
 }
 
+\TEST{value~forbidden}{
+  \zutil_debug:nn { tblr= } { text }
+}
+
 \ExplSyntaxOff
 
 \END

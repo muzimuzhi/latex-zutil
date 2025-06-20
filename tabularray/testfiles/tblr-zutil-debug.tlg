@@ -8,5 +8,17 @@ TEST: tblr
 ! debug [1,1]   >>text<<
 ! debug [end] >>text<<
 ============================================================
+============================================================
+TEST: value forbidden
+============================================================
+! LaTeX Error: The key 'zutil/debug/tblr' does not take a value.
+For immediate help type H <return>.
+ ...                                              
+l. ...}
+The key 'zutil/debug/tblr' should be given without a value.
+The value '' was present: the key will be ignored.
+! debug >>text<<
+[test] 1 error(s) encountered in this test.
+============================================================
 ***************
-[test] 0 error(s) encountered.
+[test] 1 error(s) encountered.

@@ -359,6 +359,7 @@
       {
         % expansion is deferred until the label is actually being used
         tblr .meta:n = { label = { \the\c@rownum , \the\c@colnum } }
+      , tblr .value_forbidden:n = true
       }
   }
 \IfPackageLoadedTF { tabularray }
