@@ -54,3 +54,32 @@
       { } #1
     #1 { }
   }
+
+% user interface
+\cs_new_protected:Npn \zutil_msg_softerror:nnnnnn #1#2#3#4#5#6
+  {
+    \use:e
+      {
+        \exp_not:n { \__msg_use:nnnnnnn { softerror } {#1} {#2} }
+          { \tl_to_str:n {#3} } { \tl_to_str:n {#4} }
+          { \tl_to_str:n {#5} } { \tl_to_str:n {#6} }
+      }
+  }
+\cs_new_protected:Npn \zutil_msg_softerror:nnnnn #1#2#3#4#5
+  { \zutil_msg_softerror:nnnnnn {#1} {#2} {#3} {#4} {#5} { } }
+\cs_new_protected:Npn \zutil_msg_softerror:nnnn #1#2#3#4
+  { \zutil_msg_softerror:nnnnnn {#1} {#2} {#3} {#4} { } { } }
+\cs_new_protected:Npn \zutil_msg_softerror:nnn #1#2#3
+  { \zutil_msg_softerror:nnnnnn {#1} {#2} {#3} { } { } { } }
+\cs_new_protected:Npn \zutil_msg_softerror:nn #1#2
+  { \zutil_msg_softerror:nnnnnn {#1} {#2} { } { } { } { } }
+
+% e-type variants correspond to those provided by expl3
+\cs_generate_variant:Nn \zutil_msg_softerror:nnn
+  { nnV , nne }
+\cs_generate_variant:Nn \zutil_msg_softerror:nnnn
+  { nnVV , nnVn , nnnV , nnne , nnee }
+\cs_generate_variant:Nn \zutil_msg_softerror:nnnnn
+  { nnnee , nneee }
+\cs_generate_variant:Nn \zutil_msg_softerror:nnnnnn
+  { nneeee }
