@@ -75,3 +75,14 @@ Available recipes:
 ```
 
 Run `just --dry-run <recipe>` to list commands run by each recipe
+
+As configured by `./.justfile`, `just` can be invoked from any subdirectory and acts independently with current working directory.
+
+Advanced usage:
+
+```shell
+# save a test
+$ just save tabularray build tblr-zutil-debug
+# check a test
+$ just check tabularray build tblr-zutil-debug
+```
