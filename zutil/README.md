@@ -63,7 +63,7 @@
       - misc
         - `if=⟨bool expr⟩`: only add debugging info if `⟨bool expr⟩` evaluates to true
       - `tabularray` integration
-        - `tblr`: short for `lable={⟨row⟩, ⟨column⟩}`
+        - `tblr`: short for `label={⟨row⟩, ⟨column⟩}`
     - decorator functions
       - `\zutil_debug_if:n {⟨bool expr⟩} \zutil_debug:...`
         - used as a easy-to-comment decorator/prefix of `\zutil_debug:...`; an alternative way of setting `if` option
@@ -75,7 +75,7 @@
   - `softerror` module
     - new `l3msg` message level `softerror`
       - like `error`, it uses both `⟨text⟩` and `⟨more text⟩` of a message
-      - like `warning`, it doesn't interupt processing nor prompting for user input, thus produces portable and compact messages
+      - like `warning`, it doesn't interrupt processing nor prompting for user input, thus produces portable and compact messages
       - it's most suitable for log-based tests
     - full example
       ```tex

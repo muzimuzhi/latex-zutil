@@ -61,7 +61,7 @@ Available recipes:
     [*meta]
     all
     lint-all                            # [alias: lint]
-    test-all
+    test-all *options=""
 
     [test]
     zutil *options=""                   # Run zutil tests
@@ -70,8 +70,8 @@ Available recipes:
     save package config="" *options=""  # Save l3build test results
 
     [lint]
-    typos                               # Check typos
-    explcheck                           # Check for expl3 issues
+    typos *options=""                   # Check typos
+    explcheck *options=""               # Check for expl3 issues
 ```
 
 Run `just --dry-run <recipe>` to list commands run by each recipe
@@ -81,8 +81,18 @@ As configured by `./.justfile`, `just` can be invoked from any subdirectory and 
 Advanced usage:
 
 ```shell
+# check l3build tests using "latex-dev"
+$ just test-all --dev
 # save a test
 $ just save tabularray build tblr-zutil-debug
 # check a test
 $ just check tabularray build tblr-zutil-debug
+```
+
+More usage:
+
+```shell
+$ just typos -w/--write-changes
+# or
+$ typos -w/--write-changes
 ```

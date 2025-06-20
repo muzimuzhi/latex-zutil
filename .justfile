@@ -35,7 +35,7 @@ lint-all: && typos explcheck
 alias lint := lint-all
 
 [group('*meta')]
-test-all: && (zutil) (tabularray)
+test-all *options="": && (zutil options) (tabularray options)
 
 # Run zutil tests
 [group('test')]
@@ -51,16 +51,16 @@ tabularray *options="": && \
 
 # Check typos
 [group('lint')]
-typos:
+typos *options="":
     @{{ info }}Checking for typos...{{ end_info }}
-    typos
+    typos {{ options }}
 
 # Check for expl3 issues
 [group('lint')]
-explcheck:
+explcheck *options="":
     @{{ info }}Checking for expl3 issues...{{ end_info }}
-    explcheck support/*.cfg
-    explcheck zutil/*.sty zutil/*.tex
+    explcheck {{ options }} support/*.cfg
+    explcheck {{ options }} zutil/*.sty zutil/*.tex
     # explcheck --ignored-issues=s103,s204,w302 tabularray/tabularray.sty
 
 # Run l3build tests
