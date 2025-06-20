@@ -19,6 +19,7 @@ info := "echo " + set_style + "'===>' "
 end_info := reset_style
 
 L3BUILD_CHECK_OPTIONS := env('L3BUILD_CHECK_OPTIONS', '-q --show-saves')
+L3BUILD_SAVE_OPTIONS := env('L3BUILD_SAVE_OPTIONS', '')
 
 # default recipe
 
@@ -69,3 +70,12 @@ test package="" config="" *options="":
             "cd " + package + " && texlua buildend.lua" \
         } else { "" } \
     } else { "" } }}
+
+[group('test')]
+save package="" config="" *options="":
+    @{{ info }}'Running {{ package }} tests\
+        {{ if config != "" { ', config "' + config + '"' } else { "" } }}...'\
+        {{ end_info }}
+    cd {{ package }} && \
+        l3build save {{ L3BUILD_SAVE_OPTIONS }} \
+            {{ if config != "" { "-c\"" + config + "\"" } else { "" } }} {{ options }}
