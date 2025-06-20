@@ -11,3 +11,9 @@
 # tabularray related
 tabularray/doc/** linguist-documentation
 tabularray/**/*.html linguist-generated
+*.4ht linguist-generated
+
+# others
+# optional? GitHub knows .justfile
+# https://github.com/github-linguist/linguist/blob/e63a690c1a7d3b08ef79190e10418f4584e46144/lib/linguist/languages.yml#L3711-L3727
+.justfile linguist-language=just
