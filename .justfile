@@ -34,6 +34,8 @@ all: && lint-all test-all
 [group('lint')]
 lint-all: && typos explcheck
 
+alias lint := lint-all
+
 [group('test')]
 test-all: && (zutil) (tabularray "build") (tabularray "config-old")
 
@@ -70,6 +72,8 @@ test package="" config="" *options="":
             "cd " + package + " && texlua buildend.lua" \
         } else { "" } \
     } else { "" } }}
+
+alias check := test
 
 [group('test')]
 save package="" config="" *options="":
