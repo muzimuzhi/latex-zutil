@@ -353,6 +353,8 @@
 %% tabularray support
 %%
 
+% tested in tabularray test file "tblr-zutil-debug.lvt"
+
 \cs_new_protected:Npn \__zutil_debug_tblr_support:
   {
     \keys_define:nn { zutil/debug }
@@ -362,10 +364,8 @@
       , tblr .value_forbidden:n = true
       }
   }
-\IfPackageLoadedTF { tabularray }
+
+% if "tabularray" is already loaded, the hook code to add is executed
+% immediately, because "package/.../after" hook is used as a one-time hook
+\hook_gput_code:nnn { package/tabularray/after } { zutil/debug }
   { \__zutil_debug_tblr_support: }
-  {
-    % "package/.../before" hook also works
-    \hook_gput_code:nnn { package/tabularray/after } { zutil/debug }
-      { \__zutil_debug_tblr_support: }
-  }
