@@ -17,7 +17,7 @@
         - expands to base-form of an expl3 function (in `⟨token⟩`); if colon not found then leaves `\q_no_value`. The result is returned within `\exp_not:n`.
     - `l3prg` extras
       - `\zutil_cs_if_defined:N(TF) ⟨cs⟩ {⟨true code⟩} {⟨false code⟩}`
-        - variant `c` (hand-tuned)
+        - variant `c` (hand-tuned, no `\relax` issue)
         - similar to `\cs_if_exist:NTF` but treats `\relax` as defined
     - `l3expan` extras
       - `\zutil_cs_generate_variant:N ⟨cs variant⟩`
@@ -45,11 +45,11 @@
         - example: `\zutil_debug:nn {label=a} {\ERROR}` adds `! debug [a] >>\ERROR <<` to log, using default settings
       - `\zutil_debug:nN {⟨debug options⟩} ⟨debug token⟩`
         - adds debug info; uses meaning of `⟨debug token⟩` as debug text
-        - variants `nc` (hand-tuned), `eN`, `ec`
+        - variants `nc` (hand-tuned, no `\relax` issue), `eN`, `ec`
       - `\zutil_debug:n {⟨debug text⟩}`
         - variant `e`
       - `\zutil_debug:N {⟨debug text⟩}`
-        - variant `c` (hand-tuned)
+        - variant `c` (hand-tuned, no `\relax` issue)
       - <sub>\* Unless marked with "hand-tuned", all variants in this function family are generated with `\zutil_debug_generate_variant:Nn`, in order to add appropriate collectors used by decorator functions (see below).</sub>
     - LaTeX2e interfaces
       - `\ZutilDebug [⟨debug options 1⟩] {⟨debug text⟩} [⟨debug options 2⟩]`
@@ -62,8 +62,7 @@
       - label family
         - `label=⟨label⟩`: converts  to string and adds the result as label
         - `e=⟨label⟩`: fully expands `⟨label⟩` and adds the result as label
-        - `reset-labels`: clear all labels
-        - `reset-label`: alias of `reset-labels`
+        - `reset-labels`: clear all labels; alias `reset-label`; available to `\zutil_debug_set:n` only
         - unknown keys are treated as passed to `label`
       - level family
         - `+`: increases indent level by 1
