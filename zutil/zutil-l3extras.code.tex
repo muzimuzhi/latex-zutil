@@ -44,7 +44,9 @@
     \cs_if_exist:NF #1
       {
         % \cs_split_function:N <function> expands to a 3-tuple
-        % "{<name:str>} {<signature:str>} <if colon found:bool>"
+        % "{<name:str>} {<signature:str>} <has colon:bool>".
+        % As the result starts with "{", possible leading spaces in <name>
+        % won't be gobbled by f-type expansion.
         \exp_last_unbraced:Nf \__zutil_cs_generate_variant:nnN
             \cs_split_function:N #1
       }

@@ -22,30 +22,37 @@
 }
 
 \TEST{\zutil_cs_generate_variant:N}{
+  \debug_on:n { log-functions }
   \zutil_cs_generate_variant:N \tl_new:N
   \zutil_cs_generate_variant:N \tl_new:c
-  \TYPE { [before]~\cs_meaning:N \zutil_set:V }
   \zutil_cs_generate_variant:N \zutil_set:V
-  \TYPE { [after]~\cs_meaning:N \zutil_set:V }
-  \TYPE { [before]~\cs_meaning:N \cs_new:Npo }
   \zutil_cs_generate_variant:N \cs_new:Npo
-  \TYPE { [after]~\cs_meaning:N \cs_new:Npo }
 }
 
 \TEST{\zutil_cs_generate_variant:N invalid~specifier}{
+  \debug_on:n { log-functions }
   \zutil_cs_generate_variant:N \exp_after:wc
   \zutil_cs_generate_variant:N \zutil_set:X
 }
 
+\OMIT
+\cs_new_protected:cpn { ~ myfun_name:n } #1 { }
+\cs_new_protected:cpn { ~ \c_space_tl myfun_name:nn } #1#2 { }
+\TIMO
+
+\TEST{\zutil_cs_generate_variant:N retains~leading~spaces}{
+  \debug_on:n { log-functions }
+  \exp_args:Nc \zutil_cs_generate_variant:N { ~ myfun_name:o }
+  \exp_args:Nc \zutil_cs_generate_variant:N { ~ \c_space_tl myfun_name:ne }
+}
+
 \TEST{\zutil_cs_generate_variant:n}{
-  \TYPE { [before]~\cs_meaning:N \zutil_set:v }
-  \TYPE { [before]~\cs_meaning:N \zutil_set:e }
+  \debug_on:n { log-functions }
   \zutil_cs_generate_variant:n { \zutil_set:v, \zutil_set:e }
-  \TYPE { [after]~\cs_meaning:N \zutil_set:v }
-  \TYPE { [after]~\cs_meaning:N \zutil_set:e }
 }
 
 \TEST{\zutil_prg_new_conditional_tl_if_in:Nnn}{
+  \debug_on:n { log-functions }
   \zutil_prg_new_conditional_tl_if_in:Nnn \test_if_colon_in:n {:} { p, TF }
   \test_if_colon_in:nTF { ab } { \FAILED } { \PASSED }
   \bool_if:nTF { \test_if_colon_in_p:n { a:b } } { \PASSED } { \FAILED }
