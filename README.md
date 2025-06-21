@@ -1,5 +1,7 @@
 # Z's LaTeX utility macros
 
+[![Test suite](https://github.com/muzimuzhi/latex-zutil/actions/workflows/check.yml/badge.svg)](https://github.com/muzimuzhi/latex-zutil/actions/workflows/check.yml)
+
 ## Development
 
 ### Project structure

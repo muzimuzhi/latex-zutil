@@ -33,7 +33,7 @@
 \end{tblr}
 \ENDTEST
 
-% https://github.com/muzimuzhi/tabularray-dev/issues/4
+% https://github.com/muzimuzhi/latex-zutil/issues/4
 \BEGINTEST{Keep braces when extracting table commands}
 % leading braces in cell text should be saved as-is
 \begin{tblr}{l}

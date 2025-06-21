@@ -1,4 +1,4 @@
-bundle  = "tabularray-dev"
+bundle  = "latex-zutil"
 module  = ""
 
 
