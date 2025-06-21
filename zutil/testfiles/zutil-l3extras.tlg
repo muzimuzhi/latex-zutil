@@ -1,6 +1,62 @@
 This is a generated file for the l3build validation system.
 Don't change this file in any respect.
 ============================================================
+TEST: \zutil_cs_function_name:N 
+============================================================
+[zutil_set]
+[scan_stop]
+[zutil_undefined]
+[zutil_undefined]
+[\q_no_value ]
+[\q_no_value ]
+============================================================
+============================================================
+TEST: \zutil_cs_function_signature:N 
+============================================================
+[n]
+[]
+[N]
+[]
+[\q_no_value ]
+[\q_no_value ]
+============================================================
+============================================================
+TEST: \zutil_cs_base_function:N 
+============================================================
+[\zutil_set:n ]
+[\scan_stop: ]
+[\zutil_undefined:N ]
+[\zutil_undefined: ]
+[\q_no_value ]
+[\q_no_value ]
+============================================================
+============================================================
+TEST: \zutil_cs_base_function:N variants
+============================================================
+! Use of \??? doesn't match its definition.
+<argument> \???  
+                 ! Package zutil Error: Invalid argument specifier 'w'.
+l. ...}
+If you say, e.g., `\def\a1{...}', then you must always
+put `1' after `\a', since control sequence names are
+made up of letters only. The macro here has not been
+followed by the required stuff, so I'm ignoring it.
+! Use of \??? doesn't match its definition.
+<argument> \???  
+                 ! Package zutil Error: Invalid argument specifier 'D'.
+l. ...}
+If you say, e.g., `\def\a1{...}', then you must always
+put `1' after `\a', since control sequence names are
+made up of letters only. The macro here has not been
+followed by the required stuff, so I'm ignoring it.
+[\tl_new:N ]
+[\tl_set:Nn ]
+[\zutil_undefined:n ]
+[\zutil_undefined:nnnnn ]
+[\exp_after:wN ]
+[\tex_undefined:D ]
+============================================================
+============================================================
 TEST: \zutil_cs_if_defined:NTF 
 ============================================================
 [test] 3 tests passed.
@@ -20,7 +76,7 @@ Defining \cs_new:Npo on line ...
 ============================================================
 TEST: \zutil_cs_generate_variant:N avoid defining base form
 ============================================================
-Defining \undefined:x on line ...
+Defining \zutil_undefined:x on line ...
 ============================================================
 ============================================================
 TEST: \zutil_cs_generate_variant:N invalid specifier

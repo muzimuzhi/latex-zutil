@@ -9,6 +9,12 @@
 
   - `l3extras` module
     - additions to standard `l3kernel` functions
+    - `l3basics` extras
+      - `\zutil_cs_function_name:N ⟨cs⟩`\
+        `\zutil_cs_function_signature:N ⟨cs⟩`
+        - expands to name or signature of an expl3 function (in string); if colon not found then leaves `\q_no_value`. The result is returned within `\exp_not:n`. See also `\cs_split_function:N`.
+      - `\zutil_cs_base_function:N ⟨cs⟩`
+        - expands to base-form of an expl3 function (in `⟨token⟩`); if colon not found then leaves `\q_no_value`. The result is returned within `\exp_not:n`.
     - `l3prg` extras
       - `\zutil_cs_if_defined:N(TF) ⟨cs⟩ {⟨true code⟩} {⟨false code⟩}`
         - variant `c` (hand-tuned)
@@ -31,7 +37,7 @@
         - like `\seq_set_split(_keep_spaces):Nnn` but only trims surrounding spaces only, any outer braces are retained. Errors on empty `⟨delimiter⟩`.
 
   - `debug` module
-    - adding debugging info to log
+    - adding debugging info to log; depends on the `l3extras` module
     - main functions
       - `\zutil_debug:nn {⟨debug options⟩} {⟨debug text⟩}`
         - adds debug info; `⟨debug text⟩` is used as string

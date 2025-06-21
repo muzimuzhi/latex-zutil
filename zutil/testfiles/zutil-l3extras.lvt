@@ -5,9 +5,39 @@
 
 \ExplSyntaxOn
 
-\debug_on:n { check-declarations , deprecation }
+\debug_on:n { check-declarations , deprecation , log-functions }
 
 \START
+
+\tl_map_inline:nn
+  {
+    \zutil_cs_function_name:N
+    \zutil_cs_function_signature:N
+    \zutil_cs_base_function:N
+  }
+  {
+    \TESTEXP{#1}{
+      % functions: {defined, undefined} * {has sig, no sig}
+      [ #1 \zutil_set:n ] \NEWLINE
+      [ #1 \scan_stop: ] \NEWLINE
+      [ #1 \zutil_undefined:N ] \NEWLINE
+      [ #1 \zutil_undefined: ] \NEWLINE
+      % non-functions: {defined, undefined}
+      [ #1 \l_tmpa_tl ] \NEWLINE
+      [ #1 \l_undefined_tl ]
+    }
+  }
+
+\TESTEXP{\zutil_cs_base_function:N variants}{
+  % matrix: {defined, undefined} * {single argument, multiple arguments}
+  [ \zutil_cs_base_function:N \tl_new:c ] \NEWLINE
+  [ \zutil_cs_base_function:N \tl_set:ce ] \NEWLINE
+  [ \zutil_cs_base_function:N \zutil_undefined:V ] \NEWLINE
+  [ \zutil_cs_base_function:N \zutil_undefined:oVvfx ] \NEWLINE
+  % invalid argument specifiers
+  [ \zutil_cs_base_function:N \exp_after:wN ] \NEWLINE
+  [ \zutil_cs_base_function:N \tex_undefined:D ] \NEWLINE
+}
 
 \TEST{\zutil_cs_if_defined:NTF}{
   \zutil_cs_if_defined:NTF \zutil_set:n     \PASSED \FAILED
@@ -22,7 +52,6 @@
 }
 
 \TEST{\zutil_cs_generate_variant:N}{
-  \debug_on:n { log-functions }
   \zutil_cs_generate_variant:N \tl_new:N
   \zutil_cs_generate_variant:N \tl_new:c
   \zutil_cs_generate_variant:N \zutil_set:V
@@ -30,13 +59,11 @@
 }
 
 \TEST{\zutil_cs_generate_variant:N avoid~defining~base~form}{
-  \debug_on:n { log-functions }
   \debug_off:n { check-declarations }
-  \zutil_cs_generate_variant:N \undefined:x
+  \zutil_cs_generate_variant:N \zutil_undefined:x
 }
 
 \TEST{\zutil_cs_generate_variant:N invalid~specifier}{
-  \debug_on:n { log-functions }
   \zutil_cs_generate_variant:N \exp_after:wc
   \zutil_cs_generate_variant:N \zutil_set:X
 }

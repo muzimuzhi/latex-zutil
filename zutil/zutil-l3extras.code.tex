@@ -1,5 +1,48 @@
-\ProvidesExplFile {zutil-l3extras.code.tex} {2025-01-09} {0.4}
+\ProvidesExplFile {zutil-l3extras.code.tex} {2025-06-21} {0.5}
   {Z's utilities, the l3kernel extras module}
+
+%%
+%% l3basice extras
+%%
+
+\cs_new:Npn \zutil_cs_function_name:N #1
+  {
+    \exp_last_unbraced:Nf \__zutil_cs_function_name:nnN
+      \cs_split_function:N #1 % noqa: w302
+  }
+\cs_new:Npn \__zutil_cs_function_name:nnN #1#2#3
+  {
+    \bool_if:NTF #3
+      % has colon, function
+      { \exp_not:n { #1 } }
+      % no colon, variable
+      { \exp_not:n { \q_no_value } }
+  }
+
+\cs_new:Npn \zutil_cs_function_signature:N #1
+  {
+    \exp_last_unbraced:Nf \__zutil_cs_function_signature:nnN
+      \cs_split_function:N #1 % noqa: w302
+  }
+\cs_new:Npn \__zutil_cs_function_signature:nnN #1#2#3
+  {
+    \bool_if:NTF #3
+      { \exp_not:n { #2 } }
+      { \exp_not:n { \q_no_value } }
+  }
+
+\cs_new:Npn \zutil_cs_base_function:N #1
+  {
+    \exp_last_unbraced:Nf \__zutil_cs_base_function:nnN
+      \cs_split_function:N #1 % noqa: w302
+  }
+\cs_new:Npn \__zutil_cs_base_function:nnN #1#2#3
+  {
+    \bool_if:NTF #3
+      % does \exp_not:N differ from \exp_not:n in any way?
+      { \exp_not:c { #1 : \__zutil_cs_sig_base_form:w #2 \q_stop } }
+      { \exp_not:n { \q_no_value } }
+  }
 
 %%
 %% l3prg extras
@@ -48,7 +91,7 @@
         % As the result starts with "{", possible leading spaces in <name>
         % won't be gobbled by f-type expansion.
         \exp_last_unbraced:Nf \__zutil_cs_generate_variant:nnN
-            \cs_split_function:N #1
+          \cs_split_function:N #1 % noqa: w302
       }
   }
 \cs_new_protected:Npn \zutil_cs_generate_variant:n #1
@@ -123,7 +166,7 @@
 \cs_new_protected:Npn \zutil_prg_new_conditional_tl_if_in:Nnn #1
   {
     \exp_args:Ne \__zutil_prg_new_conditional_tl_if_in:nNnn
-      { \exp_last_unbraced:Nf \use_i:nnn \cs_split_function:N #1 } #1
+      { \exp_last_unbraced:Nf \use_i:nnn \cs_split_function:N #1 } #1 % noqa: w302
   }
 % #1: str = name, #2: func = cs, #3: tl = test-in, #4: clist = conditions
 \cs_new_protected:Npn \__zutil_prg_new_conditional_tl_if_in:nNnn #1#2#3#4

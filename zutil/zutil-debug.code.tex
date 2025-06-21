@@ -38,7 +38,7 @@
     \str_set:Ne \l__zutil_tmp_str
       {
         \exp_last_unbraced:Nf \use_i:nnn
-          \cs_split_function:N #1
+          \cs_split_function:N #1 % noqa: w302
       }
     % stores the collector of base form #1
     \tl_set:Ne \l__zutil_tmp_tl
