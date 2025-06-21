@@ -18,6 +18,11 @@ Defining \exp_args:NNpo on line ...
 Defining \cs_new:Npo on line ...
 ============================================================
 ============================================================
+TEST: \zutil_cs_generate_variant:N avoid defining base form
+============================================================
+Defining \undefined:x on line ...
+============================================================
+============================================================
 TEST: \zutil_cs_generate_variant:N invalid specifier
 ============================================================
 ! Use of \??? doesn't match its definition.
@@ -44,16 +49,7 @@ If you say, e.g., `\def\a1{...}', then you must always
 put `1' after `\a', since control sequence names are
 made up of letters only. The macro here has not been
 followed by the required stuff, so I'm ignoring it.
-! LaTeX Error: Control sequence \zutil_set:X undefined.
-For immediate help type H <return>.
- ...                                              
-l. ...}
-This is a coding error.
-LaTeX has been asked to use a control sequence '\zutil_set:X':
-this has not been defined yet.
-Defining \exp_args:N on line ...
-Defining \zutil_set:X on line ...
-[test] 4 error(s) encountered in this test.
+[test] 3 error(s) encountered in this test.
 ============================================================
 ============================================================
 TEST: \zutil_cs_generate_variant:N retains leading spaces
@@ -136,4 +132,4 @@ The sequence \g_tmpa_seq is empty
 [test] 2 error(s) encountered in this test.
 ============================================================
 ***************
-[test] 6 error(s) encountered.
+[test] 5 error(s) encountered.

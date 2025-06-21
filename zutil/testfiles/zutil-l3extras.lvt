@@ -29,6 +29,12 @@
   \zutil_cs_generate_variant:N \cs_new:Npo
 }
 
+\TEST{\zutil_cs_generate_variant:N avoid~defining~base~form}{
+  \debug_on:n { log-functions }
+  \debug_off:n { check-declarations }
+  \zutil_cs_generate_variant:N \undefined:x
+}
+
 \TEST{\zutil_cs_generate_variant:N invalid~specifier}{
   \debug_on:n { log-functions }
   \zutil_cs_generate_variant:N \exp_after:wc

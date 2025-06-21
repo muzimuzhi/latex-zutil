@@ -58,10 +58,23 @@
   }
 \cs_new_protected:Npn \__zutil_cs_generate_variant:nnN #1#2#3
   {
+    % skip if it's not a function (no colon in csname)
     \bool_if:NT #3
       {
-        \cs_generate_variant:cn
-          { #1: \__zutil_cs_sig_base_form:w #2 \q_stop } { #2 }
+        \tl_set:Ne \l__zutil_tmp_tl
+          { \__zutil_cs_sig_base_form:w #2 \q_stop }
+        % skip if it's already the base form
+        \str_if_eq:onF { \l__zutil_tmp_tl } { #2 }
+          {
+            % avoid setting undefined base form to \relax
+            % a trick learnt from https://github.com/latex3/latex2e/commit/ef35caf4324ae6522204917b2da0742ef6a6281f
+            \group_begin:
+              \exp_after:wN
+            \group_end:
+              \exp_after:wN
+            \cs_generate_variant:Nn
+              \cs:w #1: \l__zutil_tmp_tl \cs_end: { #2 }
+          }
       }
   }
 \cs_new:Npn \__zutil_cs_sig_base_form:w #1
