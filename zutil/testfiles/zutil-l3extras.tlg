@@ -55,6 +55,7 @@ followed by the required stuff, so I'm ignoring it.
 [\zutil_undefined:nnnnn ]
 [\exp_after:wN ]
 [\tex_undefined:D ]
+[test] 2 error(s) encountered in this test.
 ============================================================
 ============================================================
 TEST: \zutil_cs_if_defined:NTF 
@@ -188,4 +189,4 @@ The sequence \g_tmpa_seq is empty
 [test] 2 error(s) encountered in this test.
 ============================================================
 ***************
-[test] 5 error(s) encountered.
+[test] 7 error(s) encountered.
