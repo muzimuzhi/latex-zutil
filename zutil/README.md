@@ -14,11 +14,11 @@
         - variant `c`
         - similar to `\cs_if_exist:NTF` but treats `\relax` as defined
     - `l3expan` extras
-      - `\zutil_cs_ensure_variant:N ⟨cs variant⟩`
+      - `\zutil_cs_generate_variant:N ⟨cs variant⟩`
         - similar to `\cs_generate_variant:Nn` but accepts the variant function name as argument
-        - example: `\zutil_cs_ensure_variant:N \zutil_set:V`
-      - `\zutil_cs_ensure_variant:n {⟨cs variants list⟩}`
-        - example: `\zutil_cs_ensure_variant:n { \zutil_set:v, \zutil_set:e }`
+        - example: `\zutil_cs_generate_variant:N \zutil_set:V`
+      - `\zutil_cs_generate_variant:n {⟨cs variants list⟩}`
+        - example: `\zutil_cs_generate_variant:n { \zutil_set:v, \zutil_set:e }`
     - `l3tl` extras
       - `\zutil_prg_new_conditional_tl_if_in:Nnn \⟨name⟩:⟨arg spec⟩ {⟨test token list⟩} {⟨conditions⟩}`
         - variants `Non`, `NVn`, `Nen`

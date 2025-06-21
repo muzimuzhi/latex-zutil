@@ -21,26 +21,26 @@
   \zutil_cs_if_defined:cTF { tex_undefined:D }  \FAILED \PASSED
 }
 
-\TEST{\zutil_cs_ensure_variant:N}{
-  \zutil_cs_ensure_variant:N \tl_new:N
-  \zutil_cs_ensure_variant:N \tl_new:c
+\TEST{\zutil_cs_generate_variant:N}{
+  \zutil_cs_generate_variant:N \tl_new:N
+  \zutil_cs_generate_variant:N \tl_new:c
   \TYPE { [before]~\cs_meaning:N \zutil_set:V }
-  \zutil_cs_ensure_variant:N \zutil_set:V
+  \zutil_cs_generate_variant:N \zutil_set:V
   \TYPE { [after]~\cs_meaning:N \zutil_set:V }
   \TYPE { [before]~\cs_meaning:N \cs_new:Npo }
-  \zutil_cs_ensure_variant:N \cs_new:Npo
+  \zutil_cs_generate_variant:N \cs_new:Npo
   \TYPE { [after]~\cs_meaning:N \cs_new:Npo }
 }
 
-\TEST{\zutil_cs_ensure_variant:N invalid~specifier}{
-  \zutil_cs_ensure_variant:N \exp_after:wc
-  \zutil_cs_ensure_variant:N \zutil_set:X
+\TEST{\zutil_cs_generate_variant:N invalid~specifier}{
+  \zutil_cs_generate_variant:N \exp_after:wc
+  \zutil_cs_generate_variant:N \zutil_set:X
 }
 
-\TEST{\zutil_cs_ensure_variant:n}{
+\TEST{\zutil_cs_generate_variant:n}{
   \TYPE { [before]~\cs_meaning:N \zutil_set:v }
   \TYPE { [before]~\cs_meaning:N \zutil_set:e }
-  \zutil_cs_ensure_variant:n { \zutil_set:v, \zutil_set:e }
+  \zutil_cs_generate_variant:n { \zutil_set:v, \zutil_set:e }
   \TYPE { [after]~\cs_meaning:N \zutil_set:v }
   \TYPE { [after]~\cs_meaning:N \zutil_set:e }
 }
@@ -53,7 +53,7 @@
   \zutil_prg_new_conditional_tl_if_in:Non \test_if_str_colon_in:n
     { \c_colon_str } { T, F }
   \test_if_str_colon_in:nF { ab } { \PASSED }
-  \zutil_cs_ensure_variant:N \test_if_str_colon_in:eT
+  \zutil_cs_generate_variant:N \test_if_str_colon_in:eT
   \test_if_str_colon_in:eT { a \c_colon_str b } { \PASSED }
 }
 

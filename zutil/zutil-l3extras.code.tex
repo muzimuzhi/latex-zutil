@@ -37,24 +37,24 @@
   }
 
 % Example:
-%     \zutil_cs_ensure_variant:N \zutil_set:V
-%     \zutil_cs_ensure_variant:n { \zutil_set:v, \zutil_set:e }
-\cs_new_protected:Npn \zutil_cs_ensure_variant:N #1
+%     \zutil_cs_generate_variant:N \zutil_set:V
+%     \zutil_cs_generate_variant:n { \zutil_set:v, \zutil_set:e }
+\cs_new_protected:Npn \zutil_cs_generate_variant:N #1
   {
     \cs_if_exist:NF #1
       {
         % \cs_split_function:N <function> expands to a 3-tuple
         % "{<name:str>} {<signature:str>} <if colon found:bool>"
-        \exp_last_unbraced:Nf \__zutil_cs_ensure_variant:nnN
+        \exp_last_unbraced:Nf \__zutil_cs_generate_variant:nnN
             \cs_split_function:N #1
       }
   }
-\cs_new_protected:Npn \zutil_cs_ensure_variant:n #1
+\cs_new_protected:Npn \zutil_cs_generate_variant:n #1
   {
     \clist_map_inline:nn {#1}
-      { \zutil_cs_ensure_variant:N ##1 }
+      { \zutil_cs_generate_variant:N ##1 }
   }
-\cs_new_protected:Npn \__zutil_cs_ensure_variant:nnN #1#2#3
+\cs_new_protected:Npn \__zutil_cs_generate_variant:nnN #1#2#3
   {
     \bool_if:NT #3
       {
@@ -122,7 +122,7 @@
           { \exp_not:N \prg_return_true: }
       }
   }
-\zutil_cs_ensure_variant:N \prg_new_conditional:Npne
+\zutil_cs_generate_variant:N \prg_new_conditional:Npne
 \cs_generate_variant:Nn \zutil_prg_new_conditional_tl_if_in:Nnn
   { No, NV, Ne }
 

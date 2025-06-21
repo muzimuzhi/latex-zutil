@@ -11,7 +11,7 @@ TEST: \zutil_cs_if_defined:cTF
 [test] 3 tests passed.
 ============================================================
 ============================================================
-TEST: \zutil_cs_ensure_variant:N 
+TEST: \zutil_cs_generate_variant:N 
 ============================================================
 [before] undefined
 [after] \protected\long macro:->\exp_args:NV \zutil_set:n 
@@ -19,7 +19,7 @@ TEST: \zutil_cs_ensure_variant:N
 [after] \protected\long macro:->\exp_args:NNpo \cs_new:Npn 
 ============================================================
 ============================================================
-TEST: \zutil_cs_ensure_variant:N invalid specifier
+TEST: \zutil_cs_generate_variant:N invalid specifier
 ============================================================
 ! Use of \??? doesn't match its definition.
 <argument> \???  
@@ -54,7 +54,7 @@ this has not been defined yet.
 [test] 4 error(s) encountered in this test.
 ============================================================
 ============================================================
-TEST: \zutil_cs_ensure_variant:n 
+TEST: \zutil_cs_generate_variant:n 
 ============================================================
 [before] undefined
 [before] undefined
