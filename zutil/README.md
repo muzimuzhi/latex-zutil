@@ -11,7 +11,7 @@
     - additions to standard `l3kernel` functions
     - `l3prg` extras
       - `\zutil_cs_if_defined:N(TF) ⟨cs⟩ {⟨true code⟩} {⟨false code⟩}`
-        - variant `c`
+        - variant `c` (hand-tuned)
         - similar to `\cs_if_exist:NTF` but treats `\relax` as defined
     - `l3expan` extras
       - `\zutil_cs_generate_variant:N ⟨cs variant⟩`
@@ -35,14 +35,16 @@
     - main functions
       - `\zutil_debug:nn {⟨debug options⟩} {⟨debug text⟩}`
         - adds debug info; `⟨debug text⟩` is used as string
+        - variants `ne`, `en`, `ee`
         - example: `\zutil_debug:nn {label=a} {\ERROR}` adds `! debug [a] >>\ERROR <<` to log, using default settings
       - `\zutil_debug:nN {⟨debug options⟩} ⟨debug token⟩`
         - adds debug info; uses meaning of `⟨debug token⟩` as debug text
-        - variant `eN`, `nc`, `ec`
+        - variants `nc` (hand-tuned), `eN`, `ec`
       - `\zutil_debug:n {⟨debug text⟩}`
         - variant `e`
       - `\zutil_debug:N {⟨debug text⟩}`
-        - variant `c`
+        - variant `c` (hand-tuned)
+      - <sub>\* Unless marked with "hand-tuned", all variants in this function family are generated with `\zutil_debug_generate_variant:Nn`, in order to add appropriate collectors used by decorator functions (see below).</sub>
     - LaTeX2e interfaces
       - `\ZutilDebug [⟨debug options 1⟩] {⟨debug text⟩} [⟨debug options 2⟩]`
         - equivalent to `\zutil_debug:nn {⟨debug options 1⟩,⟨debug options 2⟩} {⟨debug text⟩}`
@@ -90,8 +92,8 @@
     - `\zutil_msg_softerror:nnnnnn`
       - variant `nneeee`
     - `\zutil_msg_softerror:nnnnn`
-      - variant `nnnee`, `nneee`
+      - variants `nnnee`, `nneee`
     - `\zutil_msg_softerror:nnnn`
-      - variant `nnVV`, `nnVn`, `nnnV`, `nnne`, `nnee`
+      - variants `nnVV`, `nnVn`, `nnnV`, `nnne`, `nnee`
     - `\zutil_msg_softerror:nnn`
-      - variant `nnV`, `nne`
+      - variants `nnV`, `nne`
