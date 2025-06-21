@@ -57,47 +57,35 @@ Tools
 
 Commands
 
-```
-$ just
-just --list --unsorted
-Available recipes:
-    default                             # Print all recipes
-
-    [*meta]
-    all
-    lint-all                            # [alias: lint]
-    test-all *options=""
-
-    [test]
-    zutil *options=""                   # Run zutil tests
-    tabularray *options=""              # Run tabularray tests
-    test package config="" *options=""  # Run l3build tests [alias: check]
-    save package config="" *options=""  # Save l3build test results
-
-    [lint]
-    typos *options=""                   # Check typos
-    explcheck *options=""               # Check for expl3 issues
+Run all checks locally, as on [CI](./.github/workflows/check.yml)
+```shell
+$ just all
 ```
 
-Run `just --dry-run <recipe>` to list commands run by each recipe
-
-As configured by `./.justfile`, `just` can be invoked from any subdirectory and acts independently with current working directory.
-
-Advanced usage:
+General `just` usages
 
 ```shell
+# list all "just" recipes/commands
+$ just
+# list shell commands that would run by a "just" recipe
+$ just --dry-run <recipe>
+```
+
+Advanced `just` usages in this repository
+
+```shell
+# fix typos in-place
+$ just typos -w/--write-changes
+# or "typos -w/--write-changes"
+
 # check l3build tests using "latex-dev"
 $ just test-all --dev
-# save a test
+
+# save a l3build test
 $ just save tabularray build tblr-zutil-debug
-# check a test
+
+# check a l3build test
 $ just check tabularray build tblr-zutil-debug
 ```
 
-More usage:
-
-```shell
-$ just typos -w/--write-changes
-# or
-$ typos -w/--write-changes
-```
+Note: As configured by `.justfile` in this repository, `just` can be invoked from any subdirectory and it acts the same.
