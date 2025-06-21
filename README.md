@@ -22,6 +22,8 @@
 ├── support          # l3build support files
 │   └── ...
 ├── tabularray       # experimental tabularray development
+│   ├── CONTRIBUTING.md
+│   ├── README.md
 │   ├── build.lua        # tabularray l3build config file
 │   ├── buildend.lua     # wrapper to use support/ppmcheckpdf.lua
 │   ├── config-old.lua   # tabularray l3build config file for old test set
@@ -31,6 +33,7 @@
 │   ├── testfiles-old    # old l3build test set   
 │   └── ...
 └── zutil            # experimental LaTeX utility macros
+    ├── README.md
     ├── build.lua        # zutil l3build config file
     ├── testfiles        # zutil l3build tests
     ├── zutil-debug.code.tex
