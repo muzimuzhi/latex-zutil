@@ -10,7 +10,7 @@
 \msg_new:nnn { __test } { short } { text }
 \msg_new:nnnn { __test } { long } { text } { more~text }
 \msg_new:nnnn { __test } { 4-arg }
-  { text~[#1][#2][#3][#4] } { more~text~[#1][#2][#3][#4] } 
+  { text~[#1][#2][#3][#4] } { more~text~[#1][#2][#3][#4] }
 
 \START
 

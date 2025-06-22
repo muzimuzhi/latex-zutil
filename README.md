@@ -30,7 +30,7 @@
 │   ├── doc
 │   ├── tabularray.sty
 │   ├── testfiles        # new l3build test set
-│   ├── testfiles-old    # old l3build test set   
+│   ├── testfiles-old    # old l3build test set
 │   └── ...
 └── zutil            # experimental LaTeX utility macros
     ├── README.md

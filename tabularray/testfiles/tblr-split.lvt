@@ -55,7 +55,7 @@
     & \SetCell{} ~ \SetCell{} ~ a \\
   \c_space_tl a \c_space_tl
     & \SetCell{} \c_space_tl \SetCell{} \c_space_tl a \c_space_tl \\
-  \c_space_token a \c_space_token 
+  \c_space_token a \c_space_token
     & \SetCell{} \c_space_token \SetCell{} \c_space_token a \c_space_token
 \end{tblr}
 \ExplSyntaxOff

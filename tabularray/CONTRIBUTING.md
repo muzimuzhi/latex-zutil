@@ -16,7 +16,7 @@ Contributing to the Code
 
 - Preparation
   - Install [`l3build`](https://ctan.org/pkg/l3build) LaTeX package.
-  - Install `pdftoppm` program. 
+  - Install `pdftoppm` program.
     - Windows: `tlmgr install wintools.windows`
     - Ubuntu: `apt-get install poppler-utils`
     - macOS: `brew install poppler`
