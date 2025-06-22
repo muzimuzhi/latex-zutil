@@ -1,4 +1,32 @@
 # https://github.com/crate-ci/typos/blob/master/docs/reference.md
 
+# usage in latex3/latex3
+# https://github.com/latex3/latex3/blob/develop/.github/typos.toml
+
+[files]
+# gitignore patterns
+# https://git-scm.com/docs/gitignore#_pattern_format
+extend-exclude = [
+  # generated files
+  "*.4ht",
+  "*.html",
+  "*.md5",
+  "*.tlg",
+]
+
+[default]
+locale = "en-us"
+# Rust regex patterns
+# https://docs.rs/regex/latest/regex/index.html#syntax
+extend-ignore-re =[
+  ":[NncVvoxefTFpwD]+", # expl3 function signatures
+]
+
 [default.extend-identifiers]
 OT1 = "OT1"
+
+[type.tex]
+# run "typos --file-types" to check file type classification
+extend-glob = [
+  "*.lvt"
+]
