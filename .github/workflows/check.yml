@@ -12,6 +12,8 @@ on:
       # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#pull_request
       [opened, ready_for_review, reopened, synchronize]
   push:
+    paths-ignore:
+      - ".pre-commit-config.yaml"
   workflow_dispatch:
     inputs:
       event-name:
