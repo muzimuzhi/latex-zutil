@@ -35,6 +35,7 @@ on:
         required: false
         type: boolean
         default: false
+  # scheduled runs are dispatched from the `schedule.yml` workflow
 
 jobs:
   tests:
@@ -133,33 +134,3 @@ jobs:
         path: |
           build/**/*.diff
           build/**/*.diff.png
-
-  linters:
-    name: "Linters"
-    runs-on: ${{ github.event_name == 'workflow_dispatch' && inputs.runs-on || 'ubuntu-latest' }}
-
-    steps:
-    - uses: actions/checkout@v4
-
-    - name: Setup TeX Live
-      uses: teatimeguest/setup-texlive-action@v3
-      with:
-        package-file: .github/tl_packages
-        update-all-packages: true
-
-    - name: Install just
-      uses: extractions/setup-just@v2
-
-    # https://github.com/crate-ci/typos/pull/1192/files
-    - name: Install wget for Windows
-      if: runner.os == 'Windows'
-      run: choco install wget --no-progress
-
-    # https://github.com/crate-ci/typos/blob/master/docs/github-action.md
-    # `wget` required
-    - name: Check spelling
-      uses: crate-ci/typos@v1
-
-    - name: Lint expl3 code
-      run: |
-        just explcheck

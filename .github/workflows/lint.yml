@@ -1,0 +1,60 @@
+name: Lint
+# example `run-name`s:
+#     - Lint (ubuntu-latest)
+#     - Lint (schedule, windows-latest)
+#     - <empty>, which falls back to the default value
+run-name: ${{ github.event_name == 'workflow_dispatch' && (inputs.event-name != 'workflow_dispatch' && format('Lint ({0}, {1})', inputs.event-name, inputs.runs-on) || format('Lint ({0})', inputs.runs-on)) || '' }}
+
+on:
+  pull_request:
+    types:
+      # added "ready_for_review"
+      # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#pull_request
+      [opened, ready_for_review, reopened, synchronize]
+  push:
+  workflow_dispatch:
+    inputs:
+      event-name:
+        description: "Event name, used by dispatched scheduled runs"
+        required: false
+        type: string
+        default: "workflow_dispatch"
+      runs-on:
+        description: "Image to run on"
+        required: false
+        type: choice
+        options:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
+        default: ubuntu-latest
+
+jobs:
+  lint:
+    runs-on: ${{ github.event_name == 'workflow_dispatch' && inputs.runs-on || 'ubuntu-latest' }}
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup TeX Live
+      uses: teatimeguest/setup-texlive-action@v3
+      with:
+        package-file: .github/tl_packages
+        update-all-packages: true
+
+    - name: Install just
+      uses: extractions/setup-just@v2
+
+    # https://github.com/crate-ci/typos/pull/1192/files
+    - name: Install wget for Windows
+      if: runner.os == 'Windows'
+      run: choco install wget --no-progress
+
+    # https://github.com/crate-ci/typos/blob/master/docs/github-action.md
+    # `wget` required
+    - name: Check spelling
+      uses: crate-ci/typos@v1
+
+    - name: Lint expl3 code
+      run: |
+        just explcheck

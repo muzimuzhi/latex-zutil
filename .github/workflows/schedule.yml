@@ -25,5 +25,7 @@ jobs:
               -f "runs-on=$os" \
               -f "update-cache=true";
           done
+          gh workflow run -R ${{ github.repository }} lint.yml \
+            -f "event-name=schedule"
         env:
           GH_TOKEN: ${{ github.token }}
