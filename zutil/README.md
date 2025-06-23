@@ -10,13 +10,17 @@
   - `l3extras` module
     - additions to standard `l3kernel` functions
     - `l3basics` extras
+      - `\zutil_cs_if_function:NTF ⟨cs⟩ {⟨true code⟩} {⟨false code⟩}`\
+        `\zutil_cs_if_function_p:N ⟨cs⟩`
+        - checks if the csname of `⟨cs⟩` contains colon `:`
       - `\zutil_cs_function_name:N ⟨cs⟩`\
         `\zutil_cs_function_signature:N ⟨cs⟩`
         - expands to name or signature of an expl3 function (in string); if colon not found then leaves `\q_no_value`. The result is returned within `\exp_not:n`. See also `\cs_split_function:N`.
       - `\zutil_cs_base_function:N ⟨cs⟩`
         - expands to base-form of an expl3 function (in `⟨token⟩`); if colon not found then leaves `\q_no_value`. The result is returned within `\exp_not:n`.
     - `l3prg` extras
-      - `\zutil_cs_if_defined:N(TF) ⟨cs⟩ {⟨true code⟩} {⟨false code⟩}`
+      - `\zutil_cs_if_defined:NTF ⟨cs⟩ {⟨true code⟩} {⟨false code⟩}`\
+        `\zutil_cs_if_defined_p:N ⟨cs⟩`
         - variant `c` (hand-tuned, no `\relax` issue)
         - similar to `\cs_if_exist:NTF` but treats `\relax` as defined
     - `l3expan` extras

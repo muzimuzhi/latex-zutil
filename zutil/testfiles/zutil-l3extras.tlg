@@ -1,6 +1,11 @@
 This is a generated file for the l3build validation system.
 Don't change this file in any respect.
 ============================================================
+TEST: \zutil_cs_if_function:NTF 
+============================================================
+[test] 6 tests passed.
+============================================================
+============================================================
 TEST: \zutil_cs_function_name:N 
 ============================================================
 [zutil_set]

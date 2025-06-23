@@ -5,6 +5,16 @@
 %% l3basice extras
 %%
 
+\prg_new_conditional:Npnn \zutil_cs_if_function:N #1 { p, T, F, TF }
+  {
+    \if_bool:N
+        \exp_last_unbraced:Nf \use_iii:nnn \cs_split_function:N #1 % noqa: w302
+      \prg_return_true: % noqa: w302
+    \else:
+      \prg_return_false:
+    \fi:
+  }
+
 \cs_new:Npn \zutil_cs_function_name:N #1
   {
     \exp_last_unbraced:Nf \__zutil_cs_function_name:nnN

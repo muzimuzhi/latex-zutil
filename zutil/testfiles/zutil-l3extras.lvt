@@ -9,6 +9,17 @@
 
 \START
 
+\TESTEXP{\zutil_cs_if_function:NTF}{
+  % functions: {defined, undefined} * {has sig, no sig}
+  \zutil_cs_if_function:NTF \zutil_set:n       \PASSED \FAILED
+  \zutil_cs_if_function:NTF \scan_stop:        \PASSED \FAILED
+  \zutil_cs_if_function:NTF \zutil_undefined:N \PASSED \FAILED
+  \zutil_cs_if_function:NTF \zutil_undefined:  \PASSED \FAILED
+  % non-functions: {defined, undefined}
+  \zutil_cs_if_function:NTF \l_tmpa_tl         \FAILED \PASSED
+  \zutil_cs_if_function:NTF \l_undefined_tl    \FAILED \PASSED
+}
+
 \tl_map_inline:nn
   {
     \zutil_cs_function_name:N
