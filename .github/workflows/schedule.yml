@@ -20,7 +20,7 @@ jobs:
       - name: Dispatch workflow runs
         run:
           for os in ubuntu-latest macos-latest windows-latest; do
-            gh workflow run -R muzimuzhi/tabularray-dev check.yml \
+            gh workflow run -R ${{ github.repository }} check.yml \
               -f "event-name=schedule" \
               -f "runs-on=$os" \
               -f "update-cache=true";
