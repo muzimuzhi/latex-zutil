@@ -86,21 +86,21 @@ jobs:
     # imagemagick is pre-installed on Ubuntu 22.04 image
     # https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2204-Readme.md#installed-apt-packages
     - name: Install ppmcheckpdf dependencies (ubuntu)
-      if: runner.os == 'Linux' && matrix.tblr-config == 'config-old'
+      if: matrix.tblr-config == 'config-old' && runner.os == 'Linux'
       # actively maintained
       uses: gerlero/apt-install@v1
       with:
         packages: imagemagick poppler-utils
 
-    # imagemagick is pre-installed on the current windows-latest image
+    # imagemagick is pre-installed on windows-2022 image
     # https://github.com/actions/runner-images/blob/main/images/windows/Windows2022-Readme.md
     - name: Install ppmcheckpdf dependencies (windows)
-      if: runner.os == 'Windows' && matrix.tblr-config == 'config-old'
+      if: matrix.tblr-config == 'config-old' && runner.os == 'Windows'
       run: |
         tlmgr install wintools.windows
 
     - name: Install ppmcheckpdf dependencies (macos)
-      if: runner.os == 'macOS' && matrix.tblr-config == 'config-old'
+      if: matrix.tblr-config == 'config-old' && runner.os == 'macOS'
       run: |
         brew install imagemagick poppler
 
@@ -124,11 +124,11 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         # example names:
-        #   - tblr-diffs
-        #   - tblr-diffs-dev
-        #   - tblr-diffs-config-old
-        #   - tblr-diffs-config-old-dev
-        name: "tblr-diffs\
+        #   - zutil-diffs
+        #   - zutil-diffs-dev
+        #   - zutil-diffs-config-old
+        #   - zutil-diffs-config-old-dev
+        name: "zutil-diffs\
           ${{ matrix.tblr-config != '' && format('-{0}', matrix.tblr-config) || '' }}\
           ${{ matrix.options != '' && '-dev' || '' }}"
         # l3build is configured to use OS-independent diff file extension

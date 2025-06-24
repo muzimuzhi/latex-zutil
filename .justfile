@@ -92,5 +92,5 @@ save package config="" *options="":
         {{ if config != "" { ', config "' + config + '"' } else { "" } }}...'\
         {{ end_info }}
     cd {{ package }} && \
-        l3build save {{ L3BUILD_SAVE_OPTIONS }} \
+        l3build save {{ L3BUILD_SAVE_OPTIONS }}\
             {{ if config != "" { "-c\"" + config + "\"" } else { "" } }} {{ options }}
