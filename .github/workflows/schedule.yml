@@ -9,7 +9,7 @@ on:
 
 jobs:
   tests:
-    name: "Dispatch checks"
+    name: "Dispatch workflows"
     runs-on: ubuntu-latest
     permissions:
       # required for creating a workflow dispatch event
@@ -19,13 +19,16 @@ jobs:
     steps:
       - name: Dispatch workflow runs
         run: |
+          if [[ "${{ runner.debug }}" -eq 1 ]]; then
+              set -x
+          fi
           for os in ubuntu-latest macos-latest windows-latest; do
-            echo gh workflow run -R ${{ github.repository }} check.yml \
-              -f "event-name=schedule" \
-              -f "runs-on=$os" \
-              -f "update-cache=true";
+              gh workflow run -R ${{ github.repository }} check.yml \
+                  -f "event-name=schedule" \
+                  -f "runs-on=$os" \
+                  -f "update-cache=true";
           done
-          echo gh workflow run -R ${{ github.repository }} lint.yml \
-            -f "event-name=schedule"
+          gh workflow run -R ${{ github.repository }} lint.yml \
+              -f "event-name=schedule"
         env:
           GH_TOKEN: ${{ github.token }}
