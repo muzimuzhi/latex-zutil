@@ -1,9 +1,6 @@
 name: Lint
-# example `run-name`s:
-#     - Lint (ubuntu-latest)
-#     - Lint (schedule, windows-latest)
-#     - <empty>, which falls back to the default value
-run-name: ${{ github.event_name == 'workflow_dispatch' && (inputs.event-name != 'workflow_dispatch' && format('Lint ({0}, {1})', inputs.event-name, inputs.runs-on) || format('Lint ({0})', inputs.runs-on)) || '' }}
+
+run-name: ${{ contains(fromJSON('["workflow_call", "workflow_dispatch"]'), github.event_name) && format('Lint ({0})', github.event_name) || '' }}
 
 on:
   pull_request:
@@ -12,26 +9,27 @@ on:
       # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#pull_request
       [opened, ready_for_review, reopened, synchronize]
   push:
-  workflow_dispatch:
+  workflow_call:
     inputs:
-      event-name:
-        description: "Event name, used by dispatched scheduled runs"
+      images:
+        description: "Array of images to run on"
         required: false
         type: string
-        default: "workflow_dispatch"
-      runs-on:
-        description: "Image to run on"
+        default: '["ubuntu-latest"]'
+  workflow_dispatch:
+    inputs:
+      images:
+        description: "Array of images to run on"
         required: false
-        type: choice
-        options:
-          - ubuntu-latest
-          - macos-latest
-          - windows-latest
-        default: ubuntu-latest
+        type: string
+        default: '["ubuntu-latest"]'
 
 jobs:
   lint:
-    runs-on: ${{ github.event_name == 'workflow_dispatch' && inputs.runs-on || 'ubuntu-latest' }}
+    strategy:
+      matrix:
+        runs-on: ${{ fromJSON(inputs.images || '["ubuntu-latest"]') }}
+    runs-on: ${{ matrix.runs-on }}
 
     steps:
     - uses: actions/checkout@v4
@@ -48,7 +46,8 @@ jobs:
     # https://github.com/crate-ci/typos/pull/1192/files
     - name: Install wget for Windows
       if: runner.os == 'Windows'
-      run: choco install wget --no-progress
+      run: |
+        choco install wget --no-progress
 
     # https://github.com/crate-ci/typos/blob/master/docs/github-action.md
     # `wget` required

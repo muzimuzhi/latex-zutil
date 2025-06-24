@@ -1,9 +1,6 @@
-name: Checks
-# example `run-name`s:
-#     - Checks (ubuntu-latest)
-#     - Checks (schedule, windows-latest)
-#     - <empty>, which falls back to the default value
-run-name: ${{ github.event_name == 'workflow_dispatch' && (inputs.event-name != 'workflow_dispatch' && format('Checks ({0}, {1})', inputs.event-name, inputs.runs-on) || format('Checks ({0})', inputs.runs-on)) || '' }}
+name: Check
+
+run-name: ${{ contains(fromJSON('["workflow_call", "workflow_dispatch"]'), github.event_name) && format('Check ({0})', github.event_name) || ''}}
 
 on:
   pull_request:
@@ -16,31 +13,33 @@ on:
       - ".github/workflows/schedule.yml"
       - ".github/workflows/lint.yml"
       - ".pre-commit-config.yaml"
-  workflow_dispatch:
+  workflow_call:
     inputs:
-      event-name:
-        description: "Event name, used by dispatched scheduled runs"
+      images:
+        description: "Array of images to run on"
         required: false
         type: string
-        default: "workflow_dispatch"
-      runs-on:
-        description: "Image to run on"
-        required: false
-        type: choice
-        options:
-          - ubuntu-latest
-          - macos-latest
-          - windows-latest
-        default: ubuntu-latest
+        default: '["ubuntu-latest"]'
       update-cache:
-        description: "If update the TeX live cache"
+        description: "Update the TeX live cache?"
         required: false
         type: boolean
         default: false
-  # scheduled runs are dispatched from the `schedule.yml` workflow
+  workflow_dispatch:
+    inputs:
+      images:
+        description: "Array of images to run on"
+        required: false
+        type: string
+        default: '["ubuntu-latest"]'
+      update-cache:
+        description: "Update the TeX live cache?"
+        required: false
+        type: boolean
+        default: false
 
 jobs:
-  tests:
+  check:
     strategy:
       matrix:
         tblr-config: ["build", "config-old"]
@@ -48,9 +47,19 @@ jobs:
         #       with latex and latex-dev
         # options: ["", "--dev"]
         options: [""]
-    name: "Tests: ${{ matrix.tblr-config }}\
-      ${{ matrix.options != '' && ' (latex-dev)' || '' }}"
-    runs-on: ${{ github.event_name == 'workflow_dispatch' && inputs.runs-on || 'ubuntu-latest' }}
+        # only `workflow_call` and `workflow_dispatch` would set `inputs`
+        # context
+        runs-on: ${{ fromJSON(inputs.images || '["ubuntu-latest"]') }}
+    # example `name`s:
+    #     - Check (build)
+    #     - Check (config-old)
+    #     - Check (build, ubuntu-latest)
+    #     - Check (config-old, ubuntu-latest)
+    #     - Check (build, ubuntu-latest, --dev)
+    name: "Check (${{ matrix.tblr-config }}\
+      ${{ inputs.images && format(', {0}', matrix.runs-on) || '' }}\
+      ${{ matrix.options && format(', {0}', matrix.options) || '' }})"
+    runs-on: ${{ matrix.runs-on }}
     permissions:
       # required for for "gh cache delete"
       # https://docs.github.com/en/rest/actions/cache?apiVersion=2022-11-28#delete-a-github-actions-cache-for-a-repository-using-a-cache-id
@@ -130,8 +139,7 @@ jobs:
         #   - zutil-diffs-dev
         #   - zutil-diffs-config-old
         #   - zutil-diffs-config-old-dev
-        name: "zutil-diffs\
-          ${{ matrix.tblr-config != '' && format('-{0}', matrix.tblr-config) || '' }}\
+        name: "zutil-diffs-${{ matrix.tblr-config }}\
           ${{ matrix.options != '' && '-dev' || '' }}"
         # l3build is configured to use OS-independent diff file extension
         path: |

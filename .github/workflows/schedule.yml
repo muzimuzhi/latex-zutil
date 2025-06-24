@@ -8,27 +8,12 @@ on:
   workflow_dispatch:
 
 jobs:
-  tests:
-    name: "Dispatch workflows"
-    runs-on: ubuntu-latest
+  check:
+    uses: ./.github/workflows/check.yml
+    with:
+      images: '["ubuntu-latest", "macos-latest", "windows-latest"]'
+      update-cache: true
     permissions:
-      # required for creating a workflow dispatch event
-      # https://docs.github.com/en/rest/actions/workflows?apiVersion=2022-11-28#create-a-workflow-dispatch-event
       actions: write
-
-    steps:
-      - name: Dispatch workflow runs
-        run: |
-          if [[ "${{ runner.debug }}" -eq 1 ]]; then
-              set -x
-          fi
-          for os in ubuntu-latest macos-latest windows-latest; do
-              gh workflow run -R ${{ github.repository }} check.yml \
-                  -f "event-name=schedule" \
-                  -f "runs-on=$os" \
-                  -f "update-cache=true";
-          done
-          gh workflow run -R ${{ github.repository }} lint.yml \
-              -f "event-name=schedule"
-        env:
-          GH_TOKEN: ${{ github.token }}
+  lint:
+    uses: ./.github/workflows/lint.yml
