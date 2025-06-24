@@ -19,6 +19,11 @@ end_info := NORMAL
 L3BUILD_CHECK_OPTIONS := env('L3BUILD_CHECK_OPTIONS', '-q --show-saves')
 L3BUILD_SAVE_OPTIONS := env('L3BUILD_SAVE_OPTIONS', '')
 
+diffext := env('diffext', '.diff')
+diffexe := env('diffexe', 'git diff --no-index --text --')
+
+L3BUILD_ENVS := 'diffext="' + diffext + '" diffexe="' + diffexe + '"'
+
 # Print all recipes
 default:
     just --list --unsorted
@@ -70,7 +75,7 @@ test package config="" *options="":
         {{ if config != "" { ', config "' + config + '"' } else { "" } }}...'\
         {{ end_info }}
     cd {{ package }} && \
-        l3build check {{ L3BUILD_CHECK_OPTIONS }} \
+        {{ L3BUILD_ENVS }} l3build check {{ L3BUILD_CHECK_OPTIONS }} \
             {{ if config != "" { "-c\"" + config + "\"" } else { "" } }} {{ options }}
     {{ if package == "tabularray" { \
         if config == "config-old" { \

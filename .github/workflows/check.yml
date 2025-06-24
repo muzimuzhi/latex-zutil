@@ -131,6 +131,7 @@ jobs:
         name: "tblr-diffs\
           ${{ matrix.tblr-config != '' && format('-{0}', matrix.tblr-config) || '' }}\
           ${{ matrix.options != '' && '-dev' || '' }}"
+        # l3build is configured to use OS-independent diff file extension
         path: |
           build/**/*.diff
           build/**/*.diff.png
