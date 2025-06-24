@@ -43,7 +43,7 @@ jobs:
         update-all-packages: true
 
     - name: Install just
-      uses: extractions/setup-just@v2
+      uses: extractions/setup-just@v3
 
     # https://github.com/crate-ci/typos/pull/1192/files
     - name: Install wget for Windows
