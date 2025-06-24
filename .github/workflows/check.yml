@@ -81,7 +81,7 @@ jobs:
         update-all-packages: true
 
     - name: Install just
-      uses: extractions/setup-just@v2
+      uses: extractions/setup-just@v3
 
     # imagemagick is pre-installed on Ubuntu 22.04 image
     # https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2204-Readme.md#installed-apt-packages
