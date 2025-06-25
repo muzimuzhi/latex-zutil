@@ -11,7 +11,8 @@ extend-exclude = [
   "*.4ht",
   "*.html",
   "*.md5",
-  "*.tlg",
+  "*.pvt", # l3build pdf-based test output
+  "*.tlg", # l3build log-based test output
 ]
 
 [default]
@@ -28,5 +29,6 @@ OT1 = "OT1"
 [type.tex]
 # run "typos --file-types" to check file type classification
 extend-glob = [
-  "*.lvt"
+  "*.lvt", # l3build log-based test file
+  "*.pvt", # l3build pdf-based test file
 ]
