@@ -35,17 +35,20 @@ repos:
   # typos bumps version frequently, so use system installation instead of the
   # official pre-commit hook
   # https://github.com/crate-ci/typos/blob/master/docs/pre-commit.md
+  # https://github.com/crate-ci/typos/blob/master/.pre-commit-hooks.yaml
   - id: check-spelling
-    name: check spelling using "typos"
+    name: Check spelling
     language: system
-    # the check is fast enough to run on all files
-    entry: just typos
-    pass_filenames: false
-  - id: check-expl3
-    name: check expl3 files using "explcheck"
+    # same as the official `typos` hook args
+    # https://github.com/crate-ci/typos/blob/ebc6aac34e3692b3ce373e13f4145e8980875396/.pre-commit-hooks.yaml
+    entry: typos --write-changes --force-exclude
+  - id: lint-expl3
+    alias: explcheck
+    name: Lint expl3 files
     language: system
-    entry: just explcheck
-    pass_filenames: false
+    entry: explcheck
+    # this file list is composed in .justfile too
+    files: ^support/.*\.cfg|zutil/.*\.(sty|tex)$
 # https://pre-commit.com/#meta-hooks
 # "pre-commit run --hook-stage manual"
 - repo: meta
