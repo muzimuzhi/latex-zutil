@@ -2,7 +2,7 @@
 
 # https://pre-commit.ci/#configuration
 ci:
-  skip: [check-spelling, check-expl3]
+  skip: [check-spelling, lint-expl3]
 
 # path separator is normalized to "/", so no need to use "[\\/]" in python
 # regex, see
