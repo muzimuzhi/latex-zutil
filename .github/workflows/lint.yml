@@ -53,8 +53,10 @@ jobs:
     - name: Install uv
       uses: astral-sh/setup-uv@v6
       with:
-        # TODO: cache `pre-commit` deps installed by `uv tool install`
-        #       actually the installation only takes ~1s, so not a big deal
+        # in CI, installation is usually faster than restoring cache, thus
+        # by default no pre-built wheels will be cached
+        # https://docs.astral.sh/uv/concepts/cache/#caching-in-continuous-integration
+        # https://github.com/astral-sh/setup-uv/tree/v6/?tab=readme-ov-file#disable-cache-pruning
         enable-cache: false
 
     - name: Install pre-commit
