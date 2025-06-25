@@ -11,25 +11,23 @@ on:
   push:
   workflow_call:
     inputs:
-      images:
-        description: "Array of images to run on"
+      runs-on:
+        description: "Image to run on"
         required: false
         type: string
-        default: '["ubuntu-latest"]'
+        default: "ubuntu-latest"
   workflow_dispatch:
     inputs:
-      images:
-        description: "Array of images to run on"
+      runs-on:
+        description: "Image to run on"
         required: false
         type: string
-        default: '["ubuntu-latest"]'
+        default: "ubuntu-latest"
 
 jobs:
   lint:
-    strategy:
-      matrix:
-        runs-on: ${{ fromJSON(inputs.images || '["ubuntu-latest"]') }}
-    runs-on: ${{ matrix.runs-on }}
+    name: "Lint${{ inputs.runs-on && format(' ({0})', inputs.runs-on) || '' }}"
+    runs-on: ${{ inputs.runs-on || 'ubuntu-latest' }}
 
     steps:
     - uses: actions/checkout@v4
