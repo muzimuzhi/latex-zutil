@@ -34,6 +34,8 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    ## >>> setup begin
+
     - name: Setup TeX Live
       uses: teatimeguest/setup-texlive-action@v3
       with:
@@ -44,10 +46,38 @@ jobs:
       uses: extractions/setup-just@v3
 
     # https://github.com/crate-ci/typos/pull/1192/files
-    - name: Install wget for Windows
+    - name: Install wget for `typos`
       if: runner.os == 'Windows'
       run: |
         choco install wget --no-progress
+
+    # https://docs.astral.sh/uv/guides/integration/github/
+    - name: Install uv
+      uses: astral-sh/setup-uv@v6
+      with:
+        # TODO: cache `pre-commit` deps installed by `uv tool install`
+        #       actually the installation only takes ~1s, so not a big deal
+        enable-cache: false
+
+    - name: Install pre-commit
+      run: |
+        uv tool install pre-commit
+
+    # https://github.com/pre-commit/action/blob/main/action.yml
+    - name: Restore pre-commit hooks cache
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/pre-commit
+        key: pre-commit-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('.pre-commit-config.yaml') }}
+        restore-keys: |
+          pre-commit-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('.pre-commit-config.yaml') }}
+          pre-commit-${{ runner.os }}-${{ runner.arch }}
+
+    ## <<< setup end
+
+    - name: Run pre-commit checks
+      run: |
+        just pre-commit --color=always
 
     # https://github.com/crate-ci/typos/blob/master/docs/github-action.md
     # `wget` required
