@@ -37,6 +37,7 @@ repos:
   # https://github.com/crate-ci/typos/blob/master/docs/pre-commit.md
   # https://github.com/crate-ci/typos/blob/master/.pre-commit-hooks.yaml
   - id: check-spelling
+    alias: typos
     name: Check spelling
     language: system
     # same as the official `typos` hook args

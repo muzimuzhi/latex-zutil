@@ -11,31 +11,34 @@
 set ignore-comments := true
 
 
-# variables
+## variables
 
 info := "echo " + BOLD + BLUE + "'===>' "
 end_info := NORMAL
 
-L3BUILD_CHECK_OPTIONS := env('L3BUILD_CHECK_OPTIONS', '-q --show-saves')
-L3BUILD_SAVE_OPTIONS := env('L3BUILD_SAVE_OPTIONS', '')
+PRE_COMMIT_SKIP := env('PRE_COMMIT_SKIP', 'typos,explcheck')
 
 diffext := env('diffext', '.diff')
 diffexe := env('diffexe', 'git diff --no-index --text --')
 
 L3BUILD_ENVS := 'diffext="' + diffext + '" diffexe="' + diffexe + '"'
 
+L3BUILD_CHECK_OPTIONS := env('L3BUILD_CHECK_OPTIONS', '-q --show-saves')
+L3BUILD_SAVE_OPTIONS := env('L3BUILD_SAVE_OPTIONS', '')
+
+## default recipe
+
 # Print all recipes
 default:
-    just --list --unsorted
+    just --justfile {{justfile()}} --list --unsorted
 
-
-# meta recipes
+## meta recipes
 
 [group('*meta')]
 all: && lint-all test-all
 
 [group('*meta')]
-lint-all: && typos explcheck
+lint-all: && (pre-commit "--all-files") (typos) (explcheck)
 
 alias lint := lint-all
 
@@ -52,21 +55,27 @@ tabularray *options="": && \
     (test "tabularray" "build" options) \
     (test "tabularray" "config-old" options)
 
-# simple recipes
+## simple recipes
 
-# Check typos
+# Check spelling
 [group('lint')]
 typos *options="":
     @{{ info }}Checking spelling...{{ end_info }}
     typos {{ options }}
 
-# Check for expl3 issues
+# Lint expl3 files
 [group('lint')]
 explcheck *options="":
     @{{ info }}Linting expl3 files...{{ end_info }}
     # this file list is composed in pre-commit config too
     explcheck {{ options }} support/*.cfg zutil/*.sty zutil/*.tex
     # explcheck --ignored-issues=s103,s204,w302 tabularray/tabularray.sty
+
+# Run pre-commit checks
+[group('lint')]
+pre-commit *options="":
+    @{{ info }}Running pre-commit checks...{{ end_info }}
+    SKIP="{{ PRE_COMMIT_SKIP }}" pre-commit run {{ options }}
 
 # Run l3build tests
 [group('test')]
