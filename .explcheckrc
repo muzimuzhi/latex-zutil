@@ -1,3 +1,6 @@
 [defaults]
 terminal_width = 110
 warnings_are_errors = true
+ignored_issues = [
+  "e408", # E408 calling an undefined function
+]
