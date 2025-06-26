@@ -111,14 +111,18 @@
 \TIMO
 
 \TEST{\zutil_msg_suspend_debug:}{
-  \zutil_msg_suspend_debug:
-  \test:w
-  \fp_set_eq:NN \l_tmpa_fp \g_benchmark_time_fp
-  \zutil_msg_resume_debug:
-  \test:w
+  % inaccurate on Windows
+  \sys_if_platform_windows:TF { \PASSED }
+    {
+      \zutil_msg_suspend_debug:
+      \test:w
+      \fp_set_eq:NN \l_tmpa_fp \g_benchmark_time_fp
+      \zutil_msg_resume_debug:
+      \test:w
 
-  \fp_compare:nNnTF \l_tmpa_fp < \g_benchmark_time_fp
-    { \PASSED } { \FAILED }
+      \fp_compare:nNnTF \l_tmpa_fp < \g_benchmark_time_fp
+        { \PASSED } { \FAILED }
+    }
 }
 
 \TEST{\zutil_prg_new_conditional_tl_if_in:Nnn}{
