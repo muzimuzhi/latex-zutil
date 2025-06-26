@@ -120,13 +120,13 @@ jobs:
       run: |
         just zutil ${{ matrix.options }}
       env:
-        L3BUILD_CHECK_OPTIONS: "--halt-on-error --show-saves"
+        L3BUILD_CHECK_OPTIONS: "--halt-on-error --show-log-on-error --show-saves"
 
     - name: Run tabularray tests, config "${{ matrix.tblr-config }}"
       run: |
         just test tabularray "${{ matrix.tblr-config }}" ${{ matrix.options }}
       env:
-        L3BUILD_CHECK_OPTIONS: "--halt-on-error --show-saves"
+        L3BUILD_CHECK_OPTIONS: "--halt-on-error --show-log-on-error --show-saves"
 
     # TODO: generate a list of files related to failed tests, then
     # upload all of them (.tex, .log, .pdf, .png, .md5, etc.)
