@@ -64,7 +64,7 @@ jobs:
         uv tool install pre-commit
 
     # https://github.com/pre-commit/action/blob/main/action.yml
-    - name: Restore pre-commit hooks cache
+    - name: Restore pre-commit cache
       uses: actions/cache@v4
       with:
         path: ~/.cache/pre-commit
@@ -72,6 +72,12 @@ jobs:
         restore-keys: |
           pre-commit-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('.pre-commit-config.yaml') }}
           pre-commit-${{ runner.os }}-${{ runner.arch }}
+
+    - name: Install pre-commit hooks
+      run: |
+        pre-commit install-hooks
+        # clean unused repo cache possibly from restored pre-commit cache
+        pre-commit gc
 
     ## <<< setup end
 
