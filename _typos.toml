@@ -7,6 +7,7 @@
 # gitignore patterns
 # https://git-scm.com/docs/gitignore#_pattern_format
 extend-exclude = [
+  ".git",
   # generated files
   "*.4ht",
   "*.html",
@@ -14,6 +15,8 @@ extend-exclude = [
   "*.pvt", # l3build pdf-based test output
   "*.tlg", # l3build log-based test output
 ]
+# for including various config files
+ignore-hidden = false
 
 [default]
 locale = "en-us"
