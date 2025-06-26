@@ -29,6 +29,11 @@
         - example: `\zutil_cs_generate_variant:N \zutil_set:V`
       - `\zutil_cs_generate_variant:n {⟨cs variants list⟩}`
         - example: `\zutil_cs_generate_variant:n { \zutil_set:v, \zutil_set:e }`
+    - `l3msg` extras
+      - `\zutil_msg_suspend_debug:`\
+        `\zutil_msg_resume_debug:`
+        - suspend and resume debugging (the same as `\debug_suspend:` and `\debug_resume:`) inside functions that issue messages (`\msg_<type>:nn...`)
+        - make log-based tests quicker
     - `l3tl` extras
       - `\zutil_prg_new_conditional_tl_if_in:Nnn \⟨name⟩:⟨arg spec⟩ {⟨test token list⟩} {⟨conditions⟩}`
         - variants `Non`, `NVn`, `Nen`

@@ -159,6 +159,30 @@
 \cs_new:Npn \__zutil_cs_sig_base_form_T: { T } % noqa: w401
 \cs_new:Npn \__zutil_cs_sig_base_form_F: { F } % noqa: w401
 
+
+%%
+%% l3msg extras
+%%
+
+% suspend debugging in \msg_<type>:nn(nnnnn) functions
+\cs_new_protected:Npn \zutil_msg_suspend_debug:
+  {
+    \cs_set_eq:NN \__msg_use:nnnnnnn \__zutil_msg_use:nnnnnnn
+  }
+\cs_new_protected:Npn \zutil_msg_resume_debug:
+  {
+    \cs_set_eq:NN \__msg_use:nnnnnnn \__zutil_msg_use_orig:nnnnnnn
+  }
+
+\cs_gset_eq:NN \__zutil_msg_use_orig:nnnnnnn \__msg_use:nnnnnnn
+\cs_new_protected:Npn \__zutil_msg_use:nnnnnnn #1#2#3#4#5#6#7
+  {
+    \debug_suspend:
+    \__zutil_msg_use_orig:nnnnnnn {#1} {#2} {#3} {#4} {#5} {#6} {#7}
+    \debug_resume:
+  }
+
+
 %%
 %% l3tl extras
 %%
