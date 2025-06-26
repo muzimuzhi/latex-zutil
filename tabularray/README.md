@@ -1,8 +1,9 @@
 # tabularray-dev
 
 Branches
-- `develop` is the default branch
-- `main` tracks https://github.com/lvjr/tabularray/tree/main
+- `main` is the default branch
+- `tblr-upstream` tracks https://github.com/lvjr/tabularray/tree/main
+- `tblr` is the adapted `tblr-upstream` preparing for merging onto `main`
 
 The rest of the README is preserved as-is from the upstream source https://github.com/lvjr/tabularray.
 
