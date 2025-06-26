@@ -58,7 +58,7 @@ repos:
     stages: [manual]
   - id: check-useless-excludes
     stages: [manual]
-  # "pre-commit run identity --hook-stage manual -a" prints all fles not
+  # "pre-commit run identity --hook-stage manual -a" prints all files not
   # excluded
   - id: identity
     stages: [manual]
