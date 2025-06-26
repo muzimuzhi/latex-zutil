@@ -49,35 +49,10 @@ jobs:
       run: |
         choco install wget --no-progress
 
-    # https://docs.astral.sh/uv/guides/integration/github/
-    - name: Install uv
-      uses: astral-sh/setup-uv@v6
+    - name: Setup pre-commit
+      uses: muzimuzhi/actions/setup-pre-commit-uv@main
       with:
-        # in CI, installation is usually faster than restoring cache, thus
-        # by default no pre-built wheels will be cached
-        # https://docs.astral.sh/uv/concepts/cache/#caching-in-continuous-integration
-        # https://github.com/astral-sh/setup-uv/tree/v6/?tab=readme-ov-file#disable-cache-pruning
-        enable-cache: false
-
-    - name: Install pre-commit
-      run: |
-        uv tool install pre-commit
-
-    # https://github.com/pre-commit/action/blob/main/action.yml
-    - name: Restore pre-commit cache
-      uses: actions/cache@v4
-      with:
-        path: ~/.cache/pre-commit
-        key: pre-commit-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('.pre-commit-config.yaml') }}
-        restore-keys: |
-          pre-commit-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('.pre-commit-config.yaml') }}
-          pre-commit-${{ runner.os }}-${{ runner.arch }}
-
-    - name: Install pre-commit hooks
-      run: |
-        pre-commit install-hooks
-        # clean unused repo cache possibly from restored pre-commit cache
-        pre-commit gc
+        if-run: false # do not run pre-commit
 
     ## <<< setup end
 
