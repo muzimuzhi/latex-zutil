@@ -25,6 +25,11 @@ on:
         required: false
         type: boolean
         default: false
+      update-texlive-packages:
+        description: "Update TeX Live packages?"
+        required: false
+        type: boolean
+        default: true
   workflow_dispatch:
     inputs:
       images:
@@ -37,6 +42,11 @@ on:
         required: false
         type: boolean
         default: false
+      update-texlive-packages:
+        description: "Update TeX Live packages?"
+        required: false
+        type: boolean
+        default: true
 
 jobs:
   check:
@@ -89,7 +99,7 @@ jobs:
       uses: teatimeguest/setup-texlive-action@v3
       with:
         package-file: .github/tl_packages
-        update-all-packages: true
+        update-all-packages: ${{ inputs.update-texlive-packages || true }}
 
     - name: Install just
       uses: extractions/setup-just@v3
