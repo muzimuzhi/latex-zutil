@@ -24,7 +24,7 @@ diffexe := env('diffexe', 'git diff --no-index --text --')
 L3BUILD_ENVS := 'diffext="' + diffext + '" diffexe="' + diffexe + '"'
 
 L3BUILD_CHECK_OPTIONS := env('L3BUILD_CHECK_OPTIONS', '-q --show-saves')
-L3BUILD_SAVE_OPTIONS := env('L3BUILD_SAVE_OPTIONS', '')
+L3BUILD_SAVE_OPTIONS := env('L3BUILD_SAVE_OPTIONS', '-q')
 
 ## default recipe
 
