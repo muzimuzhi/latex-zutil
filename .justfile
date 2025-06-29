@@ -47,13 +47,13 @@ test-all *options="": && (zutil options) (tabularray options)
 
 # Run zutil tests
 [group('test')]
-zutil *options="": && (test "zutil" "" options)
+zutil *options="": && (l3build-check "zutil" "" options)
 
 # Run tabularray tests
 [group('test')]
 tabularray *options="": && \
-    (test "tabularray" "build" options) \
-    (test "tabularray" "config-old" options)
+    (l3build-check "tabularray" "build" options) \
+    (l3build-check "tabularray" "config-old" options)
 
 ## simple recipes
 
@@ -81,7 +81,7 @@ pre-commit *options="":
 
 # Run l3build tests
 [group('test')]
-test package config="" *options="":
+l3build-check package config="" *options="":
     @{{ info }}'Running {{ package }} tests\
         {{ if config != "" { ', config "' + config + '"' } else { "" } }}...'\
         {{ end_info }}
@@ -94,14 +94,17 @@ test package config="" *options="":
         } else { "" } \
     } else { "" } }}
 
-alias check := test
+alias check := l3build-check
+alias test := l3build-check
 
 # Save l3build test results
 [group('test')]
-save package config="" *options="":
+l3build-save package config="" *options="":
     @{{ info }}'Running {{ package }} tests\
         {{ if config != "" { ', config "' + config + '"' } else { "" } }}...'\
         {{ end_info }}
     cd {{ package }} && \
         l3build save {{ L3BUILD_SAVE_OPTIONS }}\
             {{ if config != "" { "-c\"" + config + "\"" } else { "" } }} {{ options }}
+
+alias save := l3build-save
