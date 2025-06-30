@@ -51,6 +51,7 @@ on:
 jobs:
   check:
     strategy:
+      fail-fast: false
       matrix:
         tblr-config: ["build", "config-old"]
         # TODO: find a way to handle different testfiles when checking
