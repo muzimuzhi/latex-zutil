@@ -71,6 +71,7 @@ jobs:
       ${{ inputs.images && format(', {0}', matrix.runs-on) || '' }}\
       ${{ matrix.options && format(', {0}', matrix.options) || '' }})"
     runs-on: ${{ matrix.runs-on }}
+    timeout-minutes: 30
     permissions:
       # required for for "gh cache delete"
       # https://docs.github.com/en/rest/actions/cache?apiVersion=2022-11-28#delete-a-github-actions-cache-for-a-repository-using-a-cache-id
