@@ -35,7 +35,7 @@ jobs:
     ## >>> setup begin
 
     - name: Setup TeX Live
-      uses: muzimuzhi/setup-texlive-action@v3
+      uses: TeX-Live/setup-texlive-action@v3
       with:
         package-file: .github/tl_packages
         update-all-packages: true
