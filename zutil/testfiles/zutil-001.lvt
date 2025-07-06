@@ -7,7 +7,7 @@
 \documentclass{article}
 
 \ExplSyntaxOn
-\debug_on:n { check-declarations , check-expressions, deprecation }
+\debug_on:n { check-declarations , check-expressions , deprecation }
 \ExplSyntaxOff
 
 \START
@@ -16,6 +16,28 @@
 \endgroup
 \usepackage{zutil}
 \begingroup
+\ENDTEST
+
+% non-expl3 catcode regime, so spaces count
+\BEGINTEST{Load module in various catcode regimes}
+  \endgroup
+  \TYPE{2e-internal catcode regime}
+  \makeatletter
+    \ASSERT{\the\catcode`\@}{11}
+    \UseName{zutil_load_module:n} {debug}
+  \makeatother
+  \TYPE{expl3 catcode regime}
+  \ExplSyntaxOn
+    \ASSERT{\the\catcode`\~}{10}
+    \zutil_load_module:n {softerror}
+  \ExplSyntaxOff
+  \begingroup
+\ENDTEST
+
+\ExplSyntaxOn
+
+\BEGINTEST{Load~a~module~twice}
+  \zutil_load_module:n { debug }
 \ENDTEST
 
 \END

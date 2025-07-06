@@ -7,12 +7,26 @@ TEST: Load zutil
 Package: zutil ....-..-.. v... Z's utilities
 (zutil-l3extras.code.tex
 File: zutil-l3extras.code.tex ....-..-.. v... Z's utilities, the l3kernel extras module
-) (zutil-debug.code.tex
+))
+============================================================
+============================================================
+TEST: Load module in various catcode regimes
+============================================================
+2e-internal catcode regime
+PASSED
+(zutil-debug.code.tex
 File: zutil-debug.code.tex ....-..-.. v... Z's utilities, the debugging module
 \l__zutil_debug_level_int=\count...
-) (zutil-softerror.code.tex
+)
+expl3 catcode regime
+PASSED
+(zutil-softerror.code.tex
 File: zutil-softerror.code.tex ....-..-.. v... Z's utilities, the softerror module
-))
+)
+============================================================
+============================================================
+TEST: Load a module twice
+============================================================
 ============================================================
 ***************
 [test] 0 error(s) encountered.

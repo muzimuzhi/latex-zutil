@@ -1,12 +1,45 @@
 \ProvidesExplPackage {zutil} {2025-06-20} {0.5}
   {Z's utilities}
 
-% TODO: add package options for loading module families
-
 
 % shared temp variables
 \tl_new:N    \l__zutil_tmp_tl
 \str_new:N   \l__zutil_tmp_str
+
+% variable(s)
+\tl_new:N   \l__zutil_presets_tl
+
+% shared message for raising short and one-time messages
+\msg_new:nnn { zutil } { tmp } { #1 }
+
+% package options
+\DeclareKeys [ zutil ]
+  {
+    presets .choices:nn =
+      { none, util, test, all }
+      {
+        \tl_set:Ne \l__zutil_presets_tl { \l_keys_choice_tl }
+      }
+  , presets .value_required:n = true
+  , presets .usage:n    = load
+  }
+
+% option "presets" internals
+\cs_new_protected:Npn \__zutil_use_presets_none: { } % noqa: w401
+\cs_new_protected:Npn \__zutil_use_presets_util: % noqa: w401
+  {
+    \zutil_load_module:n { l3extras }
+  }
+\cs_new_protected:Npn \__zutil_use_presets_test: % noqa: w401
+  {
+    \__zutil_use_presets_util:
+    \zutil_load_module:n { debug }
+    \zutil_load_module:n { softerror }
+  }
+\cs_new_protected:Npn \__zutil_use_presets_all: % noqa: w401
+  {
+    \__zutil_use_presets_test:
+  }
 
 
 % module loading
@@ -44,7 +77,8 @@
 % infected by preamble-only \@pushfilename and \@popfilename
 \@onlypreamble \zutil_load_module:n
 
-\zutil_load_module:n { l3extras } % noqa: w302
-                                  % W302 unbraced n-type function call argument
-\zutil_load_module:n { debug }
-\zutil_load_module:n { softerror }
+% process package options
+\SetKeys [ zutil ] { presets = util } % noqa: w302
+\ProcessKeyOptions [ zutil ]
+
+\use:c { __zutil_use_presets_ \l__zutil_presets_tl : }

@@ -5,6 +5,8 @@
 
 \ExplSyntaxOn
 
+\zutil_load_module:n { debug }
+
 \debug_on:n { check-declarations , deprecation }
 
 \START

@@ -3,9 +3,14 @@
 - `zutil` package
 
   - base package
+    - package option(s)
+      - `presets[=util|test|all]` (default `util`)
+        - `util`: load `l3extras` module
+        - `test`: `util` presets + load `debug` and `softerror` modules
+        - `all`: load all modules
     - `\zutil_set:n {⟨key-value list⟩}`
     - `\zutil_load_module:n {⟨module⟩}`
-      - for now, all modules are loaded automatically
+      - load a single module
 
   - `l3extras` module
     - additions to standard `l3kernel` functions
