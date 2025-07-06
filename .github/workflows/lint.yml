@@ -40,14 +40,13 @@ jobs:
         package-file: .github/tl_packages
         update-all-packages: true
 
-    - name: Install just
-      uses: extractions/setup-just@v3
-
-    # https://github.com/crate-ci/typos/pull/1192/files
-    - name: Install wget for `typos`
-      if: runner.os == 'Windows'
-      run: |
-        choco install wget --no-progress
+    - name: Install tools
+      uses: taiki-e/install-action@v2
+      with:
+        # supported tools
+        # https://github.com/taiki-e/install-action/blob/main/TOOLS.md
+        tool: just,typos
+        fallback: none
 
     - name: Setup pre-commit
       uses: muzimuzhi/actions/setup-pre-commit-uv@main
@@ -63,7 +62,8 @@ jobs:
     # https://github.com/crate-ci/typos/blob/master/docs/github-action.md
     # `wget` required
     - name: Check spelling
-      uses: crate-ci/typos@v1
+      run: |
+        just typos
 
     - name: Lint expl3 code
       run: |
