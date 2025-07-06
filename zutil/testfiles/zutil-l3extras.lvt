@@ -103,6 +103,7 @@
     \test_suspend_error_count:
     \benchmark_once:n {
       \msg_error:nn { test } { test }
+      \msg_expandable_error:nn { test } { test }
       \msg_warning:nn { test } { test }
     }
     \test_resume_error_count:
@@ -121,7 +122,12 @@
       \test:w
 
       \fp_compare:nNnTF \l_tmpa_fp < \g_benchmark_time_fp
-        { \PASSED } { \FAILED }
+        { \PASSED }
+        {
+          \fp_show:N \l_tmpa_fp
+          \fp_show:N \g_benchmark_time_fp
+          \FAILED
+        }
     }
 }
 
