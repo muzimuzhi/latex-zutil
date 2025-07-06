@@ -52,6 +52,11 @@
 
 \cs_new_protected:Npn \zutil_load_module:n #1
   {
+    \exp_args:Ne \__zutil_load_module_aux:n { \tl_to_str:e { #1 } }
+  }
+
+\cs_new_protected:Npn \__zutil_load_module_aux:n #1
+  {
     \cs_if_exist:cF { __zutil_module_[#1]_loaded: }
       {
         \cs_gset:cn { __zutil_module_[#1]_loaded: } {}
@@ -70,7 +75,10 @@
         \makeatletter
         \ExplSyntaxOff
         % \file_input:n doesn't use file hooks
-        \input { \@currname }
+        \InputIfFileExists{\@currname}{}{ % noqa: s204
+          \msg_error:nne { zutil } { tmp }
+            { Unknown~module~'#1'.~ File~'\@currname'~not~found. }
+        }
         \@popfilename
       }
   }

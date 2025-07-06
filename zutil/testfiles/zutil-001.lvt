@@ -40,4 +40,8 @@
   \zutil_load_module:n { debug }
 \ENDTEST
 
+\BEGINTEST{Load~unknown~module}
+  \zutil_load_module:n { unknown }
+\ENDTEST
+
 \END
