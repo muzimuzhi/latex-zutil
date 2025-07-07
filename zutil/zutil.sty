@@ -1,4 +1,4 @@
-\ProvidesExplPackage {zutil} {2025-06-20} {0.5}
+\ProvidesExplPackage {zutil} {2025-07-07} {0.6.1}
   {Z's utilities}
 
 
@@ -52,7 +52,17 @@
 
 \cs_new_protected:Npn \zutil_load_module:n #1
   {
-    \exp_args:Ne \__zutil_load_module_aux:n { \tl_to_str:e { #1 } }
+    \int_compare:nNnTF { \currentgrouplevel } > { 0 }
+      {
+        \msg_error:nne { zutil } { tmp }
+          {
+            Loading~module~'#1'~in~a~group.~
+            Modules~should~be~loaded~at~the~top~level.
+          }
+      }
+      {
+        \exp_args:Ne \__zutil_load_module_aux:n { \tl_to_str:e { #1 } }
+      }
   }
 
 \cs_new_protected:Npn \__zutil_load_module_aux:n #1

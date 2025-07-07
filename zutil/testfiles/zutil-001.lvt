@@ -34,14 +34,24 @@
   \begingroup
 \ENDTEST
 
+
 \ExplSyntaxOn
 
-\BEGINTEST{Load~a~module~twice}
+\TEST{Load~a~module~twice}{
+  \group_end:
   \zutil_load_module:n { debug }
-\ENDTEST
+  \group_begin:
+}
 
-\BEGINTEST{Load~unknown~module}
+\TEST{Load~unknown~module}{
+  \group_end:
   \zutil_load_module:n { unknown }
-\ENDTEST
+  \group_begin:
+}
+
+\TEST{Load~a~module~in~a~group}{
+  % \TEST constructs a group
+  \zutil_load_module:n { debug }
+}
 
 \END
