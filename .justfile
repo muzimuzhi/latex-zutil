@@ -100,3 +100,50 @@ tabularray-ppm:
 alias tblr := tabularray
 alias tblr-old := tabularray-old
 alias tblr-ppm := tabularray-ppm
+
+
+## temp helpers
+## better to extract the follow recipes to a standalone script
+
+# Run l3build tests
+_l3build-check package config="" *options="":
+    @if [ -z "{{ config }}" ]; then \
+        echo '{{ info }}Checking {{ package }} tests...{{ end_info }}'; \
+        cd {{ package }} && \
+            l3build check {{ L3BUILD_CHECK_OPTIONS + " " + options }}; \
+    else \
+        echo '{{ info }}Checking {{ package }} tests, config "{{ config }}"...{{ end_info }}'; \
+        cd {{ package }} && \
+            l3build check -c"{{ config }}" {{ L3BUILD_CHECK_OPTIONS + " " + options }}; \
+    fi
+
+# Save l3build test results
+_l3build-save package config="" *options="":
+    @if [ -z "{{ config }}" ]; then \
+        echo '{{ info }}Saving {{ package }} tests...{{ end_info }}'; \
+        cd {{ package }} && \
+            l3build save {{ L3BUILD_SAVE_OPTIONS + " " + options }}; \
+    else \
+        echo '{{ info }}Saving {{ package }} tests, config "{{ config }}"...{{ end_info }}'; \
+        cd {{ package }} && \
+            l3build save -c"{{ config }}" {{ L3BUILD_SAVE_OPTIONS + " " + options }}; \
+    fi
+
+# Check a single l3build test
+[group('test')]
+check name *options="": (_l3build_single "check" name options)
+
+# Save a single l3build test
+[group('test')]
+save name *options="": (_l3build_single "save" name options)
+
+_l3build_single command name *options="":
+    @if [ -e "zutil/testfiles/{{ name }}.lvt" ]; then \
+        just _l3build-{{ command }} zutil "" {{ options }} {{ name }}; \
+    elif [ -e "tabularray/testfiles/{{ name }}.lvt" ]; then \
+        just _l3build-{{ command }} tabularray build {{ options }} {{ name }}; \
+    elif [ -e "tabularray/testfiles-old/{{ name }}.lvt" ]; then \
+        just _l3build-{{ command }} tabularray config-old {{ options }} {{ name }}; \
+    else \
+        echo '{{ style("error") }}Test not found: "{{ name }}"{{ NORMAL }}'; \
+    fi
