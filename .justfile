@@ -106,6 +106,7 @@ alias tblr-ppm := tabularray-ppm
 ## better to extract the follow recipes to a standalone script
 
 # Run l3build tests
+[no-exit-message]
 _l3build-check package config="" *options="":
     @if [ -z "{{ config }}" ]; then \
         echo '{{ info }}Checking {{ package }} tests...{{ end_info }}'; \
@@ -118,6 +119,7 @@ _l3build-check package config="" *options="":
     fi
 
 # Save l3build test results
+[no-exit-message]
 _l3build-save package config="" *options="":
     @if [ -z "{{ config }}" ]; then \
         echo '{{ info }}Saving {{ package }} tests...{{ end_info }}'; \
