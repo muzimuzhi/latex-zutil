@@ -1,0 +1,16 @@
+\input{regression-test}
+\documentclass{minimal}
+
+\usepackage{zutil}
+
+\ExplSyntaxOn
+
+\debug_on:n { check-declarations , deprecation }
+
+\START
+
+\TEST{name}{
+  code
+}
+
+\END
