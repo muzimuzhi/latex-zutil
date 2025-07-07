@@ -16,46 +16,33 @@ set ignore-comments := true
 info := BOLD + BLUE + "===> "
 end_info := NORMAL
 
-PRE_COMMIT_SKIP := env('PRE_COMMIT_SKIP', 'typos,explcheck')
-
-diffext := env('diffext', '.diff')
-diffexe := env('diffexe', 'git diff --no-index --text --')
-
-L3BUILD_ENVS := 'diffext="' + diffext + '" diffexe="' + diffexe + '"'
+export SKIP := env('SKIP', 'typos,explcheck')
+export diffext := env('diffext', '.diff')
+export diffexe := env('diffexe', 'git diff --no-index --text --')
 
 L3BUILD_CHECK_OPTIONS := env('L3BUILD_CHECK_OPTIONS', '-q --show-saves')
 L3BUILD_SAVE_OPTIONS := env('L3BUILD_SAVE_OPTIONS', '-q')
 
-## default recipe
 
-# Print all recipes
+## top-level recipes
+
+# List all recipes
 default:
     just --justfile {{justfile()}} --list --unsorted
 
-## meta recipes
+[group('*meta')]
+all: lint-all test-all
 
 [group('*meta')]
-all: && lint-all test-all
+lint-all: pre-commit typos explcheck
 
 [group('*meta')]
-lint-all: && (pre-commit "--all-files") (typos) (explcheck)
+test-all: zutil tabularray tabularray-old tabularray-ppm
 
 alias lint := lint-all
+alias test := test-all
 
-[group('*meta')]
-test-all *options="": && (zutil options) (tabularray options)
-
-# Run zutil tests
-[group('test')]
-zutil *options="": && (l3build-check "zutil" "" options)
-
-# Run tabularray tests
-[group('test')]
-tabularray *options="": && \
-    (l3build-check "tabularray" "build" options) \
-    (l3build-check "tabularray" "config-old" options)
-
-## simple recipes
+## linting recipes
 
 # Check spelling
 [group('lint')]
@@ -73,38 +60,43 @@ explcheck *options="":
 
 alias expl3 := explcheck
 
-# Run pre-commit checks
+# Run pre-commit checks on all files
 [group('lint')]
 pre-commit *options="":
     @echo '{{ info }}Running pre-commit checks...{{ end_info }}'
-    SKIP="{{ PRE_COMMIT_SKIP }}" pre-commit run {{ options }}
+    @echo 'Skipped checks: {{ SKIP }}'
+    pre-commit run --all-files {{ options }}
 
-# Run l3build tests
+
+## testing recipes
+
+# Run zutil tests
 [group('test')]
-l3build-check package config="" *options="":
-    @echo '{{ info }}Running {{ package }} tests\
-        {{ if config != "" { ", config \"" + config + "\"" } else { "" } }}...\
-        {{ end_info }}'
-    cd {{ package }} && \
-        {{ L3BUILD_ENVS }} l3build check {{ L3BUILD_CHECK_OPTIONS }} \
-            {{ if config != "" { "-c\"" + config + "\"" } else { "" } }} {{ options }}
-    {{ if package == "tabularray" { \
-        if config == "config-old" { \
-            "cd " + package + " && texlua buildend.lua" \
-        } else { "" } \
-    } else { "" } }}
+zutil *options="":
+    @echo '{{ info }}Checking zutil tests...{{ end_info }}'
+    cd zutil && \
+        l3build check {{ L3BUILD_CHECK_OPTIONS + " " + options }}
 
-alias check := l3build-check
-alias test := l3build-check
-
-# Save l3build test results
+# Run tabularray tests, new config
 [group('test')]
-l3build-save package config="" *options="":
-    @echo '{{ info }}Running {{ package }} tests\
-        {{ if config != "" { ", config \"" + config + "\"" } else { "" } }}...\
-        {{ end_info }}'
-    cd {{ package }} && \
-        l3build save {{ L3BUILD_SAVE_OPTIONS }}\
-            {{ if config != "" { "-c\"" + config + "\"" } else { "" } }} {{ options }}
+tabularray *options="":
+    @echo '{{ info }}Checking tabularray tests, "build" config...{{ end_info }}'
+    cd tabularray && \
+        l3build check -c"build" {{ L3BUILD_CHECK_OPTIONS + " " + options }}
 
-alias save := l3build-save
+# Run tabularray tests, old config
+[group('test')]
+tabularray-old *options="":
+    @echo '{{ info }}Checking tabularray tests, "config-old" config...{{ end_info }}'
+    cd tabularray && \
+        l3build check -c"config-old" {{ L3BUILD_CHECK_OPTIONS + " " + options }}
+
+# Run tabularray PPM tests
+[group('test')]
+tabularray-ppm:
+    @echo '{{ info }}Running tabularray PPM tests, "config-old" config...{{ end_info }}'
+    cd tabularray && texlua buildend.lua
+
+alias tblr := tabularray
+alias tblr-old := tabularray-old
+alias tblr-ppm := tabularray-ppm

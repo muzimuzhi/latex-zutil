@@ -68,7 +68,7 @@ Checks
   - check spelling, lint expl3 files, lint GitHub Actions workflow files, and more (see `.pre-commit-config.yaml`)
   - incremental run (on `git` staged files only)
     - auto triggered by `git commit` (`pre-commit` git hook in use)
-    - run `just pre-commit` or `pre-commit run`
+    - run `pre-commit run`
   - full run
     - run `just lint-all` or `pre-commit run -a`
 - Slow checks
@@ -81,36 +81,13 @@ Checks
   - [`check.yml`](./.github/workflows/check.yml) full slow checks (on single OS)
   - [`schedule.yml`](./.github/workflows/schedule.yml) once a week, quick checks (on 1 OS) + slow checks on 3 OSes
 
-Run all checks
-
-```shell
-$ just all
-```
-
 General `just` usages
 
 ```shell
 # list all "just" recipes available in this repo
 $ just
 # list commands that would run by RECIPE
-$ just --dry-run RECIPE
-```
-
-Advanced `just` usages in this repository
-
-```shell
-# fix typos in-place
-$ just typos -w/--write-changes
-# or "typos -w/--write-changes"
-
-# check l3build tests using "latex-dev"
-$ just test-all --dev
-
-# save a l3build test
-$ just save tabularray build tblr-zutil-debug
-
-# check a l3build test
-$ just check tabularray build tblr-zutil-debug
+$ just -n/--dry-run RECIPE
 ```
 
 Note: As configured by `.justfile` in this repository, `just` can be invoked from any subdirectory and it acts the same.
