@@ -40,6 +40,15 @@
 
 \cs_new_protected:Npn \END
   {
+    % As \test_end: is used after "END-TEST-LOG" is written (in \END), it's
+    % too late to patch dynamically-used \test_end: to log error count. Thus
+    % we have to patch \END and other commands which are \let to \END.
+    %
+    % Cmd hooks (i.e. "cmd/END/before") used in preamble only take effect
+    % _after_ begindocument, thus are not useable here. More precisely the
+    % real patchings happen in \@kernel@after@begindocument, used right
+    % after the begindocument hook).
+    \hook_use:n { test/enddocument }
     \ifnum\currentgrouplevel>0
       \TYPE
         { Bad~grouping:~\the\currentgrouplevel! }
@@ -94,13 +103,15 @@
   {
     \int_gincr:N \g_test_cnt_int
     \SEPARATOR
-    \TYPE { TEST~\int_use:N \g_test_cnt_int :~ \tl_to_str:n {#1} }
+    \TYPE { TEST:~ \tl_to_str:n {#1} }
     \SEPARATOR
     \group_begin:
+      \hook_use:n { test/TEST/begin }
       \cs_set_eq:NN \TYPE \LONGTYPEOUT
   }
 \cs_new_protected:Npn \ENDTEST
   {
+      \hook_use:n { test/TEST/end }
     \group_end:
     \SEPARATOR
     \TYPE { }
@@ -112,10 +123,14 @@
     #2
     \ENDTEST
   }
+
 \cs_new_protected:Npn \TESTEXP #1#2
   {
     \BEGINTEST {#1}
-    \TYPE {#2}
+    % a group-free \LONGOUTPUT needed by local-scope \flag_raise:N
+    \cs_set_eq:NN \TYPE \use:n
+    \iow_term:e { #2 }
+    \cs_set_eq:NN \TYPE \LONGOUTPUT
     \ENDTEST
   }
 
@@ -156,7 +171,7 @@
   \special{%
       ps: /setdistillerparams
       where
-        {pop << /CompressPages false /CompressStreams false >> setdistillerparams}
+        {pop << /CompressPages false /CompressStreams false >> setdistillerparams}% noqa: s103
       if
     }%
   \else
