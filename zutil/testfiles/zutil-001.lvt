@@ -3,7 +3,7 @@
 \AddToHook{file/regression-test.cfg/before}{\disable@package@load{zutil}{}}
 \AddToHook{file/regression-test.cfg/after}{\reenable@package@load{zutil}}
 \makeatother
-\input{regression-test}
+\input{zutil-regression-test}
 \documentclass{article}
 
 \ExplSyntaxOn

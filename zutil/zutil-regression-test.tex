@@ -1,8 +1,5 @@
 \ProvidesExplFile {zutil-regression-test.tex} {2025-07-08} {0.1.0}
-  {%
-    Customized regression-test.tex,
-    based on regression-test.tex from l3build 2025-07-03
-  }
+  { regression-test.tex extended }
 
 \ExplSyntaxOff
 \ifnum\interactionmode>1~\scrollmode\fi
@@ -21,21 +18,18 @@
   {
     \group_begin:
       \cs_set_eq:NN \TYPE \use:n
-      \test_typeout:e { #1 }
+      \iow_term:e { #1 }
     \group_end:
   }
 \cs_new_eq:NN \TYPE \LONGTYPEOUT
-% #1's are curried
-\cs_new_protected:Npn \test_typeout:n { \iow_term:n }
-\cs_new_protected:Npn \test_typeout:e { \iow_term:e }
 
 \str_const:Nn \STARTMESSAGE
   { This~is~a~generated~file~for~the~l3build~validation~system. }
 
 \cs_new_protected:Npn \START
   {
-    \test_typeout:n { ^^JSTART-TEST-LOG^^J }
-    \test_typeout:e
+    \TYPE { ^^JSTART-TEST-LOG^^J }
+    \TYPE
       {
         ^^J
         \STARTMESSAGE
@@ -47,27 +41,23 @@
 \cs_new_protected:Npn \END
   {
     \ifnum\currentgrouplevel>0
-      \test_typeout:e
+      \TYPE
         { Bad~grouping:~\the\currentgrouplevel! }
     \fi
     \ifnum\currentiflevel>1
-      \test_typeout:e { Bad~conditionals:~\the\numexpr\currentiflevel-1! }
+      \TYPE { Bad~conditionals:~\the\numexpr\currentiflevel-1! }
     \fi
-    \test_typeout:e { ^^JEND-TEST-LOG^^J }
-    \@@@end
+    \TYPE { ^^JEND-TEST-LOG^^J }
+    \test_end:
   }
-\ifx\@@end\@undefined
-  \let\@@@end\end
-  \let\end\END
-\else
-  \let\@@@end\@@end
-  \let\@@end\END
-\fi
+\cs_set_eq:Nc \test_end: { @@end }
+\cs_set_eq:cN { @@end } \END
 
-\cs_new_protected:Npn \OMIT { \test_typeout:n { OMIT } }
-\cs_new_protected:Npn \TIMO { \test_typeout:n { TIMO } }
+\cs_new_protected:Npn \OMIT { \TYPE { OMIT } }
+\cs_new_protected:Npn \TIMO { \TYPE { TIMO } }
 
 \ExplSyntaxOff
+\makeatletter
 \begingroup       % within the scope of this groups each line needs to end in % !
 \catcode`\^^M\active %
 \gdef\SHOWFILE#1{%
@@ -85,26 +75,24 @@
      \TYPE {-------- #1 (end) -----------}%
 }%
 \endgroup
-\ExplSyntaxOn
 
-\file_if_exist:nT { regression-test.cfg }
-  {
-    \test_typeout:n
-      { ^^J^^J***^^J regression-test.cfg in operation ^^J***^^J }
-    \file_input:n { regression-test.cfg }
-  }
+\InputIfFileExists{regression-test.cfg}
+  {\TYPE{^^J***^^Jregression-test.cfg in operation^^J***^^J}}{}
+
+\makeatother
+\ExplSyntaxOn
 
 \int_new:N \g_test_cnt_int
 
-\cs_new_protected:Npn \SEPARATOR
+\cs_new:Npn \SEPARATOR
   {
-    \test_typeout:n
+    \TYPE
       { ============================================================ }
   }
 
 \cs_new_protected:Npn \BEGINTEST #1
   {
-    \int_ginc:N \g_test_cnt_int
+    \int_gincr:N \g_test_cnt_int
     \SEPARATOR
     \TYPE { TEST~\int_use:N \g_test_cnt_int :~ \tl_to_str:n {#1} }
     \SEPARATOR
@@ -131,28 +119,52 @@
     \ENDTEST
   }
 
-\cs_new_protected:Npn \TRUE    { \test_typeout:n { TRUE }   }
-\cs_new_protected:Npn \FALSE   { \test_typeout:n { FALSE }  }
-\cs_new_protected:Npn \YES     { \test_typeout:n { YES }    }
-\cs_new_protected:Npn \NO      { \test_typeout:n { NO }     }
-\cs_new_protected:Npn \NEWLINE { \test_typeout:n { ^^J }    }
+\cs_new:Npn \TRUE    { \TYPE { TRUE }   }
+\cs_new:Npn \FALSE   { \TYPE { FALSE }  }
+\cs_new:Npn \YES     { \TYPE { YES }    }
+\cs_new:Npn \NO      { \TYPE { NO }     }
+\cs_new:Npn \NEWLINE { \TYPE { ^^J }    }
 
-\cs_new_protected:Npn \ASSERT #1#2
+\cs_new:Npn \ASSERT #1#2
   {
     \tl_if_eq:eeTF {#1} {#2}
-      { \test_typeout:n { PASSED } }
-      { \test_typeout:n { FAILED } }
+      { \TYPE { PASSED } }
+      { \TYPE { FAILED } }
   }
-\cs_new_protected:Npn \ASSERTSTR #1#2
+\cs_new:Npn \ASSERTSTR #1#2
   {
     \str_if_eq:eeTF {#1} {#2}
-      { \test_typeout:n { PASSED } }
-      { \test_typeout:n { FAILED } }
+      { \TYPE { PASSED } }
+      { \TYPE { FAILED } }
   }
 
-\pdf_uncompress:
-
 \ExplSyntaxOff
+\makeatletter
+\ifnum 0%
+  \ifx\pdfoutput\@undefined\else\ifnum\pdfoutput>0 1\fi\fi
+  \ifx\outputmode\@undefined\else\ifnum\outputmode>0 1\fi\fi
+  >0 %
+  \ifx\pdfvariable\@undefined
+    \pdfcompresslevel=0 %
+    \pdfobjcompresslevel=0 %
+  \else
+    \pdfvariable compresslevel=0 %
+    \pdfvariable objcompresslevel=0 %
+  \fi
+\else
+  \ifx\XeTeXversion\@undefined
+  \special{%
+      ps: /setdistillerparams
+      where
+        {pop << /CompressPages false /CompressStreams false >> setdistillerparams}
+      if
+    }%
+  \else
+    \special{dvipdfmx:config z 0}% Compress level
+    \special{dvipdfmx:config C 0x40}% Object compression
+  \fi
+\fi
+
 \ifx\pdfoutput\@undefined
   \ifx\outputmode\@undefined
   \else
@@ -216,6 +228,7 @@
 \AddToHook{enddocument/info}[kernel/testmode]{}
 \DeclareHookRule{enddocument/info}{kernel/testmode}{voids}{kernel/release}
 
+\makeatother
 \ExplSyntaxOn
 
 \int_set:Nn \l_iow_line_count_int { 9999 }

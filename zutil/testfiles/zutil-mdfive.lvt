@@ -1,4 +1,4 @@
-\input{regression-test}
+\input{zutil-regression-test}
 \documentclass{minimal}
 
 % \usepackage{zutil}
