@@ -1,0 +1,9 @@
+This is a generated file for the l3build validation system.
+Don't change this file in any respect.
+============================================================
+TEST: Check regression-test.tex md5sum
+============================================================
+[test] 1 check(s) passed.
+============================================================
+***************
+[test] 0 error(s) encountered.
