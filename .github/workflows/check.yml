@@ -104,7 +104,12 @@ jobs:
         update-all-packages: ${{ inputs.update-texlive-packages || true }}
 
     - name: Install just
-      uses: extractions/setup-just@v3
+      uses: taiki-e/install-action@v2
+      with:
+        # supported tools
+        # https://github.com/taiki-e/install-action/blob/main/TOOLS.md
+        tool: just
+        fallback: none
 
     - name: Install ppmcheckpdf dependencies
       uses: muzimuzhi/actions/ppmcheckpdf-deps@main
