@@ -106,26 +106,8 @@ jobs:
     - name: Install just
       uses: extractions/setup-just@v3
 
-    # imagemagick is pre-installed on Ubuntu 22.04 image
-    # https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2204-Readme.md#installed-apt-packages
-    - name: Install ppmcheckpdf dependencies (ubuntu)
-      if: matrix.tblr-config == 'config-old' && runner.os == 'Linux'
-      # actively maintained
-      uses: gerlero/apt-install@v1
-      with:
-        packages: imagemagick poppler-utils
-
-    # imagemagick is pre-installed on windows-2022 image
-    # https://github.com/actions/runner-images/blob/main/images/windows/Windows2022-Readme.md
-    - name: Install ppmcheckpdf dependencies (windows)
-      if: matrix.tblr-config == 'config-old' && runner.os == 'Windows'
-      run: |
-        tlmgr install wintools.windows
-
-    - name: Install ppmcheckpdf dependencies (macos)
-      if: matrix.tblr-config == 'config-old' && runner.os == 'macOS'
-      run: |
-        brew install imagemagick poppler
+    - name: Install ppmcheckpdf dependencies
+      uses: muzimuzhi/actions/ppmcheckpdf-deps@main
 
     - name: Run zutil tests
       if: matrix.tblr-config == 'build'
