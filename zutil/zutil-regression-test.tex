@@ -1,23 +1,11 @@
-%% based on regression-test.tex from l3build, version 2025-07-03
+\ProvidesExplFile {zutil-regression-test.tex} {2025-07-08} {0.1.0}
+  {%
+    Customized regression-test.tex,
+    based on regression-test.tex from l3build 2025-07-03
+  }
 
-\begingroup\expandafter\expandafter\expandafter\endgroup
-\expandafter\ifx\csname eTeXversion\endcsname\relax
-  \message{e-TeX is required by some regression-test.tex features}%
-\fi
-\ifx\unprotect\undefined
-  \expandafter\edef\csname reset\string @catcodes\endcsname{%
-    \catcode`\noexpand\@=\the\catcode`\@\relax
-  }%
-  \catcode`\@=11 %
-\else
-  \unprotect
-  \def\reset@catcodes{\protect}%
-\fi
-\begingroup\expandafter\expandafter\expandafter\endgroup
-\expandafter\ifx\csname interactionmode\endcsname\relax
-\else
-  \ifnum\interactionmode>1 \scrollmode\fi
-\fi
+\ExplSyntaxOff
+\ifnum\interactionmode>1~\scrollmode\fi
 \errorcontextlines=-1 %
 \showboxbreadth=\maxdimen
 \showboxdepth=\maxdimen
@@ -27,55 +15,63 @@
   \showboxdepth=\maxdimen
 }
 \newlinechar=`\^^J
-\long\def\LONGTYPEOUT#1{%
-  \begingroup
-    \long\def\TYPE##1{##1}%
-    \immediate\write128{#1}%
-  \endgroup
-}
-\let\TYPE\LONGTYPEOUT
-\def\STARTMESSAGE{This is a generated file for the l3build validation system.}
-\def\START{%
-  \LONGTYPEOUT{^^JSTART-TEST-LOG^^J}%
-  \LONGTYPEOUT{^^J%
-     \STARTMESSAGE%
-     ^^J^^JDon't change this file in any respect.%
-     ^^J^^J%
-  }%
-}
-\ifx\@@end\@undefined
-  \let\@@@end\end
-\else
-  \let\@@@end\@@end
-\fi
-\def\END{%
-  \ifnum\currentgrouplevel>0 %
-    \LONGTYPEOUT{Bad grouping: \the\currentgrouplevel!}%
-  \fi
-  \ifnum\currentiflevel>1 %
-    \LONGTYPEOUT{Bad conditionals: \the\numexpr\currentiflevel-1!}%
-  \fi
-  \LONGTYPEOUT{^^JEND-TEST-LOG^^J}%
-  \@@@end
-}
-\begingroup\expandafter\expandafter\expandafter\endgroup
-\expandafter\ifx\csname currentgrouplevel\endcsname\relax
-  \def\END{%
-    \LONGTYPEOUT{^^JEND-TEST-LOG^^J}%
+\ExplSyntaxOn
+
+\cs_new_protected:Npn \LONGTYPEOUT #1
+  {
+    \group_begin:
+      \cs_set_eq:NN \TYPE \use:n
+      \test_typeout:e { #1 }
+    \group_end:
+  }
+\cs_new_eq:NN \TYPE \LONGTYPEOUT
+% #1's are curried
+\cs_new_protected:Npn \test_typeout:n { \iow_term:n }
+\cs_new_protected:Npn \test_typeout:e { \iow_term:e }
+
+\str_const:Nn \STARTMESSAGE
+  { This~is~a~generated~file~for~the~l3build~validation~system. }
+
+\cs_new_protected:Npn \START
+  {
+    \test_typeout:n { ^^JSTART-TEST-LOG^^J }
+    \test_typeout:e
+      {
+        ^^J
+        \STARTMESSAGE
+        ^^J^^JDon't~change~this~file~in~any~respect.
+        ^^J^^J
+      }
+  }
+
+\cs_new_protected:Npn \END
+  {
+    \ifnum\currentgrouplevel>0
+      \test_typeout:e
+        { Bad~grouping:~\the\currentgrouplevel! }
+    \fi
+    \ifnum\currentiflevel>1
+      \test_typeout:e { Bad~conditionals:~\the\numexpr\currentiflevel-1! }
+    \fi
+    \test_typeout:e { ^^JEND-TEST-LOG^^J }
     \@@@end
   }
-\fi
 \ifx\@@end\@undefined
+  \let\@@@end\end
   \let\end\END
 \else
+  \let\@@@end\@@end
   \let\@@end\END
 \fi
-\def\OMIT{\LONGTYPEOUT{OMIT}}
-\def\TIMO{\LONGTYPEOUT{TIMO}}
+
+\cs_new_protected:Npn \OMIT { \test_typeout:n { OMIT } }
+\cs_new_protected:Npn \TIMO { \test_typeout:n { TIMO } }
+
+\ExplSyntaxOff
 \begingroup       % within the scope of this groups each line needs to end in % !
 \catcode`\^^M\active %
 \gdef\SHOWFILE#1{%
-     \typeout{-------- #1 (start) ---------}%
+     \TYPE {-------- #1 (start) ---------}%
 \IfFileExists{#1}%
   {\begingroup %
      \catcode`\^^M\active %
@@ -86,136 +82,77 @@
      \message{\@@input #1 }%
    \endgroup }%
   {\message{Not found}}%
-     \typeout{-------- #1 (end) -----------}%
+     \TYPE {-------- #1 (end) -----------}%
 }%
 \endgroup
-\begingroup\expandafter\expandafter\expandafter\endgroup
-\expandafter\ifx\csname everyeof\endcsname\relax
-  \def\SHOWFILE#1{\TYPE{FEATURE UNAVAILABLE}}
-\fi
-\ifx\InputIfFileExists\@undefined
-  \newread\@inputcheck
-  \long\def\InputIfFileExists#1#2#3{%
-    \openin\@inputcheck#1\relax
-    \ifeof\@inputcheck
-      \def\reserved@a{#3}%
-    \else
-      \def\reserved@a{#2\input #1\relax}%
-    \fi
-    \closein\@inputcheck
-    \reserved@a
-  }%
-\fi
-\InputIfFileExists{regression-test.cfg}
-  {\LONGTYPEOUT{^^J***^^Jregression-test.cfg in operation^^J***^^J}}{}
-\newcount\gTESTint
-\def\SEPARATOR{%
-  \TYPE{%
-    ============================================================%
-  }%
-}
-\csname protected\endcsname\long\def\BEGINTEST#1{%
-  \global\advance\gTESTint by 1 %
-  \SEPARATOR
-  \LONGTYPEOUT{TEST \the\gTESTint: \detokenize{#1}}%
-  \SEPARATOR
-  \begingroup
-    \let\TYPE\LONGTYPEOUT
-}
-\begingroup\expandafter\expandafter\expandafter\endgroup
-\expandafter\ifx\csname detokenize\endcsname\relax
-  \long\def\BEGINTEST#1{%
-    \global\advance\gTESTint by 1 %
-    \SEPARATOR
-    \begingroup
-      \toks0={#1}%
-      \LONGTYPEOUT{TEST \the\gTESTint: \the\toks0 }%
-    \endgroup
-    \SEPARATOR
-    \begingroup
-      \let\TYPE\LONGTYPEOUT
+\ExplSyntaxOn
+
+\file_if_exist:nT { regression-test.cfg }
+  {
+    \test_typeout:n
+      { ^^J^^J***^^J regression-test.cfg in operation ^^J***^^J }
+    \file_input:n { regression-test.cfg }
   }
-\fi
-\csname protected\endcsname\long\def\ENDTEST{%
-  \endgroup
-  \SEPARATOR
-  \LONGTYPEOUT{}%
-}
-\long\def\TEST#1#2{%
-  \BEGINTEST{#1}%
-  #2%
-  \ENDTEST
-}
-\long\def\TESTEXP#1#2{%
-  \BEGINTEST{#1}%
-  \LONGTYPEOUT{#2}%
-  \ENDTEST
-}
-\def \TRUE  {\TYPE{TRUE}}
-\def \FALSE {\TYPE{FALSE}}
-\def \YES   {\TYPE{YES}}
-\def \NO    {\TYPE{NO}}
-\def \NEWLINE {\TYPE{^^J}}
-\csname protected\endcsname\long\def\ASSERT#1#2{%
-  \begingroup
-    \edef\@tempa{#1}%
-    \edef\@tempb{#2}%
-    \ifx\@tempa\@tempb
-      \TYPE{PASSED}%
-    \else
-      \TYPE{FAILED}%
-    \fi
-  \endgroup
-}
-\csname protected\endcsname\long\def\ASSERTSTR#1#2{%
-  \begingroup
-    \edef\@tempa{#1}%
-    \edef\@tempb{#2}%
-    \edef\@tempa{\meaning\@tempa}%
-    \edef\@tempb{\meaning\@tempb}%
-    \ifx\@tempa\@tempb
-      \TYPE{PASSED}%
-    \else
-      \TYPE{FAILED}%
-    \fi
-  \endgroup
-}
-\begingroup\expandafter\expandafter\expandafter\endgroup
-\expandafter\ifx\csname detokenize\endcsname\relax
-  \long\def\ASSERTSTR#1#2{%
-    \TYPE{FEATURE UNAVAILABLE}%
+
+\int_new:N \g_test_cnt_int
+
+\cs_new_protected:Npn \SEPARATOR
+  {
+    \test_typeout:n
+      { ============================================================ }
   }
-\fi
-\ifnum 0%
-  \ifx\pdfoutput\@undefined\else\ifnum\pdfoutput>0 1\fi\fi
-  \ifx\outputmode\@undefined\else\ifnum\outputmode>0 1\fi\fi
-  >0 %
-  \ifx\pdfvariable\@undefined
-    \pdfcompresslevel=0 %
-    \pdfobjcompresslevel=0 %
-  \else
-    \pdfvariable compresslevel=0 %
-    \pdfvariable objcompresslevel=0 %
-  \fi
-\else
-  \ifx\XeTeXversion\@undefined
-  \special{%
-      ps: /setdistillerparams
-      where
-        {pop << /CompressPages false /CompressStreams false >> setdistillerparams}
-      if
-    }%
-  \else
-    \special{dvipdfmx:config z 0}% Compress level
-    \special{dvipdfmx:config C 0x40}% Object compression
-  \fi
-\fi
-\begingroup\expandafter\expandafter\expandafter\endgroup
-\expandafter\ifx\csname protected\endcsname\relax
-  \reset@catcodes
-  \let\protected\undefined
-  \expandafter\endinput
-\fi
+
+\cs_new_protected:Npn \BEGINTEST #1
+  {
+    \int_ginc:N \g_test_cnt_int
+    \SEPARATOR
+    \TYPE { TEST~\int_use:N \g_test_cnt_int :~ \tl_to_str:n {#1} }
+    \SEPARATOR
+    \group_begin:
+      \cs_set_eq:NN \TYPE \LONGTYPEOUT
+  }
+\cs_new_protected:Npn \ENDTEST
+  {
+    \group_end:
+    \SEPARATOR
+    \TYPE { }
+  }
+
+\cs_new_protected:Npn \TEST #1#2
+  {
+    \BEGINTEST {#1}
+    #2
+    \ENDTEST
+  }
+\cs_new_protected:Npn \TESTEXP #1#2
+  {
+    \BEGINTEST {#1}
+    \TYPE {#2}
+    \ENDTEST
+  }
+
+\cs_new_protected:Npn \TRUE    { \test_typeout:n { TRUE }   }
+\cs_new_protected:Npn \FALSE   { \test_typeout:n { FALSE }  }
+\cs_new_protected:Npn \YES     { \test_typeout:n { YES }    }
+\cs_new_protected:Npn \NO      { \test_typeout:n { NO }     }
+\cs_new_protected:Npn \NEWLINE { \test_typeout:n { ^^J }    }
+
+\cs_new_protected:Npn \ASSERT #1#2
+  {
+    \tl_if_eq:eeTF {#1} {#2}
+      { \test_typeout:n { PASSED } }
+      { \test_typeout:n { FAILED } }
+  }
+\cs_new_protected:Npn \ASSERTSTR #1#2
+  {
+    \str_if_eq:eeTF {#1} {#2}
+      { \test_typeout:n { PASSED } }
+      { \test_typeout:n { FAILED } }
+  }
+
+\pdf_uncompress:
+
+\ExplSyntaxOff
 \ifx\pdfoutput\@undefined
   \ifx\outputmode\@undefined
   \else
@@ -228,6 +165,7 @@
     \pdfmapfile{pdftex.map}%
   \fi
 \fi
+
 \ifcsname pdfmeta_set_regression_data:\endcsname
    \csname pdfmeta_set_regression_data:\endcsname
 \else
@@ -274,14 +212,10 @@
     \fi
   \fi
 \fi
-\ifdefined\AddToHook
-  \AddToHook{enddocument/info}[kernel/testmode]{}
-  \DeclareHookRule{enddocument/info}{kernel/testmode}{voids}{kernel/release}
-\fi
-\ifcsname\detokenize{l_iow_line_count_int}\endcsname
-  \csname \detokenize{l_iow_line_count_int}\endcsname=9999 %
-\fi
-\reset@catcodes
-%%
-%%
-%% End of file `zutil-regression-test.tex'.
+
+\AddToHook{enddocument/info}[kernel/testmode]{}
+\DeclareHookRule{enddocument/info}{kernel/testmode}{voids}{kernel/release}
+
+\ExplSyntaxOn
+
+\int_set:Nn \l_iow_line_count_int { 9999 }
