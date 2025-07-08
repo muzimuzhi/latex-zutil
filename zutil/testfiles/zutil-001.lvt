@@ -1,7 +1,7 @@
 \makeatletter
-% otherwise zutil would be loaded in regression-test.cfg
-\AddToHook{file/regression-test.cfg/before}{\disable@package@load{zutil}{}}
-\AddToHook{file/regression-test.cfg/after}{\reenable@package@load{zutil}}
+% otherwise zutil would be loaded in zutil-regression-test.cfg
+\AddToHook{file/zutil-regression-test.cfg/before}{\disable@package@load{zutil}{}}
+\AddToHook{file/zutil-regression-test.cfg/after}{\reenable@package@load{zutil}}
 \makeatother
 \input{zutil-regression-test}
 \documentclass{article}

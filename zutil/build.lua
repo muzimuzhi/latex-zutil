@@ -8,4 +8,4 @@ installfiles    = { "*.sty", "*.tex" }
 
 checkengines    = { "pdftex", "xetex", "luatex" }
 stdengine       = "pdftex"
-checksuppfiles  = { "regression-test.cfg" }
+checksuppfiles  = { "zutil-regression-test.cfg" }
