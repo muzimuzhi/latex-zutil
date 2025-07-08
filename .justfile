@@ -140,12 +140,26 @@ check name *options="": (_l3build_single "check" name options)
 save name *options="": (_l3build_single "save" name options)
 
 _l3build_single command name *options="":
-    @if [ -e "zutil/testfiles/{{ name }}.lvt" ]; then \
-        just _l3build-{{ command }} zutil "" {{ options }} {{ name }}; \
-    elif [ -e "tabularray/testfiles/{{ name }}.lvt" ]; then \
-        just _l3build-{{ command }} tabularray build {{ options }} {{ name }}; \
-    elif [ -e "tabularray/testfiles-old/{{ name }}.lvt" ]; then \
-        just _l3build-{{ command }} tabularray config-old {{ options }} {{ name }}; \
-    else \
-        echo '{{ style("error") }}Test not found: "{{ name }}"{{ NORMAL }}'; \
-    fi
+    #!/usr/bin/env sh
+    case "{{ name }}" in
+        zutil)
+            just _l3build-{{ command }} zutil "" {{ options }}
+            ;;
+        tabularray|tblr)
+            just _l3build-{{ command }} tabularray build {{ options }}
+            ;;
+        tabularray-old|tblr-old)
+            just _l3build-{{ command }} tabularray config-old {{ options }}
+            ;;
+        *)
+            if [ -e "zutil/testfiles/{{ name }}.lvt" ]; then
+                just _l3build-{{ command }} zutil "" {{ options }} {{ name }}
+            elif [ -e "tabularray/testfiles/{{ name }}.lvt" ]; then
+                just _l3build-{{ command }} tabularray build {{ options }} {{ name }}
+            elif [ -e "tabularray/testfiles-old/{{ name }}.lvt" ]; then
+                just _l3build-{{ command }} tabularray config-old {{ options }} {{ name }}
+            else
+                echo '{{ style("error") }}Test not found: "{{ name }}"{{ NORMAL }}'
+            fi
+            ;;
+    esac
