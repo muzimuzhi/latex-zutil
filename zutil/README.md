@@ -120,9 +120,10 @@
   - `zutil-regression-test.tex` file
     - `l3build` `regression-test.tex` extended
     - new features
+      - removed test numbering
       - log number of errors and passed checks at the end of a test and the entire test file
         - errors raised through `\errmessage` are all counted
         - checks are stepped by the `\PASSED` new expandable command
-    - new command
+    - new commands
       - `\PASSED`
       - `\FAILED` (undefined, can be used as `\ERROR`)
