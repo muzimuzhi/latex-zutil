@@ -32,13 +32,14 @@ TEST: Load a module twice
 TEST: Load unknown module
 ============================================================
 ! Package zutil Error: Unknown module 'unknown'. File 'zutil-unknown.code.tex' not found.
-[test] 1 error(s) encountered in this test.
+[test] 1 error(s)
 ============================================================
 ============================================================
 TEST: Load a module in a group
 ============================================================
 ! Package zutil Error: Loading module 'debug' in a group. Modules should be loaded at the top level.
-[test] 1 error(s) encountered in this test.
+[test] 1 error(s)
 ============================================================
 ***************
-[test] 2 error(s) encountered.
+[test] 2 error(s)
+[test] 0 check(s)

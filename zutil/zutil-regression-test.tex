@@ -47,7 +47,7 @@
     % _after_ begindocument, thus are not useable here. More precisely the
     % real patchings happen in \@kernel@after@begindocument, used right
     % after the begindocument hook).
-    \hook_use:n { test/enddocument }
+    \hook_use:n { test/END }
     \ifnum\currentgrouplevel>0
       \TYPE
         { Bad~grouping:~\the\currentgrouplevel! }
@@ -252,14 +252,15 @@
 %%
 
 % end-of-file logging
-\hook_new:n { test/enddocument }
+\hook_new:n { test/END }
 % end-of-test logging
 \hook_new_pair:nn { test/TEST/begin } { test/TEST/end }
-% count number of errors per test and for the whole test file
+% count number of errors
 \int_new:N \g__test_error_cnt_int
 \int_new:N \g__test_error_tmp_int
 \flag_new:N \l__test_expandable_errors_flag
-% count number of \PASSED used per test
+% count number of checks (\PASSED)
+\int_new:N \g__test_check_cnt_int
 \flag_new:N \l__test_checks_cnt_flag
 
 \socket_new:nn { test/count-errors } { 0 }
@@ -275,9 +276,9 @@
 %% counting errors and passed checks
 %%
 
-% The aim here is to be aware of \errmessage errors thrown even within
-% \OMIT ... \TIMO, and provide a more readable view for log-based tests
-% which are expected to be error-rich.
+% The initial aim here is to count number of \errmessage errors thrown
+% in a \TEST, between tests, and even in between \OMIT ... \TIMO pairs,
+% thus provide a more readable view for log-based error-rich tests.
 %
 % Expandable errors (by using \msg_expandable_error:nn and friends) are
 % only accounted if thrown in top-levels of a test file or a test.
@@ -285,15 +286,23 @@
 % Engine errors like "! Undefined control sequence" are NOT patchable,
 % thus not credited.
 %
+% Alternatives:
+%
 % The l3build config variable "recordstatus = true" records exit code(s)
 % of _all_ check runs, thus is more time consuming.
 % https://github.com/latex3/l3build/issues/398
-
-% end-of-test logging, if this test throws error(s) [n >= 1]
-%     [test] <n> error(s) encountered in this test.
+%
+% Checks issued by the expandable \PASSED are counted too.
+%
+% In expandable contexts, the counts are stored in a l3flag variable.
+%
+% end-of-test logging [n > 0]
+%     [test] <n> error(s)
+%     [test] <n> check(s)
 % end-of-file logging [n >= 0]
 %     ***************
-%     [test] <n> error(s) encountered.
+%     [test] <n> error(s)
+%     [test] <n> check(s)
 
 \socket_new_plug:nnn { test/count-errors } { normal }
   {
@@ -317,44 +326,49 @@
   }
 
 % end-of-file logging
-\hook_gput_code:nnn { test/enddocument } { test }
+\hook_gput_code:nnn { test/END } { test }
   {
     % \OMIT ... \TIMO are not nestable, so unpaired \TIMO is valid use.
     \TIMO
     % emulate output of l3build "recordstatus = true"
     \iow_term:n { *************** }
+    % log error counts, always
     \test_add_expandable_errors_cnt:
-    \test_log_error_count:nn { \g__test_error_cnt_int } {}
+    \test_log_error_counts:n { \g__test_error_cnt_int }
+    % log check counts, always
+    \test_log_check_counts:n { \g__test_check_cnt_int }
   }
 
-% end-of-test logging
+% start-of-test setting
 \hook_gput_code:nnn { test/TEST/begin } { . }
   {
-    % error counting
+    % set error counts
     \test_clear_expandable_errors_cnt:
     \int_gset_eq:NN \g__test_error_tmp_int \g__test_error_cnt_int
-    % \PASSED counting
+    % set check counts
     \flag_if_raised:NT \l__test_checks_cnt_flag
       {
         \msg_expandable_error:nn { test } { group-too-deep }
         \flag_clear:N \l__test_checks_cnt_flag
       }
   }
+
+% end-of-test logging
 \hook_gput_code:nnn { test/TEST/end } { . }
   {
-    % error counting
+    % log error counts
     \test_add_expandable_errors_cnt:
     \int_compare:nNnF \g__test_error_cnt_int = \g__test_error_tmp_int
       {
-        \test_log_error_count:nn
+        \test_log_error_counts:n
           { \g__test_error_cnt_int - \g__test_error_tmp_int }
-          { ~in~this~test }
       }
-    % \PASSED counting
+    % log check counts
     \flag_if_raised:NT \l__test_checks_cnt_flag
       {
-        \test_log_checks_count:n
+        \int_gadd:Nn \g__test_check_cnt_int
           { \flag_height:N \l__test_checks_cnt_flag }
+        \test_log_check_counts:n { \flag_height:N \l__test_checks_cnt_flag }
         \flag_clear:N \l__test_checks_cnt_flag
       }
   }
@@ -369,16 +383,13 @@
       { \flag_height:N \l__test_expandable_errors_flag }
   }
 
-\cs_new_protected:Npn \test_log_error_count:nn #1#2
+\cs_new_protected:Npn \test_log_error_counts:n #1
   {
-    \iow_term:e
-      {
-        [test]~ \int_eval:n {#1} ~error(s)~encountered #2.
-      }
+    \iow_term:e { [test]~ \int_eval:n {#1} ~error(s) }
   }
-\cs_new_protected:Npn \test_log_checks_count:n #1
+\cs_new_protected:Npn \test_log_check_counts:n #1
   {
-    \iow_term:e { [test]~ \int_eval:n {#1} ~check(s)~passed. }
+    \iow_term:e { [test]~ \int_eval:n {#1} ~check(s) }
   }
 
 % suspend and resume error counting

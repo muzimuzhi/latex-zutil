@@ -3,7 +3,8 @@ Don't change this file in any respect.
 ============================================================
 TEST: Check regression-test.tex md5sum
 ============================================================
-[test] 1 check(s) passed.
+[test] 1 check(s)
 ============================================================
 ***************
-[test] 0 error(s) encountered.
+[test] 0 error(s)
+[test] 1 check(s)

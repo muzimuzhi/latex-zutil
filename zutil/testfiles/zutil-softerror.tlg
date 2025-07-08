@@ -20,7 +20,7 @@ For immediate help type H <return>.
  ...                                              
 l. ...}
 more text [arg1][arg2][arg3][arg4]
-[test] 3 error(s) encountered in this test.
+[test] 3 error(s)
 ============================================================
 ============================================================
 TEST: softerror
@@ -30,7 +30,7 @@ TEST: softerror
 (__test)                more text
 ! Package __test Error: text [arg1][arg2][arg3][arg4]
 (__test)                more text [arg1][arg2][arg3][arg4]
-[test] 3 error(s) encountered in this test.
+[test] 3 error(s)
 ============================================================
 ============================================================
 TEST: softerror, redirected
@@ -40,7 +40,8 @@ TEST: softerror, redirected
 (__test)                more text
 ! Package __test Error: text [arg1][arg2][arg3][arg4]
 (__test)                more text [arg1][arg2][arg3][arg4]
-[test] 3 error(s) encountered in this test.
+[test] 3 error(s)
 ============================================================
 ***************
-[test] 9 error(s) encountered.
+[test] 9 error(s)
+[test] 0 check(s)

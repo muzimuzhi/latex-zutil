@@ -18,7 +18,8 @@ l. ...}
 The key 'zutil/debug/tblr' should be given without a value.
 The value '' was present: the key will be ignored.
 ! debug >>text<<
-[test] 1 error(s) encountered in this test.
+[test] 1 error(s)
 ============================================================
 ***************
-[test] 1 error(s) encountered.
+[test] 1 error(s)
+[test] 0 check(s)

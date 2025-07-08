@@ -20,4 +20,5 @@ TEST: keep braces when splitting table into cells
 >  {[4][2]}  =>  {{{{d}}}}.
 ============================================================
 ***************
-[test] 0 error(s) encountered.
+[test] 0 error(s)
+[test] 0 check(s)
