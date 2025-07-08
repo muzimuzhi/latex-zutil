@@ -251,10 +251,6 @@
 %% zutil-regression-test.tex add-ons
 %%
 
-% end-of-file logging
-\hook_new:n { test/END }
-% end-of-test logging
-\hook_new_pair:nn { test/TEST/begin } { test/TEST/end }
 % count number of errors
 \int_new:N \g__test_error_cnt_int
 \int_new:N \g__test_error_tmp_int
@@ -262,6 +258,11 @@
 % count number of checks (\PASSED)
 \int_new:N \g__test_check_cnt_int
 \flag_new:N \l__test_checks_cnt_flag
+
+% end-of-file logging
+\hook_new:n { test/END }
+% end-of-test logging
+\hook_new_pair:nn { test/TEST/begin } { test/TEST/end }
 
 \socket_new:nn { test/count-errors } { 0 }
 \socket_new:nn { test/count-exp-errors } { 0 }
