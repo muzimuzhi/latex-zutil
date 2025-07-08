@@ -3,9 +3,9 @@ module = "zutil"
 
 maindir         = ".."
 
-sourcefiles     = { "*.sty", "*.code.tex" }
-installfiles    = { "*.sty", "*.code.tex" }
+sourcefiles     = { "*.sty", "*.tex" }
+installfiles    = { "*.sty", "*.tex" }
 
 checkengines    = { "pdftex", "xetex", "luatex" }
 stdengine       = "pdftex"
-checksuppfiles  = { "regression-test.cfg" }
+checksuppfiles  = { "zutil-regression-test.cfg" }

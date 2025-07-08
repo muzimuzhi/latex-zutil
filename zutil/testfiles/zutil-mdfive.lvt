@@ -1,0 +1,36 @@
+\input{zutil-regression-test}
+\documentclass{minimal}
+
+% \usepackage{zutil}
+
+\ExplSyntaxOn
+
+\debug_on:n { check-declarations , deprecation }
+
+\START
+
+\TEST{Check~regression-test.tex~md5sum}{
+  \sys_if_platform_unix:T
+    {
+      \str_const:Nn \c_mdfive_expected_str
+        { C14BC93225A7243044921F591A20F594 }
+      \str_const:Ne \c_mdfive_actual_str
+        { \file_mdfive_hash:n { regression-test.tex } }
+      \str_if_eq:VVTF \c_mdfive_expected_str \c_mdfive_actual_str
+        {
+          \PASSED
+        }
+        {
+          \iow_log:e
+            {
+              File~'regression-test.tex'~has~changed.~
+              The~'zutil-regression-test.tex'~may~need~an~update~too.
+              \iow_newline:
+              Expected:~ \c_mdfive_expected_str \iow_newline:
+              Actual:~ \use:n {~} ~ \c_mdfive_actual_str \iow_newline:
+            }
+        }
+    }
+}
+
+\END
