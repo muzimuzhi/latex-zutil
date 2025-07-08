@@ -116,3 +116,13 @@
       - variants `nnVV`, `nnVn`, `nnnV`, `nnne`, `nnee`
     - `\zutil_msg_softerror:nnn`
       - variants `nnV`, `nne`
+
+  - `zutil-regression-test.tex` file
+    - `l3build` `regression-test.tex` extended
+    - new features
+      - log number of errors and passed checks at the end of a test and the entire test file
+        - errors raised through `\errmessage` are all counted
+        - checks are stepped by the `\PASSED` new expandable command
+    - new command
+      - `\PASSED`
+      - `\FAILED` (undefined, can be used as `\ERROR`)
