@@ -1,9 +1,6 @@
-\makeatletter
-% otherwise zutil would be loaded in zutil-regression-test.cfg
-\AddToHook{file/zutil-regression-test.cfg/before}{\disable@package@load{zutil}{}}
-\AddToHook{file/zutil-regression-test.cfg/after}{\reenable@package@load{zutil}}
-\makeatother
+\UseName{disable@package@load}{zutil}{}
 \input{zutil-regression-test}
+\UseName{reenable@package@load}{zutil}
 \documentclass{article}
 
 \ExplSyntaxOn
