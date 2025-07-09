@@ -102,35 +102,6 @@ alias tblr-old := tabularray-old
 alias tblr-ppm := tabularray-ppm
 
 
-## temp helpers
-## better to extract the follow recipes to a standalone script
-
-# Run l3build tests
-[no-exit-message]
-_l3build-check package config="" *options="":
-    @if [ -z "{{ config }}" ]; then \
-        echo '{{ info }}Checking {{ package }} tests...{{ end_info }}'; \
-        cd {{ package }} && \
-            l3build check {{ L3BUILD_CHECK_OPTIONS + " " + options }}; \
-    else \
-        echo '{{ info }}Checking {{ package }} tests, config "{{ config }}"...{{ end_info }}'; \
-        cd {{ package }} && \
-            l3build check -c"{{ config }}" {{ L3BUILD_CHECK_OPTIONS + " " + options }}; \
-    fi
-
-# Save l3build test results
-[no-exit-message]
-_l3build-save package config="" *options="":
-    @if [ -z "{{ config }}" ]; then \
-        echo '{{ info }}Saving {{ package }} tests...{{ end_info }}'; \
-        cd {{ package }} && \
-            l3build save {{ L3BUILD_SAVE_OPTIONS + " " + options }}; \
-    else \
-        echo '{{ info }}Saving {{ package }} tests, config "{{ config }}"...{{ end_info }}'; \
-        cd {{ package }} && \
-            l3build save -c"{{ config }}" {{ L3BUILD_SAVE_OPTIONS + " " + options }}; \
-    fi
-
 # Check l3build test(s)
 [group('dev')]
 check *options="": (_l3build_single "check" options)
