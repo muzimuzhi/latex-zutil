@@ -115,19 +115,25 @@ def parse_args(args: argparse.Namespace, unknown_args: list[str]) -> None:
     if target == 'save' and not names:
         names = testsuite.resolve_tests()
 
-    run(['l3build', target, *options, *names], cwd=testsuite.directory)
+    commands = ['l3build', target, *options, *names]
+    if args.dry_run:
+        print(f"[l3build.py] Running '{' '.join(commands)}' in directory '{testsuite.directory}'")
+    else:
+        run(commands, cwd=testsuite.directory)
 
 parser = argparse.ArgumentParser(
     description='A l3build wrapper',
     allow_abbrev=False,
 )
 parser.add_argument('target', type=str, choices=L3BUILD_COMMANDS, help='The l3build target to run')
-# frequently used l3build options
+# inherited frequently-used l3build options
 # Unlike in vanilla l3build.lua, options can be intermixed with test names,
 # and uses like `-qs` are accepted.
 parser.add_argument('-e', '--engine', type=str)
 parser.add_argument('-s', '--stdengine', action='store_true', default=False)
 parser.add_argument('-q', '--quiet', action='store_true', default=True)
+# new options
+parser.add_argument('-n', '--dry-run', action='store_true', default=False)
 
 
 if __name__ == "__main__":
