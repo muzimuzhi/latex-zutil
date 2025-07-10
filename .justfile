@@ -81,7 +81,7 @@ save *options="": (_l3build_py "save" L3BUILD_SAVE_OPTIONS options)
 
 _l3build_py command *options="":
     @echo '{{ info }}Running l3build {{ command }}...{{ end_info }}'
-    @{{ python }} ./scripts/l3build.py {{ command }} {{ options }}
+    {{ python }} ./scripts/l3build.py {{ command }} {{ options }}
 
 # Run tabularray PPM tests
 [group('test')]
