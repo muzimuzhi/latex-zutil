@@ -117,22 +117,22 @@ jobs:
     - name: Run zutil tests
       if: matrix.tblr-config == 'build'
       run: |
-        just zutil ${{ matrix.options }}
+        just check zutil ${{ matrix.options }}
       env:
         L3BUILD_CHECK_OPTIONS: "--halt-on-error --show-log-on-error --show-saves"
 
     - name: Run tabularray tests, config "${{ matrix.tblr-config }}"
       if: matrix.tblr-config == 'build'
       run: |
-        just tabularray ${{ matrix.options }}
+        just check tblr ${{ matrix.options }}
       env:
         L3BUILD_CHECK_OPTIONS: "--halt-on-error --show-log-on-error --show-saves"
 
     - name: Run tabularray tests, config "${{ matrix.tblr-config }}"
       if: matrix.tblr-config == 'config-old'
       run: |
-        just tabularray-old ${{ matrix.options }}
-        just tabularray-ppm
+        just check tblr-old ${{ matrix.options }}
+        just check tblr-ppm
       env:
         L3BUILD_CHECK_OPTIONS: "--halt-on-error --show-log-on-error --show-saves"
 
