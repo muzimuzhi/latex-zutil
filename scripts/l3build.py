@@ -118,6 +118,9 @@ def parse_args(args: Namespace) -> None:
     if target == 'save' and not names:
         names = testsuite.resolve_tests()
 
+    if target == 'check' and args.show_saves:
+        options.append('-S')
+
     commands = ['l3build', target, *options, *names]
     if args.dry_run:
         print(f"[l3build.py] Running '{' '.join(commands)}' in directory '{testsuite.directory}'")
@@ -142,6 +145,7 @@ parser.add_argument('names', type=str, nargs='*', metavar='name',
 # and uses like `-qs` are accepted.
 parser.add_argument('-e', '--engine', type=str)
 parser.add_argument('-s', '--stdengine', action='store_true', default=False)
+parser.add_argument('-S', '--show-saves', action='store_true', default=False)
 parser.add_argument('-q', '--quiet', action=BooleanOptionalAction,
                     default=True)
 # new options

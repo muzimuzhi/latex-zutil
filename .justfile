@@ -104,11 +104,11 @@ alias tblr-ppm := tabularray-ppm
 
 # Check l3build test(s)
 [group('dev')]
-check *options="": (_l3build_py "check" options)
+check *options="": (_l3build_py "check" L3BUILD_CHECK_OPTIONS options)
 
 # Save l3build test(s)
 [group('dev')]
-save *options="": (_l3build_py "save" options)
+save *options="": (_l3build_py "save" L3BUILD_SAVE_OPTIONS options)
 
 _l3build_py command *options="":
     @echo '{{ info }}Running l3build {{ command }}...{{ end_info }}'
