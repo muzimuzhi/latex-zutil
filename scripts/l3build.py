@@ -117,7 +117,7 @@ def parse_args(args: Namespace) -> None:
         options.append('-H')
     if args.show_log_on_error:
         options.append('--show-log-on-error')
-    if testsuite.config != 'build':
+    if testsuite.config:
         options.append(f'-c{testsuite.config}')
 
     # 'save' target without names means saving all
