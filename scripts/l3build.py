@@ -1,13 +1,15 @@
 #!/usr/bin/env -S uv run --script
 
-import argparse
+from argparse import ArgumentParser, BooleanOptionalAction, Namespace
 from pathlib import Path
 from subprocess import run
+from typing import Final
 
 
 class TestSuite:
-    def __init__(self, name: str, directory: str, config: str, tests: tuple[str]) -> None:
+    def __init__(self, name: str, directory: str, config: str, tests: tuple[str], alias: str = "") -> None:
         self.name = name
+        self.alias = alias
         self.directory = directory
         self.config = config
         self.tests = tests
@@ -24,6 +26,7 @@ class TestSuite:
         self.test_names = tuple(test_names)
         return self.test_names
 
+
 zutil = TestSuite(
     name = 'zutil',
     directory = 'zutil',
@@ -33,6 +36,7 @@ zutil = TestSuite(
 
 tblr = TestSuite(
     name = 'tabularray',
+    alias = 'tblr',
     directory = 'tabularray',
     config = 'build',
     tests = ('testfiles/*.lvt',)
@@ -40,50 +44,46 @@ tblr = TestSuite(
 
 tblr_old = TestSuite(
     name = 'tabularray-old',
+    alias = 'tblr-old',
     directory = 'tabularray',
     config = 'config-old',
     tests = ('testfiles-old/*.tex',)
 )
 
-L3BUILD_COMMANDS = ('check', 'save')
-L3BUILD_TESTSUITES = {
-    zutil.name: zutil,
-    tblr.name: tblr,
-    tblr_old.name: tblr_old,
-}
-L3BUILD_TESTSUITE_ALIASES = {
-    'tblr': 'tabularray',
-    'tblr-old': 'tabularray-old',
-}
+testsuites = (zutil, tblr, tblr_old)
+
+L3BUILD_TESTSUITES: Final[dict[str, TestSuite]] = \
+    { ts.name: ts for ts in testsuites }
+L3BUILD_TESTSUITE_ALIASES: Final[dict[str, str]] = \
+    { ts.alias: ts.name for ts in L3BUILD_TESTSUITES.values() if ts.alias}
+
+L3BUILD_COMMANDS: Final[tuple[str, ...]] = \
+    ('check', 'save')
 
 
-def resolve_name_alias(name: str) -> str:
-    return L3BUILD_TESTSUITE_ALIASES.get(name, name)
-
-
-def parse_args(args: argparse.Namespace, unknown_args: list[str]) -> None:
+def parse_args(args: Namespace) -> None:
     """Parse command line arguments."""
     target = args.target
     testsuite = None
     options = []
     names = []
 
-    # parse unknown arguments
-    for name in unknown_args:
+    # compose testsuite and l3build names
+    for name in args.names:
         name_raw = name
-        name = resolve_name_alias(name)
+        name : str = L3BUILD_TESTSUITE_ALIASES.get(name, name)
         if name.startswith('-'):
             raise ValueError(f"Unknown argument: {name}")
-        # elif name in L3BUILD_TESTSUITES:
-        #     ts = L3BUILD_TESTSUITES[name]
-        #     testsuite = L3BUILD_TESTSUITES[name]
         else:
             for ts in L3BUILD_TESTSUITES.values():
                 if name == ts.name:
                     if testsuite is None:
                         testsuite = ts
                     elif testsuite != ts:
-                        raise ValueError(f"Multiple testsuites: testsuite {name_raw} doesn't contain tests {names}")
+                        raise ValueError(
+                            f"Multiple testsuites: testsuite {name_raw}"
+                            f"doesn't contain tests {names}"
+                        )
                     else:
                         names = []
                     break
@@ -91,7 +91,10 @@ def parse_args(args: argparse.Namespace, unknown_args: list[str]) -> None:
                     if testsuite is None:
                         testsuite = ts
                     elif testsuite != ts:
-                        raise ValueError(f"Multiple testsuites: test {name} is not in testsuite {testsuite.directory}")
+                        raise ValueError(
+                            f"Multiple testsuites: test {name}"
+                            f"is not in testsuite {testsuite.name}"
+                        )
                     if name not in names:
                         names.append(name)
                     break
@@ -99,7 +102,7 @@ def parse_args(args: argparse.Namespace, unknown_args: list[str]) -> None:
                 raise ValueError(f"Unknown test name: {name}")
 
     if testsuite is None:
-        raise ValueError("No testsuite recognized.")
+        raise ValueError("No testsuite nor names passed.")
 
     # compose l3build options
     if args.engine:
@@ -121,21 +124,35 @@ def parse_args(args: argparse.Namespace, unknown_args: list[str]) -> None:
     else:
         run(commands, cwd=testsuite.directory)
 
-parser = argparse.ArgumentParser(
+
+parser = ArgumentParser(
     description='A l3build wrapper',
-    allow_abbrev=False,
+    usage='%(prog)s target [options] name...',
+    # allow_abbrev=False, # isn't --no-q more useful than --no-quiet?
+    epilog='Not all l3build options are supported.'
 )
-parser.add_argument('target', type=str, choices=L3BUILD_COMMANDS, help='The l3build target to run')
+parser.add_argument('target', type=str,
+                    choices=L3BUILD_COMMANDS,
+                    metavar='target',
+                    help=f'the l3build target to run {L3BUILD_COMMANDS}')
+parser.add_argument('names', type=str, nargs='*', metavar='name',
+                    help='a testsuite or test')
 # inherited frequently-used l3build options
-# Unlike in vanilla l3build.lua, options can be intermixed with test names,
+# Unlike in vanilla l3build.lua, options can be intermixed with names,
 # and uses like `-qs` are accepted.
 parser.add_argument('-e', '--engine', type=str)
 parser.add_argument('-s', '--stdengine', action='store_true', default=False)
-parser.add_argument('-q', '--quiet', action='store_true', default=True)
+parser.add_argument('-q', '--quiet', action=BooleanOptionalAction,
+                    default=True)
 # new options
 parser.add_argument('-n', '--dry-run', action='store_true', default=False)
 
 
 if __name__ == "__main__":
-    args, unknown_args = parser.parse_known_intermixed_args()
-    parse_args(args, unknown_args)
+    args = parser.parse_intermixed_args()
+
+    import os
+    if 'DEBUG' in os.environ:
+        print(f"[l3build.py] Parsed args: {args}")
+
+    parse_args(args)
