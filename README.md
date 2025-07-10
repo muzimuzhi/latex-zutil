@@ -81,6 +81,20 @@ Checks
   - [`check.yml`](./.github/workflows/check.yml) full slow checks (on single OS)
   - [`schedule.yml`](./.github/workflows/schedule.yml) once a week, quick checks (on 1 OS) + slow checks on 3 OSes
 
+Developing
+
+```shell
+# check/save all tests in a testsuite
+$ just check zutil
+$ just save tblr
+# check/save specific tests in the same testsuite
+$ just check zutil-001 zutil-softerror
+$ just save tblr-loading tblr-split
+# print full usage
+$ just check -h
+$ just save -h
+```
+
 General `just` usages
 
 ```shell

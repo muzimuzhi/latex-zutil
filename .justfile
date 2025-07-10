@@ -4,17 +4,23 @@
 # use "just --dry-run [--verbose] <recipe>" to check the actual commands
 # that would run in <recipe>
 
-
 # settings
 # https://github.com/casey/just?tab=readme-ov-file#settings
 
 set ignore-comments := true
-
+set unstable
 
 ## variables
 
 info := BOLD + BLUE + "===> "
 end_info := NORMAL
+
+# to support running without uv on GitHub Actions
+python := if which('uv') == '' {
+    which('python3') || which('python')
+} else {
+    ''
+}
 
 export SKIP := env('SKIP', 'typos,explcheck')
 export diffext := env('diffext', '.diff')
@@ -22,7 +28,6 @@ export diffexe := env('diffexe', 'git diff --no-index --text --')
 
 L3BUILD_CHECK_OPTIONS := env('L3BUILD_CHECK_OPTIONS', '-q --show-saves')
 L3BUILD_SAVE_OPTIONS := env('L3BUILD_SAVE_OPTIONS', '-q')
-
 
 ## top-level recipes
 
@@ -37,10 +42,7 @@ all: lint-all test-all
 lint-all: pre-commit typos explcheck
 
 [group('*meta')]
-test-all: zutil tabularray tabularray-old tabularray-ppm
-
-alias lint := lint-all
-alias test := test-all
+test-all: (check "zutil") (check "tblr") (check "tblr-old") tblr-ppm
 
 ## linting recipes
 
@@ -67,99 +69,22 @@ pre-commit *options="":
     @echo 'Skipped checks: {{ SKIP }}'
     pre-commit run --all-files {{ options }}
 
-
 ## testing recipes
 
-# Run zutil tests
+# Check l3build test(s)
 [group('test')]
-zutil *options="":
-    @echo '{{ info }}Checking zutil tests...{{ end_info }}'
-    cd zutil && \
-        l3build check {{ L3BUILD_CHECK_OPTIONS + " " + options }}
+check *options="": (_l3build_py "check" L3BUILD_CHECK_OPTIONS options)
 
-# Run tabularray tests, new config
+# Save l3build test(s)
 [group('test')]
-tabularray *options="":
-    @echo '{{ info }}Checking tabularray tests, "build" config...{{ end_info }}'
-    cd tabularray && \
-        l3build check -c"build" {{ L3BUILD_CHECK_OPTIONS + " " + options }}
+save *options="": (_l3build_py "save" L3BUILD_SAVE_OPTIONS options)
 
-# Run tabularray tests, old config
-[group('test')]
-tabularray-old *options="":
-    @echo '{{ info }}Checking tabularray tests, "config-old" config...{{ end_info }}'
-    cd tabularray && \
-        l3build check -c"config-old" {{ L3BUILD_CHECK_OPTIONS + " " + options }}
+_l3build_py command *options="":
+    @echo '{{ info }}Running l3build {{ command }}...{{ end_info }}'
+    @{{ python }} ./scripts/l3build.py {{ command }} {{ options }}
 
 # Run tabularray PPM tests
 [group('test')]
-tabularray-ppm:
+tblr-ppm:
     @echo '{{ info }}Running tabularray PPM tests, "config-old" config...{{ end_info }}'
     cd tabularray && texlua buildend.lua
-
-alias tblr := tabularray
-alias tblr-old := tabularray-old
-alias tblr-ppm := tabularray-ppm
-
-
-## temp helpers
-## better to extract the follow recipes to a standalone script
-
-# Run l3build tests
-[no-exit-message]
-_l3build-check package config="" *options="":
-    @if [ -z "{{ config }}" ]; then \
-        echo '{{ info }}Checking {{ package }} tests...{{ end_info }}'; \
-        cd {{ package }} && \
-            l3build check {{ L3BUILD_CHECK_OPTIONS + " " + options }}; \
-    else \
-        echo '{{ info }}Checking {{ package }} tests, config "{{ config }}"...{{ end_info }}'; \
-        cd {{ package }} && \
-            l3build check -c"{{ config }}" {{ L3BUILD_CHECK_OPTIONS + " " + options }}; \
-    fi
-
-# Save l3build test results
-[no-exit-message]
-_l3build-save package config="" *options="":
-    @if [ -z "{{ config }}" ]; then \
-        echo '{{ info }}Saving {{ package }} tests...{{ end_info }}'; \
-        cd {{ package }} && \
-            l3build save {{ L3BUILD_SAVE_OPTIONS + " " + options }}; \
-    else \
-        echo '{{ info }}Saving {{ package }} tests, config "{{ config }}"...{{ end_info }}'; \
-        cd {{ package }} && \
-            l3build save -c"{{ config }}" {{ L3BUILD_SAVE_OPTIONS + " " + options }}; \
-    fi
-
-# Check a single l3build test
-[group('test')]
-check name *options="": (_l3build_single "check" name options)
-
-# Save a single l3build test
-[group('test')]
-save name *options="": (_l3build_single "save" name options)
-
-_l3build_single command name *options="":
-    #!/usr/bin/env sh
-    case "{{ name }}" in
-        zutil)
-            just _l3build-{{ command }} zutil "" {{ options }}
-            ;;
-        tabularray|tblr)
-            just _l3build-{{ command }} tabularray build {{ options }}
-            ;;
-        tabularray-old|tblr-old)
-            just _l3build-{{ command }} tabularray config-old {{ options }}
-            ;;
-        *)
-            if [ -e "zutil/testfiles/{{ name }}.lvt" ]; then
-                just _l3build-{{ command }} zutil "" {{ options }} {{ name }}
-            elif [ -e "tabularray/testfiles/{{ name }}.lvt" ]; then
-                just _l3build-{{ command }} tabularray build {{ options }} {{ name }}
-            elif [ -e "tabularray/testfiles-old/{{ name }}.lvt" ]; then
-                just _l3build-{{ command }} tabularray config-old {{ options }} {{ name }}
-            else
-                echo '{{ style("error") }}Test not found: "{{ name }}"{{ NORMAL }}'
-            fi
-            ;;
-    esac
