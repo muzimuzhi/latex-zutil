@@ -112,6 +112,7 @@ jobs:
         fallback: none
 
     - name: Install ppmcheckpdf dependencies
+      if: matrix.tblr-config == 'config-old'
       uses: muzimuzhi/actions/ppmcheckpdf-deps@main
 
     - name: Run zutil tests
