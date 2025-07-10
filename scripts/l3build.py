@@ -105,6 +105,8 @@ def parse_args(args: Namespace) -> None:
         raise ValueError("No testsuite nor names passed.")
 
     # compose l3build options
+    if args.dev:
+        options.append('--dev')
     if args.engine:
         options.append(f'-e{args.engine}')
     if args.stdengine:
@@ -143,6 +145,7 @@ parser.add_argument('names', type=str, nargs='*', metavar='name',
 # inherited frequently-used l3build options
 # Unlike in vanilla l3build.lua, options can be intermixed with names,
 # and uses like `-qs` are accepted.
+parser.add_argument('--dev', action='store_true', default=False)
 parser.add_argument('-e', '--engine', type=str)
 parser.add_argument('-s', '--stdengine', action='store_true', default=False)
 parser.add_argument('-S', '--show-saves', action='store_true', default=False)
