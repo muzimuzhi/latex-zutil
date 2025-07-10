@@ -15,13 +15,6 @@ set unstable
 info := BOLD + BLUE + "===> "
 end_info := NORMAL
 
-# to support running without uv on GitHub Actions
-python := if which('uv') == '' {
-    which('python3') || which('python')
-} else {
-    ''
-}
-
 export SKIP := env('SKIP', 'typos,explcheck')
 export diffext := env('diffext', '.diff')
 export diffexe := env('diffexe', 'git diff --no-index --text --')
@@ -81,7 +74,7 @@ save *options="": (_l3build_py "save" L3BUILD_SAVE_OPTIONS options)
 
 _l3build_py command *options="":
     @echo '{{ info }}Running l3build {{ command }}...{{ end_info }}'
-    @{{ python }} ./scripts/l3build.py {{ command }} {{ options }}
+    @./scripts/l3build.py {{ command }} {{ options }}
 
 # Run tabularray PPM tests
 [group('test')]
