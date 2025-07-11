@@ -90,20 +90,27 @@ jobs:
       # https://github.com/rhysd/actionlint/issues/237
       # shellcheck ignore doc
       # https://github.com/koalaman/shellcheck/wiki/Ignore
-
-      # TODO: find why 'cache_keys' might contain dup items
       run: |
         # emulate TeX-Live/setup-texlive-action cache key prefix
         prefix="setup-texlive-action"
         # shellcheck disable=SC2016
         prefix="$prefix\
         -$(node -e 'console.log(`${os.platform()}-${os.arch()}`)')"
-        cache_keys=$(\
-            gh cache list --key "$prefix" --json key --jq '.[].key')
-        for key in $cache_keys; do
-            echo "Deleting cache \"$key\""
-            gh cache delete "$key"
+        echo "prefix=$prefix"
+        caches=()
+        while IFS= read -r line; do
+            caches+=( "$line" )
+        done < <(gh cache list \
+                --key "$prefix" --json id,key --jq '.[] | .id, .key')
+        # cache id is unique; cache key may not
+        # branches may have different caches using the same cache key
+        for ((i=0; i<${#caches[@]}; i+=2)); do
+            id=${caches[i]}
+            key=${caches[i+1]}
+            echo "Deleting cache with id \"$id\", key \"$key\""
+            gh cache delete "$id"
         done
+      shell: bash
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
