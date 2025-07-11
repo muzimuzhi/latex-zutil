@@ -85,11 +85,21 @@ jobs:
       continue-on-error: true
       # https://cli.github.com/manual/gh_cache_list
       # https://cli.github.com/manual/gh_cache_delete
+
+      # "shellcheck disable=..." directive used at top doesn't work, see
+      # https://github.com/rhysd/actionlint/issues/237
+      # shellcheck ignore doc
+      # https://github.com/koalaman/shellcheck/wiki/Ignore
+
+      # TODO: find why 'cache_keys' might contain dup items
       run: |
-        # TODO: find why 'cache_keys' might contain dup items
-        set -x
+        # emulate TeX-Live/setup-texlive-action cache key prefix
+        prefix="setup-texlive-action"
+        # shellcheck disable=SC2016
+        prefix="$prefix\
+        -$(node -e 'console.log(`${os.platform()}-${os.arch()}`)')"
         cache_keys=$(\
-            gh cache list --key setup-texlive --json key --jq '.[].key')
+            gh cache list --key "$prefix" --json key --jq '.[].key')
         for key in $cache_keys; do
             echo "Deleting cache \"$key\""
             gh cache delete "$key"
