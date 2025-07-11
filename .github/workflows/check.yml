@@ -137,14 +137,14 @@ jobs:
       env:
         L3BUILD_CHECK_OPTIONS: "--halt-on-error --show-log-on-error --show-saves"
 
-    - name: Run tabularray tests, config "${{ matrix.tblr-config }}"
+    - name: Run tabularray tests, config "build"
       if: matrix.tblr-config == 'build'
       run: |
         just check tblr ${{ matrix.options }}
       env:
         L3BUILD_CHECK_OPTIONS: "--halt-on-error --show-log-on-error --show-saves"
 
-    - name: Run tabularray tests, config "${{ matrix.tblr-config }}"
+    - name: Run tabularray tests, config "config-old"
       if: matrix.tblr-config == 'config-old'
       run: |
         just check tblr-old ${{ matrix.options }}
