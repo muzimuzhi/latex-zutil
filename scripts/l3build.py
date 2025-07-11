@@ -2,7 +2,8 @@
 
 from argparse import ArgumentParser, BooleanOptionalAction, Namespace
 from pathlib import Path
-from subprocess import run
+from subprocess import CalledProcessError, run
+import sys
 from typing import Final
 
 
@@ -131,7 +132,10 @@ def parse_args(args: Namespace) -> None:
     if args.dry_run:
         print(f"[l3build.py] Running '{' '.join(commands)}' in directory '{testsuite.directory}'")
     else:
-        run(commands, cwd=testsuite.directory)
+        try:
+            run(commands, cwd=testsuite.directory, check=True)
+        except CalledProcessError:
+            sys.exit(1)
 
 
 parser = ArgumentParser(
