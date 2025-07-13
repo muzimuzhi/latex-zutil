@@ -11,6 +11,7 @@
 """Check and save selective l3build tests made easier."""
 
 import argparse
+import logging
 import os
 import sys
 from enum import UNIQUE, StrEnum, verify
@@ -19,6 +20,12 @@ from subprocess import CalledProcessError, run
 from typing import Final
 
 type Test = str
+
+
+logging.basicConfig(
+    format='%(levelname)s - %(filename)s:%(lineno)d - %(funcName)s - %(levelname)s - %(message)s',  # noqa: E501
+)
+logger = logging.getLogger('l3build-wrapper.py')
 
 
 # suggested by https://stackoverflow.com/a/60465422
@@ -157,7 +164,11 @@ class TestSuiteRun:
 
         commands = ['l3build', target, *self.options, *self.names]
         if args.dry_run or args.verbose:
-            print(f'[l3build-wrapper.py] Running "{" ".join(commands)}" in directory "{self.ts.path}"')  # noqa: E501 # fmt: skip
+            logger.info(
+                'Running "%s" in directory "%s"',
+                ' '.join(commands),
+                self.ts.path,
+            )
         if not args.dry_run:
             try:
                 run(commands, cwd=self.ts.path, check=True)  # noqa: S603
@@ -200,8 +211,7 @@ def l3build_patched() -> bool:
     try:
         rst = run(['l3build', '--version'], check=True, capture_output=True)  # noqa: S607
     except CalledProcessError:
-        print('[l3build-wrapper.py] "l3build --version" failed.')
-        sys.exit(1)
+        logger.exception('"l3build --version" failed.')
 
     return '(with patch)' in rst.stdout.decode('utf-8')
 
@@ -308,12 +318,17 @@ _improved.add_argument('-q', '--quiet',
 # fmt: on
 
 if __name__ == '__main__':
-    args = parser.parse_intermixed_args()
+    try:
+        args = parser.parse_intermixed_args()
 
-    if debug_logging_enabled():
-        args.verbose = True
+        if args.verbose or debug_logging_enabled():
+            logger.setLevel(logging.DEBUG)
+            args.verbose = True
 
-    if args.verbose:
-        print(f'[l3build-wrapper.py] Parsed args: {args}')
+        if args.verbose:
+            logger.debug('Parsed args: %s', args)
 
-    wrap_l3build(args)
+        wrap_l3build(args)
+    except L3buildWrapperError as e:
+        # TODO: logger.exception() logs exception info without color
+        logger.error(e)  # noqa: TRY400

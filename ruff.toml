@@ -12,7 +12,12 @@ ignore = [
   'D213',   # the (first) summary line of multi-line docstrings not on the
             #   second physical line, incompatible with D212
   'T201',   # uses of `print()`
+  'TD002',  # Missing author in TODO
+  'TD003',  # Missing issue link for this TODO
   'PGH004', # blanket `noqa` annotation which suppresses all diagnostics
+]
+extend-ignore = [
+  'FIX002', # Line contains TODO, consider resolving the issue
 ]
 flake8-quotes.inline-quotes = 'single'
 
