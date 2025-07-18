@@ -1,6 +1,10 @@
 bundle  = "latex-zutil"
 module  = ""
 
+-- optional, otherwise the auto-detection will take over, see
+-- the `listmodules()` in `l3build-stdmain.lua`.
+modules = { "zutil", "tabularray" }
+
 --[[
 Unfortunately, "diffext" and "diffexe" MUST be set as envvars, not "l3build"
 variables. See feature request https://github.com/latex3/l3build/issues/400.
@@ -12,6 +16,3 @@ calling "l3build" via "just".
 diffext = ".diff"
 diffexe = "git diff --no-index --text --"
 ]]
-
-checkbundles    = { "tabularray", "zutil" }
-ctanbundles     = { "tabularray", "zutil" }
