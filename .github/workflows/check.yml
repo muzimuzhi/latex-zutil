@@ -30,6 +30,11 @@ on:
         required: false
         type: boolean
         default: true
+      test-tblr-old:
+        description: "Run tests with the old tabularray configuration?"
+        required: false
+        type: boolean
+        default: false
   workflow_dispatch:
     inputs:
       images:
@@ -47,13 +52,17 @@ on:
         required: false
         type: boolean
         default: true
+      test-tblr-old:
+        description: "Run tests with the old tabularray configuration?"
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   check:
     strategy:
       fail-fast: false
       matrix:
-        tblr-config: ["build", "config-old"]
         # TODO: find a way to handle different testfiles when checking
         #       with latex and latex-dev
         # options: ["", "--dev"]
@@ -62,13 +71,10 @@ jobs:
         # context
         runs-on: ${{ fromJSON(inputs.images || '["ubuntu-latest"]') }}
     # example `name`s:
-    #     - Check (build)
-    #     - Check (config-old)
-    #     - Check (build, ubuntu-latest)
-    #     - Check (config-old, ubuntu-latest)
-    #     - Check (build, ubuntu-latest, --dev)
-    name: "Check (${{ matrix.tblr-config }}\
-      ${{ inputs.images && format(', {0}', matrix.runs-on) || '' }}\
+    #     - Check (ubuntu-latest)
+    #     - Check (ubuntu-latest, --dev)
+    name: "Check (\
+      ${{ inputs && format('{0}', matrix.runs-on) || '' }}\
       ${{ matrix.options && format(', {0}', matrix.options) || '' }})"
     runs-on: ${{ matrix.runs-on }}
     timeout-minutes: 30
@@ -137,24 +143,22 @@ jobs:
         enable-cache: false
 
     - name: Install ppmcheckpdf dependencies
-      if: matrix.tblr-config == 'config-old'
+      if: inputs.test-tblr-old
       uses: muzimuzhi/actions/ppmcheckpdf-deps@main
 
     # uses "L3BUILD_CHECK_OPTIONS" job env
     - name: Run zutil tests
-      if: matrix.tblr-config == 'build'
       run: |
         just zutil
 
     # uses "L3BUILD_CHECK_OPTIONS" job env
     - name: Run tabularray tests, config "build"
-      if: matrix.tblr-config == 'build'
       run: |
         just tblr
 
     # uses "L3BUILD_CHECK_OPTIONS" job env
     - name: Run tabularray tests, config "config-old"
-      if: matrix.tblr-config == 'config-old'
+      if: inputs.test-tblr-old
       run: |
         just tblr-old
         just tblr-ppm
@@ -168,11 +172,9 @@ jobs:
         # example names:
         #   - zutil-diffs
         #   - zutil-diffs-dev
-        #   - zutil-diffs-config-old
-        #   - zutil-diffs-config-old-dev
-        name: "zutil-diffs-${{ matrix.tblr-config }}\
+        name: "zutil-diffs-\
           ${{ matrix.options != '' && '-dev' || '' }}"
-        # l3build is configured to use OS-independent diff file extension
+        # configured in .justfile, l3build uses OS-independent diff file extension
         path: |
           build/**/*.diff
           build/**/*.diff.png
