@@ -35,7 +35,7 @@ all: lint-all test-all
 lint-all: pre-commit typos explcheck
 
 [group('*meta')]
-test-all: (check "zutil") (check "tblr") (check "tblr-old") tblr-ppm
+test-all: zutil tblr tblr-old tblr-ppm
 
 ## linting recipes
 
@@ -64,23 +64,37 @@ pre-commit *options="":
 
 ## testing recipes
 
-# Check l3build test(s)
+# Run zutil l3build tests
 [group('test')]
-check *options="": (_l3build_py "check" L3BUILD_CHECK_OPTIONS options)
+zutil: (check "zutil")
 
-# Save l3build test(s)
+# Run tblr l3build tests
 [group('test')]
-save *options="": (_l3build_py "save" L3BUILD_SAVE_OPTIONS options)
+tblr: (check "tblr")
 
-_l3build_py command *options="":
-    @echo '{{ info }}Running l3build {{ command }}...{{ end_info }}'
-    @./scripts/l3build.py {{ command }} {{ options }}
+# Run tblr old l3build tests
+[group('test')]
+tblr-old: (check "tblr-old")
 
 # Run tabularray PPM tests
 [group('test')]
 tblr-ppm:
     @echo '{{ info }}Running tabularray PPM tests, "config-old" config...{{ end_info }}'
     cd tabularray && texlua buildend.lua
+
+## development recipes
+
+# Check l3build test(s)
+[group('dev')]
+check *options="": (_l3build_py "check" L3BUILD_CHECK_OPTIONS options)
+
+# Save l3build test(s)
+[group('dev')]
+save *options="": (_l3build_py "save" L3BUILD_SAVE_OPTIONS options)
+
+_l3build_py command *options="":
+    @echo '{{ info }}Running l3build {{ command }}...{{ end_info }}'
+    @./scripts/l3build.py {{ command }} {{ options }}
 
 # Create a new l3build test from template
 [group('dev')]
