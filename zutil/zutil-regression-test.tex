@@ -254,8 +254,8 @@
 
 \int_new:N \l__test_group_level_int
 % count number of errors
-\int_new:N \g__test_error_cnt_int
-\int_new:N \g__test_error_tmp_int
+\int_new:N \g__test_errors_cnt_int
+\int_new:N \g__test_errors_tmp_int
 \flag_new:N \l__test_exp_errors_cnt_flag
 % count number of checks (\PASSED)
 \int_new:N \g__test_check_cnt_int
@@ -310,7 +310,7 @@
 
 \socket_new_plug:nnn { test/count-errors } { normal }
   {
-    \int_gincr:N \g__test_error_cnt_int
+    \int_gincr:N \g__test_errors_cnt_int
   }
 \socket_assign_plug:nn { test/count-errors } { normal }
 % No group level checking is performed on expandable errors, as errors are
@@ -340,7 +340,7 @@
     \iow_term:n { *************** }
     % log error counts, always
     \test_add_expandable_errors_cnt:
-    \test_log_error_counts:n { \g__test_error_cnt_int }
+    \test_log_error_counts:n { \g__test_errors_cnt_int }
     % log check counts, always
     \test_log_check_counts:n { \g__test_check_cnt_int }
   }
@@ -350,7 +350,7 @@
   {
     % reset error counts
     \test_add_expandable_errors_cnt:
-    \int_gset_eq:NN \g__test_error_tmp_int \g__test_error_cnt_int
+    \int_gset_eq:NN \g__test_errors_tmp_int \g__test_errors_cnt_int
     \flag_if_raised:NT \l__test_exp_errors_cnt_flag
       {
         \__test_type:e
@@ -388,10 +388,10 @@
   {
     % log error counts
     \test_add_expandable_errors_cnt:
-    \int_compare:nNnF \g__test_error_cnt_int = \g__test_error_tmp_int
+    \int_compare:nNnF \g__test_errors_cnt_int = \g__test_errors_tmp_int
       {
         \test_log_error_counts:n
-          { \g__test_error_cnt_int - \g__test_error_tmp_int }
+          { \g__test_errors_cnt_int - \g__test_errors_tmp_int }
       }
     % log check counts
     \flag_if_raised:NT \l__test_checks_cnt_flag
@@ -405,7 +405,7 @@
 
 \cs_new_protected:Npn \test_add_expandable_errors_cnt:
   {
-    \int_gadd:Nn \g__test_error_cnt_int
+    \int_gadd:Nn \g__test_errors_cnt_int
       { \flag_height:N \l__test_exp_errors_cnt_flag }
   }
 
