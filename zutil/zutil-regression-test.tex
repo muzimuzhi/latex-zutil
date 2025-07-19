@@ -104,6 +104,7 @@
     \SEPARATOR
     \TYPE { TEST:~ \tl_to_str:n {#1} }
     \SEPARATOR
+    \hook_use:n { test/TEST/before }
     \group_begin:
       \hook_use:n { test/TEST/begin }
       \cs_set_eq:NN \TYPE \LONGTYPEOUT
@@ -251,26 +252,28 @@
 %% zutil-regression-test.tex add-ons
 %%
 
+\int_new:N \l__test_group_level_int
 % count number of errors
-\int_new:N \g__test_error_cnt_int
-\int_new:N \g__test_error_tmp_int
-\flag_new:N \l__test_expandable_errors_flag
+\int_new:N \g__test_errors_cnt_int
+\int_new:N \g__test_errors_tmp_int
+\flag_new:N \l__test_exp_errors_cnt_flag
 % count number of checks (\PASSED)
 \int_new:N \g__test_check_cnt_int
 \flag_new:N \l__test_checks_cnt_flag
 
 % end-of-file logging
 \hook_new:n { test/END }
+% before-test logging
+\hook_new:n { test/TEST/before }
 % end-of-test logging
 \hook_new_pair:nn { test/TEST/begin } { test/TEST/end }
 
 \socket_new:nn { test/count-errors } { 0 }
 \socket_new:nn { test/count-exp-errors } { 0 }
 
-\msg_new:nnn { test } { group-too-deep }
+\msg_new:nnn { test } { PASSED }
   {
-    \exp_not:N \PASSED should~be~used~in~group~level~<=~1.~
-    Current~level:~\int_use:N \currentgrouplevel.
+    PASSED
   }
 
 %%
@@ -307,13 +310,15 @@
 
 \socket_new_plug:nnn { test/count-errors } { normal }
   {
-    \int_gincr:N \g__test_error_cnt_int
+    \int_gincr:N \g__test_errors_cnt_int
   }
 \socket_assign_plug:nn { test/count-errors } { normal }
-
+% No group level checking is performed on expandable errors, as errors are
+% always logged and it's not controlled by tests in which group does an
+% expandable error occur.
 \socket_new_plug:nnn { test/count-exp-errors } { normal }
   {
-    \flag_raise:N \l__test_expandable_errors_flag
+    \flag_raise:N \l__test_exp_errors_cnt_flag
   }
 \socket_assign_plug:nn { test/count-exp-errors } { normal }
 
@@ -335,23 +340,47 @@
     \iow_term:n { *************** }
     % log error counts, always
     \test_add_expandable_errors_cnt:
-    \test_log_error_counts:n { \g__test_error_cnt_int }
+    \test_log_error_counts:n { \g__test_errors_cnt_int }
     % log check counts, always
     \test_log_check_counts:n { \g__test_check_cnt_int }
   }
 
-% start-of-test setting
-\hook_gput_code:nnn { test/TEST/begin } { . }
+% before-test logging
+\hook_gput_code:nnn { test/TEST/before } { . }
   {
-    % set error counts
-    \test_clear_expandable_errors_cnt:
-    \int_gset_eq:NN \g__test_error_tmp_int \g__test_error_cnt_int
-    % set check counts
+    % reset error counts
+    \test_add_expandable_errors_cnt:
+    \int_gset_eq:NN \g__test_errors_tmp_int \g__test_errors_cnt_int
+    \flag_if_raised:NT \l__test_exp_errors_cnt_flag
+      {
+        \__test_type:e
+          {
+            \flag_height:N \l__test_exp_errors_cnt_flag \c_space_tl
+            expandable~errors~raised~between~tests.
+          }
+        \flag_clear:N \l__test_exp_errors_cnt_flag
+      }
+    % reset check counts
     \flag_if_raised:NT \l__test_checks_cnt_flag
       {
-        \msg_expandable_error:nn { test } { group-too-deep }
+        \__test_type:e
+          {
+            \flag_height:N \l__test_checks_cnt_flag \c_space_tl
+            checks~used~between~tests.
+          }
         \flag_clear:N \l__test_checks_cnt_flag
       }
+  }
+
+\hook_gput_code:nnn { test/TEST/begin } { . }
+  {
+    % enable checking commands
+    \int_set_eq:NN \l__test_group_level_int \currentgrouplevel
+    \cs_set_eq:NN \PASSED \__test_PASSED:
+  }
+\cs_new:Npn \__test_type:e #1
+  {
+    \iow_term:e { [test]~ #1 }
   }
 
 % end-of-test logging
@@ -359,10 +388,10 @@
   {
     % log error counts
     \test_add_expandable_errors_cnt:
-    \int_compare:nNnF \g__test_error_cnt_int = \g__test_error_tmp_int
+    \int_compare:nNnF \g__test_errors_cnt_int = \g__test_errors_tmp_int
       {
         \test_log_error_counts:n
-          { \g__test_error_cnt_int - \g__test_error_tmp_int }
+          { \g__test_errors_cnt_int - \g__test_errors_tmp_int }
       }
     % log check counts
     \flag_if_raised:NT \l__test_checks_cnt_flag
@@ -374,23 +403,19 @@
       }
   }
 
-\cs_new:Npn \test_clear_expandable_errors_cnt:
-  {
-    \flag_clear:N \l__test_expandable_errors_flag
-  }
 \cs_new_protected:Npn \test_add_expandable_errors_cnt:
   {
-    \int_gadd:Nn \g__test_error_cnt_int
-      { \flag_height:N \l__test_expandable_errors_flag }
+    \int_gadd:Nn \g__test_errors_cnt_int
+      { \flag_height:N \l__test_exp_errors_cnt_flag }
   }
 
 \cs_new_protected:Npn \test_log_error_counts:n #1
   {
-    \iow_term:e { [test]~ \int_eval:n {#1} ~error(s) }
+    \__test_type:e { \int_eval:n {#1} ~error(s) }
   }
 \cs_new_protected:Npn \test_log_check_counts:n #1
   {
-    \iow_term:e { [test]~ \int_eval:n {#1} ~check(s) }
+    \__test_type:e { \int_eval:n {#1} ~check(s) }
   }
 
 % suspend and resume error counting
@@ -406,13 +431,12 @@
     \socket_assign_plug:nn { test/count-exp-errors } { normal }
   }
 
-\cs_new:Npn \PASSED
+% will be let to \PASSED at the beginning of each test
+\cs_new:Npn \__test_PASSED:
   {
-    \if_int_compare:w \currentgrouplevel > 2 \exp_stop_f:
-      \msg_expandable_error:nn { test } { group-too-deep }
-    \else:
-      \flag_raise:N \l__test_checks_cnt_flag
-    \fi:
+    \int_compare:nNnTF { \currentgrouplevel } > { \l__test_group_level_int }
+      { \msg_expandable_error:nn { test } { PASSED } }
+      { \flag_raise:N \l__test_checks_cnt_flag }
   }
 \cs_undefine:N \FAILED
 

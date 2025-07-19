@@ -1,0 +1,48 @@
+\input{zutil-regression-test}
+\documentclass{minimal}
+
+% \usepackage{zutil}
+
+\ExplSyntaxOn
+
+\debug_on:n { check-declarations , deprecation }
+
+\msg_redirect_module:nnn { test } { error } { softerror }
+\msg_new:nnn { test } { msg1 } { This~is~a~test~message. }
+
+\START
+
+\TEST{No~errors~nor~checks}{
+}
+
+\TEST{Count~expl3~errors}{
+  \msg_error:nn { test } { msg1 }
+}
+
+\TEST{Count~expl3~expandable~errors}{
+  \msg_expandable_error:nn { test } { msg1 }
+}
+
+\TEST{Count~latex2e~errors}{
+  \PackageError{test}{error~text}{}
+}
+
+\msg_expandable_error:nn { test } { msg1 }
+\TEST{Count~expandable~errors~between~tests}{
+  \TYPE { BODY }
+}
+
+\TEST{Count~checks}{
+  \PASSED
+}
+
+% \PASSED is only defined in tests
+\cs_if_exist:NF \PASSED { \FAILED }
+
+\TEST{Checks~used~in~deeper~groups}{
+  {
+    \PASSED
+  }
+}
+
+\END
