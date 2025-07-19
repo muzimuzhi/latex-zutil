@@ -81,3 +81,21 @@ _l3build_py command *options="":
 tblr-ppm:
     @echo '{{ info }}Running tabularray PPM tests, "config-old" config...{{ end_info }}'
     cd tabularray && texlua buildend.lua
+
+# Create a new l3build test from template
+[group('dev')]
+new-test module name:
+    #!/usr/bin/env sh
+    echo '{{ info }}Creating new l3build test "{{ module }}-{{ name }}" for module "{{ module }}"...{{ end_info }}'
+    template="support/TEMPLATE-{{ module }}-test.lvt"
+    new_test="{{ module }}/testfiles/{{ module }}-{{ name }}.lvt"
+    if [ ! -f "$template" ]; then
+        echo "Template file \"$template\" does not exist."
+        exit 1
+    fi
+    if [ -f "$new_test" ]; then
+        echo "Test file \"$new_test\" already exists. Please choose a different name."
+        exit 1
+    fi
+    cp "$template" "$new_test"
+    code "$new_test"
