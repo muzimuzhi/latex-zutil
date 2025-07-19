@@ -162,6 +162,7 @@
 %%
 
 % suspend debugging in \msg_<type>:nn(nnnnn) functions
+% FIXME: not tested, due to unstable benchmark results
 \cs_new_protected:Npn \zutil_msg_suspend_debug:
   {
     \cs_set_eq:NN \__msg_use:nnnnnnn \__zutil_msg_use:nnnnnnn

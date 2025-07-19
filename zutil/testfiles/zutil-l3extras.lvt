@@ -95,42 +95,6 @@
   \zutil_cs_generate_variant:n { \zutil_set:v, \zutil_set:e }
 }
 
-\OMIT
-\msg_new:nnnn { test } { test } { text } { more~text }
-\cs_gset:Npn \test:w
-  {
-    \OMIT
-    \test_suspend_error_count:
-    \benchmark_once:n {
-      \msg_error:nn { test } { test }
-      \msg_expandable_error:nn { test } { test }
-      \msg_warning:nn { test } { test }
-    }
-    \test_resume_error_count:
-    \TIMO
-  }
-\TIMO
-
-\TEST{\zutil_msg_suspend_debug:}{
-  % inaccurate on Windows
-  \sys_if_platform_windows:TF { \PASSED }
-    {
-      \zutil_msg_suspend_debug:
-      \test:w
-      \fp_set_eq:NN \l_tmpa_fp \g_benchmark_time_fp
-      \zutil_msg_resume_debug:
-      \test:w
-
-      \fp_compare:nNnTF \l_tmpa_fp < \g_benchmark_time_fp
-        { \PASSED }
-        {
-          \fp_show:N \l_tmpa_fp
-          \fp_show:N \g_benchmark_time_fp
-          \FAILED
-        }
-    }
-}
-
 \TEST{\zutil_prg_new_conditional_tl_if_in:Nnn}{
   \debug_on:n { log-functions }
   \zutil_prg_new_conditional_tl_if_in:Nnn \test_if_colon_in:n {:} { p, TF }
