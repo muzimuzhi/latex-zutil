@@ -8,8 +8,8 @@ local gsub             = string.gsub
 local gmatch           = string.gmatch
 local match            = string.match
 
-local function rewrite(source,result,processor,...)
-  -- overwrite result file
+local function rewrite_extra(source,result,processor,...)
+  -- load the result file created by the original rewrite_log_old()
   local file = assert(open(result,"rb"))
   local content = gsub(file:read("a") .. "\n","\r\n","\n")
   close(file)
@@ -46,7 +46,7 @@ local function normalize_log_extra(content, engine, errlevels)
       skipping_lines = 3
       goto continue
     end
-    -- skip \c__msg_no_info_text_tl
+    -- skip non-empty lines produced by \c__msg_no_info_text_tl
     if match(line, "^LaTeX does not know anything more about this error, sorry%.$") then
       skipping_lines = 2
       goto continue
@@ -63,5 +63,5 @@ end
 local rewrite_log_old = rewrite_log
 function rewrite_log(source, result, engine, errlevels)
   rewrite_log_old(source, result, engine, errlevels)
-  rewrite(source, result, normalize_log_extra, engine, errlevels)
+  rewrite_extra(source, result, normalize_log_extra, engine, errlevels)
 end
