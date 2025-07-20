@@ -48,15 +48,32 @@
     % real patchings happen in \@kernel@after@begindocument, used right
     % after the begindocument hook).
     \hook_use:n { test/END }
-    \ifnum\currentgrouplevel>0
-      \TYPE
-        { Bad~grouping:~\the\currentgrouplevel! }
-    \fi
-    \ifnum\currentiflevel>1
-      \TYPE { Bad~conditionals:~\the\numexpr\currentiflevel-1! }
-    \fi
+    \test_check_group_level:n { \c_zero_int }
+    \test_check_if_level:n { \c_one_int }
     \TYPE { ^^JEND-TEST-LOG^^J }
     \test_end:
+  }
+\cs_new_protected:Npn \test_check_group_level:n #1
+  {
+    \int_compare:nNnF { \currentgrouplevel } = { #1 }
+      {
+        \test_type:e
+          {
+            Bad~group~level:~\the\currentgrouplevel!~
+            Expected~ \int_eval:n {#1} .
+          }
+      }
+  }
+\cs_new_protected:Npn \test_check_if_level:n #1
+  {
+    \int_compare:nNnF { \currentiflevel } = { #1 }
+      {
+        \test_type:e
+          {
+            Bad~if~level:~\the\currentiflevel!~
+            Expected~ \int_eval:n {#1} .
+          }
+      }
   }
 \cs_set_eq:Nc \test_end: { @@end }
 \cs_set_eq:cN { @@end } \END
@@ -252,7 +269,7 @@
 %% zutil-regression-test.tex add-ons
 %%
 
-\int_new:N \l__test_group_level_int
+\int_new:N \g__test_group_level_int
 % count number of errors
 \int_new:N \g__test_errors_cnt_int
 \int_new:N \g__test_errors_tmp_int
@@ -353,7 +370,7 @@
     \int_gset_eq:NN \g__test_errors_tmp_int \g__test_errors_cnt_int
     \flag_if_raised:NT \l__test_exp_errors_cnt_flag
       {
-        \__test_type:e
+        \test_type:e
           {
             \flag_height:N \l__test_exp_errors_cnt_flag \c_space_tl
             expandable~errors~raised~between~tests.
@@ -363,7 +380,7 @@
     % reset check counts
     \flag_if_raised:NT \l__test_checks_cnt_flag
       {
-        \__test_type:e
+        \test_type:e
           {
             \flag_height:N \l__test_checks_cnt_flag \c_space_tl
             checks~used~between~tests.
@@ -374,11 +391,11 @@
 
 \hook_gput_code:nnn { test/TEST/begin } { . }
   {
+    \int_gset_eq:NN \g__test_group_level_int \currentgrouplevel
     % enable checking commands
-    \int_set_eq:NN \l__test_group_level_int \currentgrouplevel
     \cs_set_eq:NN \PASSED \__test_PASSED:
   }
-\cs_new:Npn \__test_type:e #1
+\cs_new:Npn \test_type:e #1
   {
     \iow_term:e { [test]~ #1 }
   }
@@ -386,6 +403,8 @@
 % end-of-test logging
 \hook_gput_code:nnn { test/TEST/end } { . }
   {
+    % check group and if levels
+    \test_check_group_level:n { \g__test_group_level_int }
     % log error counts
     \test_add_expandable_errors_cnt:
     \int_compare:nNnF \g__test_errors_cnt_int = \g__test_errors_tmp_int
@@ -411,11 +430,11 @@
 
 \cs_new_protected:Npn \test_log_error_counts:n #1
   {
-    \__test_type:e { \int_eval:n {#1} ~error(s) }
+    \test_type:e { \int_eval:n {#1} ~error(s) }
   }
 \cs_new_protected:Npn \test_log_check_counts:n #1
   {
-    \__test_type:e { \int_eval:n {#1} ~check(s) }
+    \test_type:e { \int_eval:n {#1} ~check(s) }
   }
 
 % suspend and resume error counting
@@ -434,7 +453,7 @@
 % will be let to \PASSED at the beginning of each test
 \cs_new:Npn \__test_PASSED:
   {
-    \int_compare:nNnTF { \currentgrouplevel } > { \l__test_group_level_int }
+    \int_compare:nNnTF { \currentgrouplevel } > { \g__test_group_level_int }
       { \msg_expandable_error:nn { test } { PASSED } }
       { \flag_raise:N \l__test_checks_cnt_flag }
   }
