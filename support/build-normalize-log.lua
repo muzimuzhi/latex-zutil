@@ -46,6 +46,11 @@ local function normalize_log_extra(content, engine, errlevels)
       skipping_lines = 3
       goto continue
     end
+    -- skip \c__msg_no_info_text_tl
+    if match(line, "^LaTeX does not know anything more about this error, sorry%.$") then
+      skipping_lines = 2
+      goto continue
+    end
     line = normalize(line)
     if line ~= "" then
       new_content = new_content .. line .. "\n"
