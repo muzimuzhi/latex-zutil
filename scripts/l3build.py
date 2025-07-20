@@ -9,17 +9,19 @@ import os
 import sys
 
 
+type Test = str
+
 class TestSuite:
-    def __init__(self, name: str, path: str, config: str, tests: list[str], alias: str | None = None) -> None:
+    def __init__(self, name: str, path: str, config: str, tests: list[Test], alias: str | None = None) -> None:
         self.name = name
         self.alias = alias
         self.path = path
         self.config = config
         self.tests = tests
-        self.test_names: tuple[str] | None = None
+        self.test_names: tuple[Test, ...] | None = None
 
-    def resolve_tests(self) -> tuple[str, ...]:
-        """Resolve the test patterns to actual test names."""
+    def get_names(self) -> tuple[Test, ...]:
+        """Generate test names from the test patterns."""
         if self.test_names is not None:
             return self.test_names
 
@@ -28,6 +30,44 @@ class TestSuite:
             test_names.extend([p.stem for p in Path(self.path).glob(test)])
         self.test_names = tuple(test_names)
         return self.test_names
+
+
+class RunNames:
+    def __init__(self, ts: TestSuite) -> None:
+        self.name = ts.name
+        self.ts = ts
+        self.options: list[str] = []
+        self.names: list[Test] = []
+        self.enabled: bool = False
+
+    def add_name(self, name: Test) -> None:
+        """Add a test name to the test suite run."""
+        if name not in self.names:
+            self.names.append(name)
+
+    def add_option(self, option: str) -> None:
+        """Set the options for the test suite run."""
+        self.options.append(option)
+
+    def set_options(self, args: argparse.Namespace) -> None:
+        if self.ts.config:
+            self.add_option(f'-c{self.ts.config}')
+        if args.engine:
+            self.add_option(f'-e{args.engine}')
+        if args.stdengine:
+            self.add_option('-s')
+        if args.quiet:
+            self.add_option('-q')
+        if args.verbose and not on_ci():
+            self.add_option('-v')
+        if args.halt_on_error:
+            self.add_option('-H')
+        if args.dev:
+            self.add_option('--dev')
+        if args.dirty:
+            self.add_option('--dirty')
+        if args.show_log_on_error:
+            self.add_option('--show-log-on-error')
 
 
 zutil = TestSuite(
@@ -55,8 +95,9 @@ tblr_old = TestSuite(
 
 L3BUILD_TESTSUITES: Final[tuple[TestSuite, ...]] = \
     (zutil, tblr, tblr_old)
-L3BUILD_TESTSUITE_ALIASES: Final[dict[str, str]] = \
-    { ts.alias: ts.name for ts in L3BUILD_TESTSUITES if ts.alias}
+L3BUILD_TESTSUITES_MAP: Final[dict[str, TestSuite]] = \
+    { ts.alias: ts for ts in L3BUILD_TESTSUITES if ts.alias } | \
+    { ts.name: ts for ts in L3BUILD_TESTSUITES }
 
 L3BUILD_COMMANDS: Final[tuple[str, ...]] = \
     ('check', 'save')
@@ -80,81 +121,65 @@ def debug_logging_enabled() -> bool:
 
 def parse_args(args: argparse.Namespace) -> None:
     """Parse command line arguments."""
-    target = args.target
-    testsuite = None
-    options = []
-    names = []
+    target: str = args.target
+    testsuites_run: dict[str, RunNames] = \
+        { ts.name: RunNames(ts) for ts in L3BUILD_TESTSUITES }
 
-    # compose testsuite and l3build names
+    # process names
+    known_names: list[str] = []
     for name in args.names:
         if name.startswith('-'):
-            raise ValueError(f"Unknown argument: {name}")
-        name_raw = name
-        name : str = L3BUILD_TESTSUITE_ALIASES.get(name, name)
+            raise ValueError(f"Unknown option: \"{name}\".")
+
         for ts in L3BUILD_TESTSUITES:
-            if name == ts.name:
-                if testsuite is None:
-                    testsuite = ts
-                elif testsuite != ts:
-                    raise ValueError(
-                        f"Multiple testsuites: testsuite {name_raw} "
-                        f"doesn't contain tests {names}"
-                    )
-                else:
-                    names = []
-                break
-            if name in ts.resolve_tests():
-                if testsuite is None:
-                    testsuite = ts
-                elif testsuite != ts:
-                    raise ValueError(
-                        f"Multiple testsuites: test {name} "
-                        f"is not in testsuite {testsuite.name}"
-                    )
-                if name not in names:
-                    names.append(name)
-                break
-        else:
-            raise ValueError(f"Unknown test name: {name}")
+            ts_run = testsuites_run[ts.name]
+            if name == ts.name or name == ts.alias:
+                # it's a testsuite
+                known_names.append(name)
+                ts_run.enabled = True
+                ts_run.names = []
+            elif name in ts.get_names():
+                # it's a test
+                known_names.append(name)
+                ts_run.enabled = True
+                ts_run.add_name(name)
 
-    if testsuite is None:
+    if set(args.names) != set(known_names):
+        raise ValueError(f"Unknown name(s): {set(args.names) - set(known_names)}.")
+
+    # compose and run l3build commands
+    l3build_called: bool = False
+    for ts_run in testsuites_run.values():
+        # special treatment for the `save` target
+        if target == 'save':
+            if ts_run.names:
+                # `save` names
+                ts_run.enabled = True
+            else:
+                # `save` a testsuite means saving all names in it
+                ts_run.names = list(ts_run.ts.get_names())
+
+        if not ts_run.enabled:
+            continue
+        l3build_called = True
+
+        # compose l3build options
+        ts_run.set_options(args)
+
+        if target == 'check' and args.show_saves:
+            ts_run.add_option('-S')
+
+        commands = ['l3build', target, *ts_run.options, *ts_run.names]
+        if args.dry_run or args.verbose:
+            print(f"[l3build.py] Running '{' '.join(commands)}' in directory '{ts_run.ts.path}'")
+        if not args.dry_run:
+            try:
+                run(commands, cwd=ts_run.ts.path, check=True)
+            except CalledProcessError:
+                sys.exit(1)
+
+    if not l3build_called:
         raise ValueError("No testsuites nor names passed.")
-
-    # compose l3build options
-    if testsuite.config:
-        options.append(f'-c{testsuite.config}')
-    if args.engine:
-        options.append(f'-e{args.engine}')
-    if args.stdengine:
-        options.append('-s')
-    if args.quiet:
-        options.append('-q')
-    if args.verbose and not on_ci():
-        options.append('-v')
-    if args.halt_on_error:
-        options.append('-H')
-    if args.dev:
-        options.append('--dev')
-    if args.dirty:
-        options.append('--dirty')
-    if args.show_log_on_error:
-        options.append('--show-log-on-error')
-
-    # 'save' target without names means saving all
-    if target == 'save' and not names:
-        names = testsuite.resolve_tests()
-
-    if target == 'check' and args.show_saves:
-        options.append('-S')
-
-    commands = ['l3build', target, *options, *names]
-    if args.dry_run or args.verbose:
-        print(f"[l3build.py] Running '{' '.join(commands)}' in directory '{testsuite.path}'")
-    if not args.dry_run:
-        try:
-            run(commands, cwd=testsuite.path, check=True)
-        except CalledProcessError:
-            sys.exit(1)
 
 
 parser = argparse.ArgumentParser(
