@@ -138,6 +138,8 @@ def parse_args(args: Namespace) -> None:
         options.append('-H')
     if args.dev:
         options.append('--dev')
+    if args.dirty:
+        options.append('--dirty')
     if args.show_log_on_error:
         options.append('--show-log-on-error')
 
@@ -178,8 +180,9 @@ parser.add_argument('-s', '--stdengine', action='store_true', default=False)
 parser.add_argument('-S', '--show-saves', action='store_true', default=False)
 parser.add_argument('-q', '--quiet', action=BooleanOptionalAction,
                     default=True)
-# more l3build options, mostly used on CI
+# more l3build options
 parser.add_argument('--dev', action='store_true', default=False)
+parser.add_argument('--dirty', action='store_true', default=False)
 parser.add_argument('-H', '--halt-on-error', action='store_true',
                     default=False)
 parser.add_argument('--show-log-on-error', action='store_true',
