@@ -64,14 +64,18 @@ L3BUILD_COMMANDS: Final[tuple[str, ...]] = \
     ('check', 'save')
 
 
+def on_ci() -> bool:
+    """Check if the script is running on a CI environment."""
+    # GitHub Actions sets 'CI'
+    # https://docs.github.com/en/actions/reference/variables-reference#default-environment-variables
+    return os.getenv('CI') == 'true'
+
 def debug_logging_enabled() -> bool:
     """Check if debug logging is enabled."""
-    # 'CI' is set by GitHub Actions
-    # https://docs.github.com/en/actions/reference/variables-reference#default-environment-variables
     # debug logging envvars
     # https://docs.github.com/en/actions/how-tos/monitoring-and-troubleshooting-workflows/troubleshooting-workflows/enabling-debug-logging
     return 'DEBUG' in os.environ or \
-        (os.getenv('CI') == 'true' and\
+        (on_ci() and\
             (os.getenv('ACTIONS_RUNNER_DEBUG') == 'true' or\
             os.getenv('ACTIONS_STEP_DEBUG') == 'true'))
 
@@ -128,7 +132,7 @@ def parse_args(args: Namespace) -> None:
         options.append('-s')
     if args.quiet:
         options.append('-q')
-    if args.verbose and os.getenv('CI') != 'true':
+    if args.verbose and not on_ci():
         options.append('-V')
     if args.halt_on_error:
         options.append('-H')
