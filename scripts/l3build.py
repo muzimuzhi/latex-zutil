@@ -106,20 +106,22 @@ def parse_args(args: Namespace) -> None:
         raise ValueError("No testsuite nor names passed.")
 
     # compose l3build options
+    if testsuite.config:
+        options.append(f'-c{testsuite.config}')
     if args.engine:
         options.append(f'-e{args.engine}')
     if args.stdengine:
         options.append('-s')
     if args.quiet:
         options.append('-q')
-    if args.dev:
-        options.append('--dev')
+    if args.verbose and os.getenv('CI') != 'true':
+        options.append('-V')
     if args.halt_on_error:
         options.append('-H')
+    if args.dev:
+        options.append('--dev')
     if args.show_log_on_error:
         options.append('--show-log-on-error')
-    if testsuite.config:
-        options.append(f'-c{testsuite.config}')
 
     # 'save' target without names means saving all
     if target == 'save' and not names:
@@ -129,9 +131,9 @@ def parse_args(args: Namespace) -> None:
         options.append('-S')
 
     commands = ['l3build', target, *options, *names]
-    if args.dry_run:
+    if args.dry_run or args.verbose:
         print(f"[l3build.py] Running '{' '.join(commands)}' in directory '{testsuite.directory}'")
-    else:
+    if not args.dry_run:
         try:
             run(commands, cwd=testsuite.directory, check=True)
         except CalledProcessError:
@@ -166,13 +168,17 @@ parser.add_argument('--show-log-on-error', action='store_true',
                     default=False)
 # new options
 parser.add_argument('-n', '--dry-run', action='store_true', default=False)
-
+parser.add_argument('-V', '--verbose', action='store_true', default=False,
+                    help='print debug information (local patch needed)')
 
 if __name__ == "__main__":
     args = parser.parse_intermixed_args()
 
     import os
     if 'DEBUG' in os.environ:
+        args.verbose = True
+
+    if args.verbose:
         print(f"[l3build.py] Parsed args: {args}")
 
     parse_args(args)
