@@ -130,7 +130,7 @@ def debug_logging_enabled() -> bool:
             os.getenv('ACTIONS_STEP_DEBUG') == 'true'))
 
 
-def parse_args(args: argparse.Namespace) -> None:
+def wrap_l3build(args: argparse.Namespace) -> None:
     """Parse command line arguments."""
     target: str = args.target
     testsuites_run: dict[str, RunNames] = \
@@ -156,11 +156,6 @@ def parse_args(args: argparse.Namespace) -> None:
 
     if set(known_names) != names:
         raise ValueError(f"Unknown name(s): {names - set(known_names)}.")
-
-    # import pprint
-    # for ts_run in testsuites_run.values():
-    #     pprint.pprint(ts_run.__dict__)
-    # os._exit(0)  # for debugging
 
     # compose and run l3build commands
     l3build_called: bool = False
@@ -231,4 +226,4 @@ if __name__ == "__main__":
     if args.verbose:
         print(f"[l3build.py] Parsed args: {args}")
 
-    parse_args(args)
+    wrap_l3build(args)
