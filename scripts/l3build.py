@@ -82,7 +82,7 @@ def parse_args(args: Namespace) -> None:
                         testsuite = ts
                     elif testsuite != ts:
                         raise ValueError(
-                            f"Multiple testsuites: testsuite {name_raw}"
+                            f"Multiple testsuites: testsuite {name_raw} "
                             f"doesn't contain tests {names}"
                         )
                     else:
@@ -93,7 +93,7 @@ def parse_args(args: Namespace) -> None:
                         testsuite = ts
                     elif testsuite != ts:
                         raise ValueError(
-                            f"Multiple testsuites: test {name}"
+                            f"Multiple testsuites: test {name} "
                             f"is not in testsuite {testsuite.name}"
                         )
                     if name not in names:
