@@ -269,14 +269,14 @@
 %% zutil-regression-test.tex add-ons
 %%
 
-\int_new:N \g__test_group_level_int
+\int_new:N \g_test_group_level_int
 % count number of errors
-\int_new:N \g__test_errors_cnt_int
-\int_new:N \g__test_errors_tmp_int
-\flag_new:N \l__test_exp_errors_cnt_flag
+\int_new:N \g_test_errors_cnt_int
+\int_new:N \g_test_errors_tmp_int
+\flag_new:N \l_test_exp_errors_cnt_flag
 % count number of checks (\PASSED)
-\int_new:N \g__test_check_cnt_int
-\flag_new:N \l__test_checks_cnt_flag
+\int_new:N \g_test_check_cnt_int
+\flag_new:N \l_test_checks_cnt_flag
 
 % end-of-file logging
 \hook_new:n { test/END }
@@ -327,7 +327,7 @@
 
 \socket_new_plug:nnn { test/count-errors } { normal }
   {
-    \int_gincr:N \g__test_errors_cnt_int
+    \int_gincr:N \g_test_errors_cnt_int
   }
 \socket_assign_plug:nn { test/count-errors } { normal }
 % No group level checking is performed on expandable errors, as errors are
@@ -335,15 +335,15 @@
 % expandable error occur.
 \socket_new_plug:nnn { test/count-exp-errors } { normal }
   {
-    \flag_raise:N \l__test_exp_errors_cnt_flag
+    \flag_raise:N \l_test_exp_errors_cnt_flag
   }
 \socket_assign_plug:nn { test/count-exp-errors } { normal }
 
-\cs_new_protected:Npn \__test_count_errors:
+\cs_new_protected:Npn \test_count_errors:
   {
     \socket_use:n { test/count-errors }
   }
-\cs_new:Npn \__test_count_exp_errors:
+\cs_new:Npn \test_count_exp_errors:
   {
     \socket_use_expandable:n { test/count-exp-errors }
   }
@@ -357,9 +357,9 @@
     \iow_term:n { *************** }
     % log error counts, always
     \test_add_expandable_errors_cnt:
-    \test_log_error_counts:n { \g__test_errors_cnt_int }
+    \test_log_error_counts:n { \g_test_errors_cnt_int }
     % log check counts, always
-    \test_log_check_counts:n { \g__test_check_cnt_int }
+    \test_log_check_counts:n { \g_test_check_cnt_int }
   }
 
 % before-test logging
@@ -367,31 +367,31 @@
   {
     % reset error counts
     \test_add_expandable_errors_cnt:
-    \int_gset_eq:NN \g__test_errors_tmp_int \g__test_errors_cnt_int
-    \flag_if_raised:NT \l__test_exp_errors_cnt_flag
+    \int_gset_eq:NN \g_test_errors_tmp_int \g_test_errors_cnt_int
+    \flag_if_raised:NT \l_test_exp_errors_cnt_flag
       {
         \test_type:e
           {
-            \flag_height:N \l__test_exp_errors_cnt_flag \c_space_tl
+            \flag_height:N \l_test_exp_errors_cnt_flag \c_space_tl
             expandable~errors~raised~between~tests.
           }
-        \flag_clear:N \l__test_exp_errors_cnt_flag
+        \flag_clear:N \l_test_exp_errors_cnt_flag
       }
     % reset check counts
-    \flag_if_raised:NT \l__test_checks_cnt_flag
+    \flag_if_raised:NT \l_test_checks_cnt_flag
       {
         \test_type:e
           {
-            \flag_height:N \l__test_checks_cnt_flag \c_space_tl
+            \flag_height:N \l_test_checks_cnt_flag \c_space_tl
             checks~used~between~tests.
           }
-        \flag_clear:N \l__test_checks_cnt_flag
+        \flag_clear:N \l_test_checks_cnt_flag
       }
   }
 
 \hook_gput_code:nnn { test/TEST/begin } { . }
   {
-    \int_gset_eq:NN \g__test_group_level_int \currentgrouplevel
+    \int_gset_eq:NN \g_test_group_level_int \currentgrouplevel
     % enable checking commands
     \cs_set_eq:NN \PASSED \__test_PASSED:
   }
@@ -404,28 +404,28 @@
 \hook_gput_code:nnn { test/TEST/end } { . }
   {
     % check group and if levels
-    \test_check_group_level:n { \g__test_group_level_int }
+    \test_check_group_level:n { \g_test_group_level_int }
     % log error counts
     \test_add_expandable_errors_cnt:
-    \int_compare:nNnF \g__test_errors_cnt_int = \g__test_errors_tmp_int
+    \int_compare:nNnF \g_test_errors_cnt_int = \g_test_errors_tmp_int
       {
         \test_log_error_counts:n
-          { \g__test_errors_cnt_int - \g__test_errors_tmp_int }
+          { \g_test_errors_cnt_int - \g_test_errors_tmp_int }
       }
     % log check counts
-    \flag_if_raised:NT \l__test_checks_cnt_flag
+    \flag_if_raised:NT \l_test_checks_cnt_flag
       {
-        \int_gadd:Nn \g__test_check_cnt_int
-          { \flag_height:N \l__test_checks_cnt_flag }
-        \test_log_check_counts:n { \flag_height:N \l__test_checks_cnt_flag }
-        \flag_clear:N \l__test_checks_cnt_flag
+        \int_gadd:Nn \g_test_check_cnt_int
+          { \flag_height:N \l_test_checks_cnt_flag }
+        \test_log_check_counts:n { \flag_height:N \l_test_checks_cnt_flag }
+        \flag_clear:N \l_test_checks_cnt_flag
       }
   }
 
 \cs_new_protected:Npn \test_add_expandable_errors_cnt:
   {
-    \int_gadd:Nn \g__test_errors_cnt_int
-      { \flag_height:N \l__test_exp_errors_cnt_flag }
+    \int_gadd:Nn \g_test_errors_cnt_int
+      { \flag_height:N \l_test_exp_errors_cnt_flag }
   }
 
 \cs_new_protected:Npn \test_log_error_counts:n #1
@@ -453,9 +453,9 @@
 % will be let to \PASSED at the beginning of each test
 \cs_new:Npn \__test_PASSED:
   {
-    \int_compare:nNnTF { \currentgrouplevel } > { \g__test_group_level_int }
+    \int_compare:nNnTF { \currentgrouplevel } > { \g_test_group_level_int }
       { \msg_expandable_error:nn { test } { PASSED } }
-      { \flag_raise:N \l__test_checks_cnt_flag }
+      { \flag_raise:N \l_test_checks_cnt_flag }
   }
 \cs_undefine:N \FAILED
 
@@ -480,7 +480,7 @@
 % #1 curried
 \cs_new_protected:Npn \__test_errmessage_new:w
   {
-    \__test_count_errors:
+    \test_count_errors:
     \__test_errmessage_orig:w
   }
 \cs_gset_eq:NN \errmessage       \__test_errmessage_new:w
@@ -492,6 +492,6 @@
 % #1 and #2 curried
 \cs_gset:Npn \__msg_expandable_error:nn
   {
-    \__test_count_exp_errors:
+    \test_count_exp_errors:
     \__test_msg_expandable_error_orig:nn
   }
