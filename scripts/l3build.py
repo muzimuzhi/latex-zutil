@@ -133,7 +133,7 @@ def parse_args(args: argparse.Namespace) -> None:
     if args.quiet:
         options.append('-q')
     if args.verbose and not on_ci():
-        options.append('-V')
+        options.append('-v')
     if args.halt_on_error:
         options.append('-H')
     if args.dev:
@@ -194,7 +194,7 @@ parser.add_argument('-q', '--quiet',
 # new options
 parser.add_argument('-n', '--dry-run', action='store_true', default=False,
                     help='print what l3build command(s) would be executed without execution')
-parser.add_argument('-V', '--verbose', action='store_true', default=False,
+parser.add_argument('-v', '--verbose', action='store_true', default=False,
                     help='print debug information (local patch needed)')
 
 if __name__ == "__main__":
