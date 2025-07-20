@@ -118,7 +118,7 @@ def parse_args(args: argparse.Namespace) -> None:
             raise ValueError(f"Unknown test name: {name}")
 
     if testsuite is None:
-        raise ValueError("No testsuite nor names passed.")
+        raise ValueError("No testsuites nor names passed.")
 
     # compose l3build options
     if testsuite.config:
