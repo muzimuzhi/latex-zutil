@@ -2,7 +2,7 @@ module = "tabularray"
 
 
 maindir         = ".."
-checkdeps       = { maindir .. "/zutil"}
+checkdeps       = { maindir .. "/zutil" }
 
 sourcefiles     = { "tabularray.sty" }
 
@@ -14,3 +14,5 @@ checksuppfiles  = { "zutil-regression-test.cfg" }
 
 
 checkconfigs    = { "build", "config-old" }
+
+dofile(maindir .. "/support/build-normalize-log.lua")

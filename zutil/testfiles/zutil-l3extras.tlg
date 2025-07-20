@@ -42,18 +42,10 @@ TEST: \zutil_cs_base_function:N variants
 <argument> \???  
                  ! Package zutil Error: Invalid argument specifier 'w'. Accepted specifiers are 'NcnofexVvpTF'.
 l. ...}
-If you say, e.g., `\def\a1{...}', then you must always
-put `1' after `\a', since control sequence names are
-made up of letters only. The macro here has not been
-followed by the required stuff, so I'm ignoring it.
 ! Use of \??? doesn't match its definition.
 <argument> \???  
                  ! Package zutil Error: Invalid argument specifier 'D'. Accepted specifiers are 'NcnofexVvpTF'.
 l. ...}
-If you say, e.g., `\def\a1{...}', then you must always
-put `1' after `\a', since control sequence names are
-made up of letters only. The macro here has not been
-followed by the required stuff, so I'm ignoring it.
 [\tl_new:N ]
 [\tl_set:Nn ]
 [\zutil_undefined:n ]
@@ -91,20 +83,12 @@ TEST: \zutil_cs_generate_variant:N invalid specifier
 <argument> \???  
                  ! Package zutil Error: Invalid argument specifier 'w'. Accepted specifiers are 'NcnofexVvpTF'.
 l. ...}
-If you say, e.g., `\def\a1{...}', then you must always
-put `1' after `\a', since control sequence names are
-made up of letters only. The macro here has not been
-followed by the required stuff, so I'm ignoring it.
 Defining \exp_after:wc on line ...
 ! LaTeX Error: Variant form 'wc' deprecated for base form '\exp_after:wN'. One should not change an argument from type 'w' to type 'w': base form is already a variant.
 ! Use of \??? doesn't match its definition.
 <argument> \???  
                  ! Package zutil Error: Invalid argument specifier 'X'. Accepted specifiers are 'NcnofexVvpTF'.
 l. ...}
-If you say, e.g., `\def\a1{...}', then you must always
-put `1' after `\a', since control sequence names are
-made up of letters only. The macro here has not been
-followed by the required stuff, so I'm ignoring it.
 [test] 3 error(s)
 ============================================================
 ============================================================

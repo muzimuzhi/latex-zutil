@@ -17,3 +17,5 @@ checksuppfiles  = { "zutil-regression-test.cfg" }
 -- running `l3build` in `./zutil` won't even load the top-level `build.lua`.
 errorline       = 254
 halferrorline   = 239
+
+dofile(maindir .. "/support/build-normalize-log.lua")
