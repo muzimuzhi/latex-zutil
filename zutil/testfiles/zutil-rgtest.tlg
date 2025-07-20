@@ -8,6 +8,8 @@ TEST: No errors nor checks
 TEST: Count expl3 errors
 ============================================================
 ! Package test Error: This is a test message.
+ ...
+l. ...}
 [test] 1 error(s)
 ============================================================
 ============================================================
@@ -27,10 +29,25 @@ TEST: Count latex2e errors
 l. ...}
 [test] 1 error(s)
 ============================================================
+============================================================
+TEST: Count errors raised in deeper groups
+============================================================
+! Package test Error: This is a test message.
+ ...
+l. ...}
+! Package test Error: error text.
+ ...
+l. ...}
+[test] 2 error(s)
+============================================================
+============================================================
+TEST: Not counted: expandable errors raised in deeper groups
+============================================================
 ! Use of \??? doesn't match its definition.
 <argument> \???  
                  ! Package test Error: This is a test message.
-l. ...\msg_expandable_error:nn { test } { msg1 }
+l. ...}
+============================================================
 ============================================================
 TEST: Count expandable errors between tests
 ============================================================
@@ -42,22 +59,31 @@ TEST: Count checks
 ============================================================
 [test] 1 check(s)
 ============================================================
-! Undefined control sequence.
-<argument> \FAILED 
-l. ...\cs_if_exist:NF \PASSED { \FAILED }
-The control sequence at the end of the top line
-of your error message was never \def'ed. If you have
-misspelled it (e.g., `\hobx'), type `I' and the correct
-spelling (e.g., `I\hbox'). Otherwise just continue,
-and I'll forget about whatever was undefined.
+PASSED
 ============================================================
-TEST: Checks used in deeper groups
+TEST: Not counted: checks used in deeper groups
 ============================================================
 ! Use of \??? doesn't match its definition.
 <argument> \???  
                  ! Package test Error: PASSED
 l. ...}
 ============================================================
-***************
-[test] 4 error(s)
+============================================================
+TEST: Errors and checks in a deeper-group test
+============================================================
+! Package test Error: This is a test message.
+ ...
+l. ...  }
+! Use of \??? doesn't match its definition.
+<argument> \???  
+                 ! Package test Error: This is a test message.
+l. ...  }
+! Package test Error: error text.
+ ...
+l. ...  }
+[test] 3 error(s)
 [test] 1 check(s)
+============================================================
+***************
+[test] 9 error(s)
+[test] 2 check(s)

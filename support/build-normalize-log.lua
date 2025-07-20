@@ -31,6 +31,7 @@ local function normalize_log_extra(content, engine, errlevels)
     line = gsub(line, "^See the .* package documentation for explanation%.$", "")
     line = gsub(line, "^See the .* class documentation for explanation%.$", "")
     line = gsub(line, "^See the LaTeX manual or LaTeX Companion for explanation%.$", "")
+    line = gsub(line, "^%(That was another \\errmessage%.%)$", "")
     return line
   end
 

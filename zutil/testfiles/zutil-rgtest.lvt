@@ -7,7 +7,7 @@
 
 \debug_on:n { check-declarations , deprecation }
 
-\msg_redirect_module:nnn { test } { error } { softerror }
+% \msg_redirect_module:nnn { test } { error } { softerror }
 \msg_new:nnn { test } { msg1 } { This~is~a~test~message. }
 
 \START
@@ -27,7 +27,26 @@
   \PackageError{test}{error~text}{}
 }
 
+\TEST{Count~errors~raised~in~deeper~groups}{
+  {
+    \msg_error:nn { test } { msg1 }
+    {
+      \PackageError{test}{error~text}{}
+    }
+  }
+}
+
+\TEST{Not~counted:~expandable~errors~raised~in~deeper~groups}{
+  {
+    {
+      \msg_expandable_error:nn { test } { msg1 }
+    }
+  }
+}
+
+\OMIT
 \msg_expandable_error:nn { test } { msg1 }
+\TIMO
 \TEST{Count~expandable~errors~between~tests}{
   \TYPE { BODY }
 }
@@ -37,10 +56,19 @@
 }
 
 % \PASSED is only defined in tests
-\cs_if_exist:NF \PASSED { \FAILED }
+\cs_if_exist:NF \PASSED { \TYPE { PASSED } }
 
-\TEST{Checks~used~in~deeper~groups}{
+\TEST{Not~counted:~checks~used~in~deeper~groups}{
   {
+    \PASSED
+  }
+}
+
+{
+  \TEST{Errors~and~checks~in~a~deeper-group~test}{
+    \msg_error:nn { test } { msg1 }
+    \msg_expandable_error:nn { test } { msg1 }
+    \PackageError{test}{error~text}{}
     \PASSED
   }
 }
