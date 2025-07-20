@@ -38,7 +38,7 @@ class RunNames:
         self.ts = ts
         self.options: list[str] = []
         self.names: list[Test] = []
-        self.enabled: bool = False
+        self.run_as_whole: bool = False
 
     def add_name(self, name: Test) -> None:
         """Add a test name to the test suite run."""
@@ -48,6 +48,15 @@ class RunNames:
     def add_option(self, option: str) -> None:
         """Set the options for the test suite run."""
         self.options.append(option)
+
+    def finalize_names(self, args: argparse.Namespace) -> None:
+        if self.run_as_whole:
+            # `save` a testsuite means saving all names in it
+            if args.target == 'save':
+                self.names = list(self.ts.get_names())
+            # `check` a testsuite means checking with no names
+            elif args.target == 'check':
+                self.names = []
 
     def set_options(self, args: argparse.Namespace) -> None:
         if self.ts.config:
@@ -62,6 +71,8 @@ class RunNames:
             self.add_option('-v')
         if args.halt_on_error:
             self.add_option('-H')
+        if args.target == 'check' and args.show_saves:
+            self.add_option('-S')
         if args.dev:
             self.add_option('--dev')
         if args.dirty:
@@ -126,48 +137,40 @@ def parse_args(args: argparse.Namespace) -> None:
         { ts.name: RunNames(ts) for ts in L3BUILD_TESTSUITES }
 
     # process names
+    names = set(args.names)
     known_names: list[str] = []
-    for name in args.names:
+    for name in names:
         if name.startswith('-'):
             raise ValueError(f"Unknown option: \"{name}\".")
 
         for ts in L3BUILD_TESTSUITES:
             ts_run = testsuites_run[ts.name]
             if name == ts.name or name == ts.alias:
-                # it's a testsuite
+                # `name` is a testsuite name (or alias)
                 known_names.append(name)
-                ts_run.enabled = True
-                ts_run.names = []
+                ts_run.run_as_whole = True
             elif name in ts.get_names():
-                # it's a test
+                # `name` is a test name
                 known_names.append(name)
-                ts_run.enabled = True
                 ts_run.add_name(name)
 
-    if set(args.names) != set(known_names):
-        raise ValueError(f"Unknown name(s): {set(args.names) - set(known_names)}.")
+    if set(known_names) != names:
+        raise ValueError(f"Unknown name(s): {names - set(known_names)}.")
+
+    # import pprint
+    # for ts_run in testsuites_run.values():
+    #     pprint.pprint(ts_run.__dict__)
+    # os._exit(0)  # for debugging
 
     # compose and run l3build commands
     l3build_called: bool = False
     for ts_run in testsuites_run.values():
-        # special treatment for the `save` target
-        if target == 'save':
-            if ts_run.names:
-                # `save` names
-                ts_run.enabled = True
-            else:
-                # `save` a testsuite means saving all names in it
-                ts_run.names = list(ts_run.ts.get_names())
-
-        if not ts_run.enabled:
+        if not ts_run.run_as_whole and not ts_run.names:
             continue
         l3build_called = True
 
-        # compose l3build options
+        ts_run.finalize_names(args)
         ts_run.set_options(args)
-
-        if target == 'check' and args.show_saves:
-            ts_run.add_option('-S')
 
         commands = ['l3build', target, *ts_run.options, *ts_run.names]
         if args.dry_run or args.verbose:
@@ -194,7 +197,7 @@ parser.add_argument('target', type=str,
                     metavar='target',
                     help=f'the l3build target to run {L3BUILD_COMMANDS}')
 parser.add_argument('names', type=str, nargs='*', metavar='name',
-                    help='testsuite or test')
+                    help='testsuite or test in one or more testsuites')
 # inherited frequently-used l3build options
 # Unlike in vanilla l3build.lua, options can be intermixed with names,
 # and uses like `-qs` are accepted.
