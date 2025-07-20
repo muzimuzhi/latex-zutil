@@ -3,8 +3,10 @@
 from argparse import ArgumentParser, BooleanOptionalAction, Namespace
 from pathlib import Path
 from subprocess import CalledProcessError, run
-import sys
 from typing import Final
+
+import os
+import sys
 
 
 class TestSuite:
@@ -60,6 +62,18 @@ L3BUILD_TESTSUITE_ALIASES: Final[dict[str, str]] = \
 
 L3BUILD_COMMANDS: Final[tuple[str, ...]] = \
     ('check', 'save')
+
+
+def debug_logging_enabled() -> bool:
+    """Check if debug logging is enabled."""
+    # 'CI' is set by GitHub Actions
+    # https://docs.github.com/en/actions/reference/variables-reference#default-environment-variables
+    # debug logging envvars
+    # https://docs.github.com/en/actions/how-tos/monitoring-and-troubleshooting-workflows/troubleshooting-workflows/enabling-debug-logging
+    return 'DEBUG' in os.environ or \
+        (os.getenv('CI') == 'true' and\
+            (os.getenv('ACTIONS_RUNNER_DEBUG') == 'true' or\
+            os.getenv('ACTIONS_STEP_DEBUG') == 'true'))
 
 
 def parse_args(args: Namespace) -> None:
@@ -174,8 +188,7 @@ parser.add_argument('-V', '--verbose', action='store_true', default=False,
 if __name__ == "__main__":
     args = parser.parse_intermixed_args()
 
-    import os
-    if 'DEBUG' in os.environ:
+    if debug_logging_enabled():
         args.verbose = True
 
     if args.verbose:
