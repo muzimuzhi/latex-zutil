@@ -12,7 +12,6 @@ TEST: tblr
 TEST: value forbidden
 ============================================================
 ! LaTeX Error: The key 'zutil/debug/tblr' does not take a value.
-For immediate help type H <return>.
  ...                                              
 l. ...}
 The key 'zutil/debug/tblr' should be given without a value.
