@@ -87,36 +87,35 @@ def parse_args(args: argparse.Namespace) -> None:
 
     # compose testsuite and l3build names
     for name in args.names:
-        name_raw = name
-        name : str = L3BUILD_TESTSUITE_ALIASES.get(name, name)
         if name.startswith('-'):
             raise ValueError(f"Unknown argument: {name}")
+        name_raw = name
+        name : str = L3BUILD_TESTSUITE_ALIASES.get(name, name)
+        for ts in L3BUILD_TESTSUITES:
+            if name == ts.name:
+                if testsuite is None:
+                    testsuite = ts
+                elif testsuite != ts:
+                    raise ValueError(
+                        f"Multiple testsuites: testsuite {name_raw} "
+                        f"doesn't contain tests {names}"
+                    )
+                else:
+                    names = []
+                break
+            if name in ts.resolve_tests():
+                if testsuite is None:
+                    testsuite = ts
+                elif testsuite != ts:
+                    raise ValueError(
+                        f"Multiple testsuites: test {name} "
+                        f"is not in testsuite {testsuite.name}"
+                    )
+                if name not in names:
+                    names.append(name)
+                break
         else:
-            for ts in L3BUILD_TESTSUITES:
-                if name == ts.name:
-                    if testsuite is None:
-                        testsuite = ts
-                    elif testsuite != ts:
-                        raise ValueError(
-                            f"Multiple testsuites: testsuite {name_raw} "
-                            f"doesn't contain tests {names}"
-                        )
-                    else:
-                        names = []
-                    break
-                if name in ts.resolve_tests():
-                    if testsuite is None:
-                        testsuite = ts
-                    elif testsuite != ts:
-                        raise ValueError(
-                            f"Multiple testsuites: test {name} "
-                            f"is not in testsuite {testsuite.name}"
-                        )
-                    if name not in names:
-                        names.append(name)
-                    break
-            else:
-                raise ValueError(f"Unknown test name: {name}")
+            raise ValueError(f"Unknown test name: {name}")
 
     if testsuite is None:
         raise ValueError("No testsuite nor names passed.")
