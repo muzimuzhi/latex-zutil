@@ -10,10 +10,10 @@ import sys
 
 
 class TestSuite:
-    def __init__(self, name: str, directory: str, config: str, tests: tuple[str], alias: str = "") -> None:
+    def __init__(self, name: str, path: str, config: str, tests: list[str], alias: str | None = None) -> None:
         self.name = name
         self.alias = alias
-        self.directory = directory
+        self.path = path
         self.config = config
         self.tests = tests
         self.test_names: tuple[str] | None = None
@@ -25,40 +25,38 @@ class TestSuite:
 
         test_names = []
         for test in self.tests:
-            test_names.extend([p.stem for p in Path(self.directory).glob(test)])
+            test_names.extend([p.stem for p in Path(self.path).glob(test)])
         self.test_names = tuple(test_names)
         return self.test_names
 
 
 zutil = TestSuite(
     name = 'zutil',
-    directory = 'zutil',
+    path = 'zutil',
     config = 'build',
-    tests = ('testfiles/*.lvt',)
+    tests = ['testfiles/*.lvt']
 )
 
 tblr = TestSuite(
     name = 'tabularray',
     alias = 'tblr',
-    directory = 'tabularray',
+    path = 'tabularray',
     config = 'build',
-    tests = ('testfiles/*.lvt',)
+    tests = ['testfiles/*.lvt']
 )
 
 tblr_old = TestSuite(
     name = 'tabularray-old',
     alias = 'tblr-old',
-    directory = 'tabularray',
+    path = 'tabularray',
     config = 'config-old',
-    tests = ('testfiles-old/*.tex',)
+    tests = ['testfiles-old/*.tex']
 )
 
-testsuites = (zutil, tblr, tblr_old)
-
-L3BUILD_TESTSUITES: Final[dict[str, TestSuite]] = \
-    { ts.name: ts for ts in testsuites }
+L3BUILD_TESTSUITES: Final[tuple[TestSuite, ...]] = \
+    (zutil, tblr, tblr_old)
 L3BUILD_TESTSUITE_ALIASES: Final[dict[str, str]] = \
-    { ts.alias: ts.name for ts in L3BUILD_TESTSUITES.values() if ts.alias}
+    { ts.alias: ts.name for ts in L3BUILD_TESTSUITES if ts.alias}
 
 L3BUILD_COMMANDS: Final[tuple[str, ...]] = \
     ('check', 'save')
@@ -94,7 +92,7 @@ def parse_args(args: argparse.Namespace) -> None:
         if name.startswith('-'):
             raise ValueError(f"Unknown argument: {name}")
         else:
-            for ts in L3BUILD_TESTSUITES.values():
+            for ts in L3BUILD_TESTSUITES:
                 if name == ts.name:
                     if testsuite is None:
                         testsuite = ts
@@ -152,10 +150,10 @@ def parse_args(args: argparse.Namespace) -> None:
 
     commands = ['l3build', target, *options, *names]
     if args.dry_run or args.verbose:
-        print(f"[l3build.py] Running '{' '.join(commands)}' in directory '{testsuite.directory}'")
+        print(f"[l3build.py] Running '{' '.join(commands)}' in directory '{testsuite.path}'")
     if not args.dry_run:
         try:
-            run(commands, cwd=testsuite.directory, check=True)
+            run(commands, cwd=testsuite.path, check=True)
         except CalledProcessError:
             sys.exit(1)
 
