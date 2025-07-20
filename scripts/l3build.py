@@ -1,10 +1,10 @@
 #!/usr/bin/env -S uv run --script
 
-from argparse import ArgumentParser, BooleanOptionalAction, Namespace
 from pathlib import Path
 from subprocess import CalledProcessError, run
 from typing import Final
 
+import argparse
 import os
 import sys
 
@@ -80,7 +80,7 @@ def debug_logging_enabled() -> bool:
             os.getenv('ACTIONS_STEP_DEBUG') == 'true'))
 
 
-def parse_args(args: Namespace) -> None:
+def parse_args(args: argparse.Namespace) -> None:
     """Parse command line arguments."""
     target = args.target
     testsuite = None
@@ -160,26 +160,25 @@ def parse_args(args: Namespace) -> None:
             sys.exit(1)
 
 
-parser = ArgumentParser(
+parser = argparse.ArgumentParser(
     description='A l3build wrapper',
     usage='%(prog)s target [options] name...',
     # allow_abbrev=False, # isn't --no-q more useful than --no-quiet?
-    epilog='Not all l3build options are supported.'
+    epilog='Not all l3build options are supported.',
+    formatter_class=argparse.ArgumentDefaultsHelpFormatter
 )
 parser.add_argument('target', type=str,
                     choices=L3BUILD_COMMANDS,
                     metavar='target',
                     help=f'the l3build target to run {L3BUILD_COMMANDS}')
 parser.add_argument('names', type=str, nargs='*', metavar='name',
-                    help='a testsuite or test')
+                    help='testsuite or test')
 # inherited frequently-used l3build options
 # Unlike in vanilla l3build.lua, options can be intermixed with names,
 # and uses like `-qs` are accepted.
 parser.add_argument('-e', '--engine', type=str)
 parser.add_argument('-s', '--stdengine', action='store_true', default=False)
 parser.add_argument('-S', '--show-saves', action='store_true', default=False)
-parser.add_argument('-q', '--quiet', action=BooleanOptionalAction,
-                    default=True)
 # more l3build options
 parser.add_argument('--dev', action='store_true', default=False)
 parser.add_argument('--dirty', action='store_true', default=False)
@@ -187,8 +186,14 @@ parser.add_argument('-H', '--halt-on-error', action='store_true',
                     default=False)
 parser.add_argument('--show-log-on-error', action='store_true',
                     default=False)
+# modified options
+parser.add_argument('-q', '--quiet',
+                    action=argparse.BooleanOptionalAction,
+                    default=True,
+                    help='suppress output (local patch added support for "save" target)')
 # new options
-parser.add_argument('-n', '--dry-run', action='store_true', default=False)
+parser.add_argument('-n', '--dry-run', action='store_true', default=False,
+                    help='print what l3build command(s) would be executed without execution')
 parser.add_argument('-V', '--verbose', action='store_true', default=False,
                     help='print debug information (local patch needed)')
 
