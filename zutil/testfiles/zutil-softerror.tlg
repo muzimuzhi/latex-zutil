@@ -4,20 +4,17 @@ Don't change this file in any respect.
 TEST: normal error
 ============================================================
 ! Package __test Error: text
-Type <return> to continue.
- ->\tex_errmessage:D  Package __test Error: text^^J^^JType <return> to continue\use_none:n                                                
+ ...
 l. ...}
 LaTeX does not know anything more about this error, sorry.
 Try typing <return> to proceed.
 If that doesn't work, type X <return> to quit.
 ! Package __test Error: text
-For immediate help type H <return>.
- ->\tex_errmessage:D  Package __test Error: text^^J^^JFor immediate help type H <return>\use_none:n                                                
+ ...
 l. ...}
 more text
 ! Package __test Error: text [arg1][arg2][arg3][arg4]
-For immediate help type H <return>.
- ->\tex_errmessage:D  Package __test Error: text [arg1][arg2][arg3][arg4]^^J^^JFor immediate help type H <return>\use_none:n                                                
+ ...
 l. ...}
 more text [arg1][arg2][arg3][arg4]
 [test] 3 error(s)
