@@ -10,7 +10,7 @@
 \tl_new:N   \l__zutil_presets_tl
 
 % shared message for raising short and one-time messages
-\msg_new:nnn { zutil } { tmp } { #1 }
+\msg_new:nnn { zutil } { _shared } { #1 }
 
 % package options
 \DeclareKeys [ zutil ]
@@ -54,7 +54,7 @@
   {
     \int_compare:nNnTF { \currentgrouplevel } > { 0 }
       {
-        \msg_error:nne { zutil } { tmp }
+        \msg_error:nne { zutil } { _shared }
           {
             Loading~module~'#1'~in~a~group.~
             Modules~should~be~loaded~at~the~top~level.
@@ -86,7 +86,7 @@
         \ExplSyntaxOff
         % \file_input:n doesn't use file hooks
         \InputIfFileExists{\@currname}{}{ % noqa: s204
-          \msg_error:nne { zutil } { tmp }
+          \msg_error:nne { zutil } { _shared }
             { Unknown~module~'#1'.~ File~'\@currname'~not~found. }
         }
         \@popfilename
