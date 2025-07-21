@@ -54,10 +54,6 @@ jobs:
         tool: just,typos
         fallback: none
 
-    - name: Install ruff
-      run: |
-        uv tool install ruff
-
     - name: Run pre-commit checks
       run: |
         just pre-commit

@@ -65,7 +65,8 @@ pre-commit *options="":
 [group('lint')]
 ruff command="check" *options="":
     @echo '{{ info }}Running ruff check...{{ end_info }}'
-    ruff {{ command }} {{ options }}
+    # `uvx` is an alias for `uv tool run`
+    uvx ruff {{ command }} {{ options }}
 
 ## testing recipes
 
