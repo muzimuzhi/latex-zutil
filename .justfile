@@ -63,9 +63,9 @@ pre-commit *options="":
     pre-commit run --all-files {{ options }}
 
 [group('lint')]
-ruff command *options="":
+ruff *options="":
     @echo '{{ info }}Running ruff...{{ end_info }}'
-    ruff {{ command }} {{ options }} scripts
+    ruff {{ options }}
 
 ## testing recipes
 

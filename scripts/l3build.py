@@ -1,18 +1,34 @@
 #!/usr/bin/env -S uv run --script
+#
+# /// script
+# requires-python = ">=3.12"
+# dependencies = []
+# ///
 
-from pathlib import Path
-from subprocess import CalledProcessError, run
-from typing import Final
+# python 3.12 is needed by the `type` alias statement
+
+"""A wrapper for l3build to check and save tests."""
 
 import argparse
 import os
 import sys
-
+from pathlib import Path
+from subprocess import CalledProcessError, run
+from typing import Final
 
 type Test = str
 
 class TestSuite:
-    def __init__(self, name: str, path: str, config: str, tests: list[Test], alias: str | None = None) -> None:
+    """A class representing a test suite for l3build."""
+
+    def __init__(
+        self,
+        name: str,
+        path: str,
+        config: str,
+        tests: list[Test],
+        alias: str | None = None,
+    ) -> None:
         self.name = name
         self.alias = alias
         self.path = path
@@ -33,6 +49,8 @@ class TestSuite:
 
 
 class RunNames:
+    """A class to hold the names and options for a test suite to run."""
+
     def __init__(self, ts: TestSuite) -> None:
         self.name = ts.name
         self.ts = ts
@@ -45,11 +63,11 @@ class RunNames:
         if name not in self.names:
             self.names.append(name)
 
-    def add_option(self, option: str) -> None:
-        """Set the options for the test suite run."""
+    def _add_option(self, option: str) -> None:
         self.options.append(option)
 
     def finalize_names(self, args: argparse.Namespace) -> None:
+        """Adjust collected test names at final stage."""
         if self.run_as_whole:
             # `save` a testsuite means saving all names in it
             if args.target == 'save':
@@ -58,34 +76,35 @@ class RunNames:
             elif args.target == 'check':
                 self.names = []
 
-    def set_options(self, args: argparse.Namespace) -> None:
+    def set_options(self, args: argparse.Namespace) -> None: # noqa: C901
+        """Compose l3build options."""
         if self.ts.config:
-            self.add_option(f'-c{self.ts.config}')
+            self._add_option(f'-c{self.ts.config}')
         if args.engine:
-            self.add_option(f'-e{args.engine}')
+            self._add_option(f'-e{args.engine}')
         if args.stdengine:
-            self.add_option('-s')
+            self._add_option('-s')
         if args.quiet:
-            self.add_option('-q')
+            self._add_option('-q')
         if args.verbose and not on_ci():
-            self.add_option('-v')
+            self._add_option('-v')
         if args.halt_on_error:
-            self.add_option('-H')
+            self._add_option('-H')
         if args.target == 'check' and args.show_saves:
-            self.add_option('-S')
+            self._add_option('-S')
         if args.dev:
-            self.add_option('--dev')
+            self._add_option('--dev')
         if args.dirty:
-            self.add_option('--dirty')
+            self._add_option('--dirty')
         if args.show_log_on_error:
-            self.add_option('--show-log-on-error')
+            self._add_option('--show-log-on-error')
 
 
 zutil = TestSuite(
     name = 'zutil',
     path = 'zutil',
     config = 'build',
-    tests = ['testfiles/*.lvt']
+    tests = ['testfiles/*.lvt'],
 )
 
 tblr = TestSuite(
@@ -93,7 +112,7 @@ tblr = TestSuite(
     alias = 'tblr',
     path = 'tabularray',
     config = 'build',
-    tests = ['testfiles/*.lvt']
+    tests = ['testfiles/*.lvt'],
 )
 
 tblr_old = TestSuite(
@@ -101,7 +120,7 @@ tblr_old = TestSuite(
     alias = 'tblr-old',
     path = 'tabularray',
     config = 'config-old',
-    tests = ['testfiles-old/*.tex']
+    tests = ['testfiles-old/*.tex'],
 )
 
 L3BUILD_TESTSUITES: Final[tuple[TestSuite, ...]] = \
@@ -130,22 +149,22 @@ def debug_logging_enabled() -> bool:
             os.getenv('ACTIONS_STEP_DEBUG') == 'true'))
 
 
-def wrap_l3build(args: argparse.Namespace) -> None:
+def wrap_l3build(args: argparse.Namespace) -> None: # noqa: C901
     """Parse command line arguments."""
     target: str = args.target
     testsuites_run: dict[str, RunNames] = \
         { ts.name: RunNames(ts) for ts in L3BUILD_TESTSUITES }
 
     # process names
-    names = set(args.names)
+    names: set[str] = set(args.names)
     known_names: list[str] = []
     for name in names:
         if name.startswith('-'):
-            raise ValueError(f"Unknown option: \"{name}\".")
+            raise ValueError(f'Unknown option: "{name}".') # noqa
 
         for ts in L3BUILD_TESTSUITES:
             ts_run = testsuites_run[ts.name]
-            if name == ts.name or name == ts.alias:
+            if name in (ts.name, ts.alias):
                 # `name` is a testsuite name (or alias)
                 known_names.append(name)
                 ts_run.run_as_whole = True
@@ -155,7 +174,7 @@ def wrap_l3build(args: argparse.Namespace) -> None:
                 ts_run.add_name(name)
 
     if set(known_names) != names:
-        raise ValueError(f"Unknown name(s): {names - set(known_names)}.")
+        raise ValueError(f'Unknown name(s): {names - set(known_names)}.') # noqa
 
     # compose and run l3build commands
     l3build_called: bool = False
@@ -169,23 +188,23 @@ def wrap_l3build(args: argparse.Namespace) -> None:
 
         commands = ['l3build', target, *ts_run.options, *ts_run.names]
         if args.dry_run or args.verbose:
-            print(f"[l3build.py] Running '{' '.join(commands)}' in directory '{ts_run.ts.path}'")
+            print(f'[l3build.py] Running "{' '.join(commands)}" '
+                  f'in directory "{ts_run.ts.path}"')
         if not args.dry_run:
             try:
-                run(commands, cwd=ts_run.ts.path, check=True)
+                run(commands, cwd=ts_run.ts.path, check=True) # noqa: S603
             except CalledProcessError:
                 sys.exit(1)
 
     if not l3build_called:
-        raise ValueError("No testsuites nor names passed.")
+        raise ValueError('No testsuites nor names passed.') # noqa
 
 
 parser = argparse.ArgumentParser(
     description='A l3build wrapper',
     usage='%(prog)s target [options] name...',
-    # allow_abbrev=False, # isn't --no-q more useful than --no-quiet?
     epilog='Not all l3build options are supported.',
-    formatter_class=argparse.ArgumentDefaultsHelpFormatter
+    formatter_class=argparse.ArgumentDefaultsHelpFormatter,
 )
 parser.add_argument('target', type=str,
                     choices=L3BUILD_COMMANDS,
@@ -210,20 +229,20 @@ parser.add_argument('--show-log-on-error', action='store_true',
 parser.add_argument('-q', '--quiet',
                     action=argparse.BooleanOptionalAction,
                     default=True,
-                    help='suppress output (local patch added support for "save" target)')
+                    help='suppress TeX standard output (local patch added support for "save" target)') # noqa: E501
 # new options
 parser.add_argument('-n', '--dry-run', action='store_true', default=False,
-                    help='print what l3build command(s) would be executed without execution')
+                    help='print what l3build command(s) would be executed without execution') # noqa: E501
 parser.add_argument('-v', '--verbose', action='store_true', default=False,
                     help='print debug information (local patch needed)')
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     args = parser.parse_intermixed_args()
 
     if debug_logging_enabled():
         args.verbose = True
 
     if args.verbose:
-        print(f"[l3build.py] Parsed args: {args}")
+        print(f'[l3build.py] Parsed args: {args}')
 
     wrap_l3build(args)

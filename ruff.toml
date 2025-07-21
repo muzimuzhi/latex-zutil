@@ -1,0 +1,8 @@
+include = ['scripts/*.py']
+
+target-version = 'py312'
+
+[lint]
+select = ['ALL']
+ignore = ['D203', 'D213', 'D107', 'T201', 'PGH004']
+flake8-quotes.inline-quotes = 'single'
