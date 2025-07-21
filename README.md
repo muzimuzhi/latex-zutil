@@ -1,107 +1,69 @@
-# Z's LaTeX utility macros
+# Z's LaTeX utilities
 
 [![Check](https://github.com/muzimuzhi/latex-zutil/actions/workflows/check.yml/badge.svg)](https://github.com/muzimuzhi/latex-zutil/actions/workflows/check.yml)
 [![Lint](https://github.com/muzimuzhi/latex-zutil/actions/workflows/lint.yml/badge.svg)](https://github.com/muzimuzhi/latex-zutil/actions/workflows/lint.yml)
 
+## Components
+
+- `./scripts/l3build.py`\
+  A `l3build` wrapper which makes checking and saving `l3build` tests easier
+- `./zutil`\
+  Utility macros in expl3; documented in its own [README](./zutil/README.md).
+- `./tabularray`\
+  The [`tabularray`](https://ctan.org/pkg/tabularray) LaTeX package with experimental improvements (currently out-of-date)
+
 ## Development
 
-### Project structure
+### Checks
 
-```
-# based on "tree -a -L2 -I .git -I .vscode"
-.
-├── .explcheckrc     # explcheck [1] config file
-├── .gitattributes
-├── .github
-│   └── ...
-├── .gitignore
-├── .justfile        # just [2] definition file
-├── .pre-commit-config.yaml # pre-commit [3] config file
-├── README.md
-├── _typos.toml      # typos [4] config file
-├── build            # temp l3build [5] directory (if exist)
-├── build.lua        # l3build config file
-├── support          # l3build support files
-│   └── ...
-├── tabularray       # experimental tabularray development
-│   ├── CONTRIBUTING.md
-│   ├── README.md
-│   ├── build.lua        # tabularray l3build config file
-│   ├── buildend.lua     # wrapper to use support/ppmcheckpdf.lua
-│   ├── config-old.lua   # tabularray l3build config file for old test set
-│   ├── doc
-│   ├── tabularray.sty
-│   ├── testfiles        # new l3build test set
-│   ├── testfiles-old    # old l3build test set
-│   └── ...
-└── zutil            # experimental LaTeX utility macros
-    ├── README.md
-    ├── build.lua        # zutil l3build config file
-    ├── testfiles        # zutil l3build tests
-    ├── zutil-debug.code.tex
-    ├── zutil-l3extras.code.tex
-    ├── zutil-softerror.code.tex
-    └── zutil.sty
-```
-
-## Linting and Testing
-
-Tools
-
-- [1] `explcheck`: Development tools for expl3 programmers\
-      https://github.com/Witiko/expltools\
-      Installation: `tlmgr install expltools`
-- [2] `just`: Just a command runner\
-      https://github.com/casey/just
-- [3] `pre-commit`: a Git hook framework\
-      https://github.com/pre-commit/pre-commit\
-      Installation: (recommended) `uv tool install pre-commit`
-- [4] `typos`: Source code spell checker\
-      https://github.com/crate-ci/typos
-- [5] `l3build`: A testing and building system for LaTeX\
-      https://github.com/latex3/l3build\
-      Installation: `tlmgr install l3build`
-
-Checks
-
-- Quick checks
-  - check spelling, lint expl3 files, lint GitHub Actions workflow files, and more (see `.pre-commit-config.yaml`)
+- Quick checks (various linters)
   - incremental run (on `git` staged files only)
     - auto triggered by `git commit` (`pre-commit` git hook in use)
-    - run `pre-commit run`
+    - run `pre-commit run` manually
   - full run
     - run `just lint-all` or `pre-commit run -a`
-- Slow checks
-  - `l3build` tests
-  - run `just test-all`
+- Slow checks (`l3build` test suites)
+  - run actively maintained test suites `just check zutil tblr`
+  - run all test suites `just test-all`
 - Full checks
   - run `just all`
-- Checks on CI
+- Checks run on CI
   - [`lint.yml`](./.github/workflows/lint.yml) full quick checks
-  - [`check.yml`](./.github/workflows/check.yml) full slow checks (on single OS)
-  - [`schedule.yml`](./.github/workflows/schedule.yml) once a week, quick checks (on 1 OS) + slow checks on 3 OSes
+  - [`check.yml`](./.github/workflows/check.yml) actively maintained slow checks (on Ubuntu)
+  - [`schedule.yml`](./.github/workflows/schedule.yml) once a week, quick checks (on Ubuntu) + full slow checks on 3 OSes
 
-Developing
-
-```shell
-# check/save all tests in a testsuite
-$ just check zutil
-$ just save tblr
-# check/save specific tests in the same testsuite
-$ just check zutil-001 zutil-softerror
-$ just save tblr-loading tblr-split
-# print full usage
-$ just check -h
-$ just save -h
-```
-
-General `just` usages
+### General `just` usages
 
 ```shell
-# list all "just" recipes available in this repo
+# list all "just" available recipes
 $ just
 # list commands that would run by RECIPE
 $ just -n/--dry-run RECIPE
+
+# (just recipes `check` and `save` both use `l3build.py`)
+# print help text of `l3build.py`
+$ just [check|save] -h
+# check/save one or more tests and/or testsuites
+$ just check zutil tblr
+$ just save zutil-001 tblr-loading
 ```
 
-Note: As configured by `.justfile` in this repository, `just` can be invoked from any subdirectory and it acts the same.
+Note: As configured by `.justfile` in this repository, `just` invoked from any subdirectories acts the same as being invoked from the top-level directory.
+
+### Tools
+
+- `explcheck`: Development tools for expl3 programmers\
+  https://github.com/Witiko/expltools \
+  Installation: `tlmgr install expltools`
+- `just`: Just a command runner\
+  https://github.com/casey/just
+- `l3build`: A testing and building system for LaTeX\
+  https://github.com/latex3/l3build\
+  Installation: `tlmgr install l3build`
+- `pre-commit`: a Git hook framework\
+  https://github.com/pre-commit/pre-commit \
+  Installation: (recommended) `uv tool install pre-commit`
+- `typos`: Source code spell checker\
+  https://github.com/crate-ci/typos
+- `uv`: An extremely fast Python package and project manager\
+  https://github.com/astral-sh/uv
