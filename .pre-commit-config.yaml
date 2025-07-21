@@ -53,6 +53,12 @@ repos:
     entry: explcheck
     # this file list is composed in .justfile too
     files: ^support/.*\.cfg|zutil/.*\.(sty|tex)$
+  - id: lint-python
+    alias: ruff
+    name: Lint python files
+    language: system
+    entry: ruff check
+    files: ^scripts/.*\.py$
 # https://pre-commit.com/#meta-hooks
 # "pre-commit run --hook-stage manual"
 - repo: meta

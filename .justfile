@@ -15,7 +15,7 @@ set unstable
 info := BOLD + BLUE + "===> "
 end_info := NORMAL
 
-export SKIP := env('SKIP', 'typos,explcheck')
+export SKIP := env('SKIP', 'typos,explcheck,ruff')
 export diffext := env('diffext', '.diff')
 export diffexe := env('diffexe', 'git diff --no-index --text --')
 
@@ -32,7 +32,7 @@ default:
 all: lint-all test-all
 
 [group('*meta')]
-lint-all: pre-commit typos explcheck
+lint-all: pre-commit typos explcheck ruff
 
 [group('*meta')]
 test-all: zutil tblr tblr-old tblr-ppm
@@ -63,9 +63,9 @@ pre-commit *options="":
     pre-commit run --all-files {{ options }}
 
 [group('lint')]
-ruff *options="":
-    @echo '{{ info }}Running ruff...{{ end_info }}'
-    ruff {{ options }}
+ruff command="check" *options="":
+    @echo '{{ info }}Running ruff check...{{ end_info }}'
+    ruff {{ command }} {{ options }}
 
 ## testing recipes
 
