@@ -1,0 +1,21 @@
+include = ['scripts/*.py']
+
+target-version = 'py312'
+
+[lint]
+# https://docs.astral.sh/ruff/settings/#lint
+select = ['ALL']
+ignore = [
+  'D107',   # undocumented public `__init__()` method
+  'D203',   # class docstring not preceded by a blank line,
+            #   incompatible with D211
+  'D213',   # the (first) summary line of multi-line docstrings not on the
+            #   second physical line, incompatible with D212
+  'T201',   # uses of `print()`
+  'PGH004', # blanket `noqa` annotation which suppresses all diagnostics
+]
+flake8-quotes.inline-quotes = 'single'
+
+[format]
+# https://docs.astral.sh/ruff/settings/#format
+quote-style = 'single'

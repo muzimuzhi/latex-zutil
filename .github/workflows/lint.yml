@@ -67,3 +67,7 @@ jobs:
     - name: Lint expl3 code
       run: |
         just explcheck
+
+    - name: Lint python code
+      run: |
+        just ruff check

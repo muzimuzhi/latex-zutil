@@ -4,3 +4,5 @@ build/**/*.*
 !build/**/*.fc
 # unignore diff images created by ppmcheckpdf.lua
 !build/**/*.diff.png
+
+**/__pycache__/

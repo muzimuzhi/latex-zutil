@@ -2,7 +2,7 @@
 
 # https://pre-commit.ci/#configuration
 ci:
-  skip: [check-spelling, lint-expl3]
+  skip: [check-spelling, lint-expl3, lint-python]
 
 # path separator is normalized to "/", so no need to use "[\\/]" in python
 # regex, see
@@ -53,6 +53,12 @@ repos:
     entry: explcheck
     # this file list is composed in .justfile too
     files: ^support/.*\.cfg|zutil/.*\.(sty|tex)$
+  - id: lint-python
+    alias: ruff
+    name: Lint python files
+    language: system
+    entry: uvx ruff check
+    files: ^scripts/.*\.py$
 # https://pre-commit.com/#meta-hooks
 # "pre-commit run --hook-stage manual"
 - repo: meta
