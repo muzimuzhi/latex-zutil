@@ -192,10 +192,7 @@ def wrap_l3build(args: argparse.Namespace) -> None:  # noqa: C901
 
         commands = ['l3build', target, *ts_run.options, *ts_run.names]
         if args.dry_run or args.verbose:
-            print(
-                f'[l3build.py] Running "{" ".join(commands)}" '
-                f'in directory "{ts_run.ts.path}"'
-            )
+            print(f'[l3build.py] Running "{" ".join(commands)}" in directory "{ts_run.ts.path}"')  # noqa: E501 # fmt: skip
         if not args.dry_run:
             try:
                 run(commands, cwd=ts_run.ts.path, check=True)  # noqa: S603
