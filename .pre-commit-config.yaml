@@ -57,7 +57,7 @@ repos:
     alias: ruff
     name: Lint python files
     language: system
-    entry: ruff check
+    entry: uvx ruff check
     files: ^scripts/.*\.py$
 # https://pre-commit.com/#meta-hooks
 # "pre-commit run --hook-stage manual"
