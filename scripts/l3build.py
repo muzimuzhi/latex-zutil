@@ -5,7 +5,8 @@
 # dependencies = []
 # ///
 
-# python 3.12 is needed by the `type` alias statement
+# Python 3.12 is needed by the `type` alias statement.
+# Required python version is also recorded in `ruff.toml`.
 
 """A wrapper for l3build to check and save tests."""
 
