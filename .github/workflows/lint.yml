@@ -44,7 +44,7 @@ jobs:
     - name: Setup pre-commit
       uses: muzimuzhi/actions/setup-pre-commit-uv@main
       with:
-        if-run: false # do not run pre-commit
+        run-pre-commit: false
 
     - name: Install tools
       uses: taiki-e/install-action@v2
