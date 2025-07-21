@@ -62,6 +62,11 @@ pre-commit *options="":
     @echo 'Skipped checks: {{ SKIP }}'
     pre-commit run --all-files {{ options }}
 
+[group('lint')]
+ruff command *options="":
+    @echo '{{ info }}Running ruff...{{ end_info }}'
+    ruff {{ command }} {{ options }} scripts
+
 ## testing recipes
 
 # Run zutil l3build tests
