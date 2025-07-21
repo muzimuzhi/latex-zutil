@@ -8,7 +8,7 @@
 # Python 3.12 is needed by the `type` alias statement.
 # Required python version is also recorded in `ruff.toml`.
 
-"""A wrapper for l3build to check and save tests."""
+"""An l3build wrapper to check and save l3build tests easier."""
 
 import argparse
 import os
@@ -21,7 +21,7 @@ type Test = str
 
 
 class TestSuite:
-    """A class representing a test suite for l3build."""
+    """A l3build test suite."""
 
     def __init__(
         self,
@@ -50,8 +50,8 @@ class TestSuite:
         return self.test_names
 
 
-class RunNames:
-    """A class to hold the names and options for a test suite to run."""
+class TestSuiteRun:
+    """Data needed by running l3build on a single test suite."""
 
     def __init__(self, ts: TestSuite) -> None:
         self.name = ts.name
@@ -154,10 +154,10 @@ def debug_logging_enabled() -> bool:
 
 
 def wrap_l3build(args: argparse.Namespace) -> None:  # noqa: C901
-    """Parse command line arguments."""
+    """Run l3build on each test suite."""
     target: str = args.target
-    testsuites_run: dict[str, RunNames] = {
-        ts.name: RunNames(ts) for ts in L3BUILD_TESTSUITES
+    testsuites_run: dict[str, TestSuiteRun] = {
+        ts.name: TestSuiteRun(ts) for ts in L3BUILD_TESTSUITES
     }
 
     # process names
