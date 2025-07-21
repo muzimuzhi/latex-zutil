@@ -6,3 +6,6 @@ target-version = 'py312'
 select = ['ALL']
 ignore = ['D203', 'D213', 'D107', 'T201', 'PGH004']
 flake8-quotes.inline-quotes = 'single'
+
+[format]
+quote-style = 'single'

@@ -18,6 +18,7 @@ from typing import Final
 
 type Test = str
 
+
 class TestSuite:
     """A class representing a test suite for l3build."""
 
@@ -76,7 +77,7 @@ class RunNames:
             elif args.target == 'check':
                 self.names = []
 
-    def set_options(self, args: argparse.Namespace) -> None: # noqa: C901
+    def set_options(self, args: argparse.Namespace) -> None:  # noqa: C901
         """Compose l3build options."""
         if self.ts.config:
             self._add_option(f'-c{self.ts.config}')
@@ -101,36 +102,34 @@ class RunNames:
 
 
 zutil = TestSuite(
-    name = 'zutil',
-    path = 'zutil',
-    config = 'build',
-    tests = ['testfiles/*.lvt'],
+    name='zutil',
+    path='zutil',
+    config='build',
+    tests=['testfiles/*.lvt'],
 )
 
 tblr = TestSuite(
-    name = 'tabularray',
-    alias = 'tblr',
-    path = 'tabularray',
-    config = 'build',
-    tests = ['testfiles/*.lvt'],
+    name='tabularray',
+    alias='tblr',
+    path='tabularray',
+    config='build',
+    tests=['testfiles/*.lvt'],
 )
 
 tblr_old = TestSuite(
-    name = 'tabularray-old',
-    alias = 'tblr-old',
-    path = 'tabularray',
-    config = 'config-old',
-    tests = ['testfiles-old/*.tex'],
+    name='tabularray-old',
+    alias='tblr-old',
+    path='tabularray',
+    config='config-old',
+    tests=['testfiles-old/*.tex'],
 )
 
-L3BUILD_TESTSUITES: Final[tuple[TestSuite, ...]] = \
-    (zutil, tblr, tblr_old)
-L3BUILD_TESTSUITES_MAP: Final[dict[str, TestSuite]] = \
-    { ts.alias: ts for ts in L3BUILD_TESTSUITES if ts.alias } | \
-    { ts.name: ts for ts in L3BUILD_TESTSUITES }
+L3BUILD_TESTSUITES: Final[tuple[TestSuite, ...]] = (zutil, tblr, tblr_old)
+L3BUILD_TESTSUITES_MAP: Final[dict[str, TestSuite]] = {
+    ts.alias: ts for ts in L3BUILD_TESTSUITES if ts.alias
+} | {ts.name: ts for ts in L3BUILD_TESTSUITES}
 
-L3BUILD_COMMANDS: Final[tuple[str, ...]] = \
-    ('check', 'save')
+L3BUILD_COMMANDS: Final[tuple[str, ...]] = ('check', 'save')
 
 
 def on_ci() -> bool:
@@ -139,28 +138,33 @@ def on_ci() -> bool:
     # https://docs.github.com/en/actions/reference/variables-reference#default-environment-variables
     return os.getenv('CI') == 'true'
 
+
 def debug_logging_enabled() -> bool:
     """Check if debug logging is enabled."""
     # debug logging envvars
     # https://docs.github.com/en/actions/how-tos/monitoring-and-troubleshooting-workflows/troubleshooting-workflows/enabling-debug-logging
-    return 'DEBUG' in os.environ or \
-        (on_ci() and\
-            (os.getenv('ACTIONS_RUNNER_DEBUG') == 'true' or\
-            os.getenv('ACTIONS_STEP_DEBUG') == 'true'))
+    return 'DEBUG' in os.environ or (
+        on_ci()
+        and (
+            os.getenv('ACTIONS_RUNNER_DEBUG') == 'true'
+            or os.getenv('ACTIONS_STEP_DEBUG') == 'true'
+        )
+    )
 
 
-def wrap_l3build(args: argparse.Namespace) -> None: # noqa: C901
+def wrap_l3build(args: argparse.Namespace) -> None:  # noqa: C901
     """Parse command line arguments."""
     target: str = args.target
-    testsuites_run: dict[str, RunNames] = \
-        { ts.name: RunNames(ts) for ts in L3BUILD_TESTSUITES }
+    testsuites_run: dict[str, RunNames] = {
+        ts.name: RunNames(ts) for ts in L3BUILD_TESTSUITES
+    }
 
     # process names
     names: set[str] = set(args.names)
     known_names: list[str] = []
     for name in names:
         if name.startswith('-'):
-            raise ValueError(f'Unknown option: "{name}".') # noqa
+            raise ValueError(f'Unknown option: "{name}".')  # noqa
 
         for ts in L3BUILD_TESTSUITES:
             ts_run = testsuites_run[ts.name]
@@ -174,7 +178,7 @@ def wrap_l3build(args: argparse.Namespace) -> None: # noqa: C901
                 ts_run.add_name(name)
 
     if set(known_names) != names:
-        raise ValueError(f'Unknown name(s): {names - set(known_names)}.') # noqa
+        raise ValueError(f'Unknown name(s): {names - set(known_names)}.')  # noqa
 
     # compose and run l3build commands
     l3build_called: bool = False
@@ -188,16 +192,18 @@ def wrap_l3build(args: argparse.Namespace) -> None: # noqa: C901
 
         commands = ['l3build', target, *ts_run.options, *ts_run.names]
         if args.dry_run or args.verbose:
-            print(f'[l3build.py] Running "{' '.join(commands)}" '
-                  f'in directory "{ts_run.ts.path}"')
+            print(
+                f'[l3build.py] Running "{" ".join(commands)}" '
+                f'in directory "{ts_run.ts.path}"'
+            )
         if not args.dry_run:
             try:
-                run(commands, cwd=ts_run.ts.path, check=True) # noqa: S603
+                run(commands, cwd=ts_run.ts.path, check=True)  # noqa: S603
             except CalledProcessError:
                 sys.exit(1)
 
     if not l3build_called:
-        raise ValueError('No testsuites nor names passed.') # noqa
+        raise ValueError('No testsuites nor names passed.')  # noqa
 
 
 parser = argparse.ArgumentParser(
@@ -206,6 +212,7 @@ parser = argparse.ArgumentParser(
     epilog='Not all l3build options are supported.',
     formatter_class=argparse.ArgumentDefaultsHelpFormatter,
 )
+# fmt: off
 parser.add_argument('target', type=str,
                     choices=L3BUILD_COMMANDS,
                     metavar='target',
@@ -229,12 +236,13 @@ parser.add_argument('--show-log-on-error', action='store_true',
 parser.add_argument('-q', '--quiet',
                     action=argparse.BooleanOptionalAction,
                     default=True,
-                    help='suppress TeX standard output (local patch added support for "save" target)') # noqa: E501
+                    help='suppress TeX standard output (local patch added support for "save" target)')  # noqa: E501
 # new options
 parser.add_argument('-n', '--dry-run', action='store_true', default=False,
-                    help='print what l3build command(s) would be executed without execution') # noqa: E501
+                    help='print what l3build command(s) would be executed without execution')  # noqa: E501
 parser.add_argument('-v', '--verbose', action='store_true', default=False,
                     help='print debug information (local patch needed)')
+# fmt: on
 
 if __name__ == '__main__':
     args = parser.parse_intermixed_args()
