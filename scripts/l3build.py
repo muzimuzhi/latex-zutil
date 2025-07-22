@@ -88,7 +88,7 @@ class TestSuiteRun:
             self._add_option('-s')
         if args.quiet:
             self._add_option('-q')
-        if args.verbose and not on_ci():
+        if args.verbose and l3build_patched():
             self._add_option('-v')
         if args.halt_on_error:
             self._add_option('-H')
@@ -131,6 +131,17 @@ L3BUILD_TESTSUITES_MAP: Final[dict[str, TestSuite]] = {
 } | {ts.name: ts for ts in L3BUILD_TESTSUITES}
 
 L3BUILD_COMMANDS: Final[tuple[str, ...]] = ('check', 'save')
+
+
+def l3build_patched() -> bool:
+    """Check if the l3build is patched (aka, run locally)."""
+    try:
+        rst = run(['l3build', '--version'], check=True, capture_output=True)  # noqa: S607
+    except CalledProcessError:
+        print('[l3build.py] "l3build --version" failed.')
+        sys.exit(1)
+
+    return '(with patch)' in rst.stdout.decode('utf-8')
 
 
 def on_ci() -> bool:
