@@ -8,7 +8,7 @@
 # Python 3.12 is needed by the `type` alias statement.
 # Required python version is also recorded in `ruff.toml`.
 
-"""An l3build wrapper to check and save l3build tests easier."""
+"""Check and save l3build tests easier."""
 
 import argparse
 import os
@@ -204,8 +204,10 @@ def wrap_l3build(args: argparse.Namespace) -> None:  # noqa: C901
         raise ValueError('No testsuites nor names passed.')  # noqa
 
 
+# Unlike in vanilla l3build, options can be intermixed with names,
+# and short flags are mergeable (`-qs` is the same as `-q -s`).
 parser = argparse.ArgumentParser(
-    description='A l3build wrapper',
+    description='Check and save l3build tests easier',
     usage='%(prog)s target [options] name...',
     epilog='Not all l3build options are supported.',
     formatter_class=argparse.ArgumentDefaultsHelpFormatter,
@@ -216,30 +218,35 @@ parser.add_argument('target', type=str,
                     metavar='target',
                     help=f'the l3build target to run {L3BUILD_COMMANDS}')
 parser.add_argument('names', type=str, nargs='*', metavar='name',
-                    help='testsuite or test in one or more testsuites')
-# inherited frequently-used l3build options
-# Unlike in vanilla l3build.lua, options can be intermixed with names,
-# and uses like `-qs` are accepted.
-parser.add_argument('-e', '--engine', type=str)
-parser.add_argument('-s', '--stdengine', action='store_true', default=False)
-parser.add_argument('-S', '--show-saves', action='store_true', default=False)
-# more l3build options
-parser.add_argument('--dev', action='store_true', default=False)
-parser.add_argument('--dirty', action='store_true', default=False)
-parser.add_argument('-H', '--halt-on-error', action='store_true',
-                    default=False)
-parser.add_argument('--show-log-on-error', action='store_true',
-                    default=False)
-# modified options
-parser.add_argument('-q', '--quiet',
-                    action=argparse.BooleanOptionalAction,
-                    default=True,
-                    help='suppress TeX standard output (local patch added support for "save" target)')  # noqa: E501
-# new options
+                    help='a test suite or test')
+
+# wrapper-only options
 parser.add_argument('-n', '--dry-run', action='store_true', default=False,
                     help='print what l3build command(s) would be executed without execution')  # noqa: E501
 parser.add_argument('-v', '--verbose', action='store_true', default=False,
-                    help='print debug information (local patch needed)')
+                    help='print debug information (also passed to "l3build" if patched l3build is detected)')  # noqa: E501
+
+_inherited = parser.add_argument_group('inherited l3build options')
+# commonly used l3build options
+_inherited.add_argument('-e', '--engine', type=str)
+_inherited.add_argument('-s', '--stdengine', action='store_true',
+                        default=False)
+_inherited.add_argument('-S', '--show-saves', action='store_true',
+                        default=False)
+# more l3build options
+_inherited.add_argument('--dev', action='store_true', default=False)
+_inherited.add_argument('--dirty', action='store_true', default=False)
+_inherited.add_argument('-H', '--halt-on-error', action='store_true',
+                        default=False)
+_inherited.add_argument('--show-log-on-error', action='store_true',
+                        default=False)
+
+_improved = parser.add_argument_group('improved l3build options')
+# modified options
+_improved.add_argument('-q', '--quiet',
+                       action=argparse.BooleanOptionalAction,
+                       default=True,
+                       help='suppress TeX standard output (local patch added support for "save" target)')  # noqa: E501
 # fmt: on
 
 if __name__ == '__main__':
