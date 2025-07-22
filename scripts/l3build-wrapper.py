@@ -159,7 +159,7 @@ def l3build_patched() -> bool:
     try:
         rst = run(['l3build', '--version'], check=True, capture_output=True)  # noqa: S607
     except CalledProcessError:
-        print('[l3build.py] "l3build --version" failed.')
+        print('[l3build-wrapper.py] "l3build --version" failed.')
         sys.exit(1)
 
     return '(with patch)' in rst.stdout.decode('utf-8')
@@ -222,7 +222,7 @@ def wrap_l3build(args: argparse.Namespace) -> None:  # noqa: C901
 
         commands = ['l3build', target, *ts_run.options, *ts_run.names]
         if args.dry_run or args.verbose:
-            print(f'[l3build.py] Running "{" ".join(commands)}" in directory "{ts_run.ts.path}"')  # noqa: E501 # fmt: skip
+            print(f'[l3build-wrapper.py] Running "{" ".join(commands)}" in directory "{ts_run.ts.path}"')  # noqa: E501 # fmt: skip
         if not args.dry_run:
             try:
                 run(commands, cwd=ts_run.ts.path, check=True)  # noqa: S603
@@ -285,6 +285,6 @@ if __name__ == '__main__':
         args.verbose = True
 
     if args.verbose:
-        print(f'[l3build.py] Parsed args: {args}')
+        print(f'[l3build-wrapper.py] Parsed args: {args}')
 
     wrap_l3build(args)

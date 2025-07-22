@@ -5,7 +5,7 @@
 
 ## Components
 
-- `./scripts/l3build.py`\
+- `./scripts/l3build-wrapper.py`\
   A `l3build` wrapper which makes checking and saving `l3build` tests easier
 - `./zutil`\
   Utility macros in expl3; documented in its own [README](./zutil/README.md).
@@ -40,8 +40,8 @@ $ just
 # list commands that would run by RECIPE
 $ just -n/--dry-run RECIPE
 
-# (just recipes `check` and `save` both use `l3build.py`)
-# print help text of `l3build.py`
+# (just recipes `check` and `save` both use `l3build-wrapper.py`)
+# print help text of `l3build-wrapper.py`
 $ just [check|save] -h
 # check/save one or more tests and/or testsuites
 $ just check zutil tblr
