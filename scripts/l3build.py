@@ -20,6 +20,27 @@ from typing import Final
 type Test = str
 
 
+# suggested by https://stackoverflow.com/a/60465422
+class L3buildWrapperError(Exception):
+    """Base class for L3buildWrapper exceptions."""
+
+
+# https://docs.astral.sh/ruff/rules/raise-vanilla-args/
+class NameRequiredError(L3buildWrapperError):
+    """No names were provided."""
+
+    def __init__(self) -> None:
+        super().__init__('No test suite nor test names.')
+
+
+class UnknownNameError(L3buildWrapperError):
+    """Unknown name was provided."""
+
+    def __init__(self, name: str) -> None:
+        super().__init__(f'Unknown name: "{name}".')
+        self.name = name
+
+
 class TestSuite:
     """A l3build test suite."""
 
@@ -187,7 +208,7 @@ def wrap_l3build(args: argparse.Namespace) -> None:  # noqa: C901
                 ts_run.add_name(name)
 
     if _names:
-        raise ValueError(f'Unknown name: {_names.pop()}.')  # noqa
+        raise UnknownNameError(_names.pop())
 
     # compose and run l3build commands
     l3build_called: bool = False
@@ -209,7 +230,7 @@ def wrap_l3build(args: argparse.Namespace) -> None:  # noqa: C901
                 sys.exit(1)
 
     if not l3build_called:
-        raise ValueError('No testsuites nor names passed.')  # noqa
+        raise NameRequiredError
 
 
 # Unlike in vanilla l3build, options can be intermixed with names,
