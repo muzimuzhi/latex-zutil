@@ -173,21 +173,21 @@ def wrap_l3build(args: argparse.Namespace) -> None:  # noqa: C901
 
     # process names
     names: set[str] = set(args.names)
-    known_names: list[str] = []
+    _names: set[str] = names.copy()
     for name in names:
         for ts in L3BUILD_TESTSUITES:
             ts_run = testsuites_run[ts.name]
             if name in (ts.name, ts.alias):
                 # `name` is a testsuite name (or alias)
-                known_names.append(name)
+                _names.discard(name)
                 ts_run.run_as_whole = True
             elif name in ts.get_names():
                 # `name` is a test name
-                known_names.append(name)
+                _names.discard(name)
                 ts_run.add_name(name)
 
-    if set(known_names) != names:
-        raise ValueError(f'Unknown name(s): {names - set(known_names)}.')  # noqa
+    if _names:
+        raise ValueError(f'Unknown name: {_names.pop()}.')  # noqa
 
     # compose and run l3build commands
     l3build_called: bool = False
