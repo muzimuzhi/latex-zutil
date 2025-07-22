@@ -175,9 +175,6 @@ def wrap_l3build(args: argparse.Namespace) -> None:  # noqa: C901
     names: set[str] = set(args.names)
     known_names: list[str] = []
     for name in names:
-        if name.startswith('-'):
-            raise ValueError(f'Unknown option: "{name}".')  # noqa
-
         for ts in L3BUILD_TESTSUITES:
             ts_run = testsuites_run[ts.name]
             if name in (ts.name, ts.alias):
