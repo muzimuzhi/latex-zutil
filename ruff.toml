@@ -1,4 +1,4 @@
-include = ['scripts/*.py']
+include = ['l3build-wrapper/*.py']
 
 target-version = 'py312'
 

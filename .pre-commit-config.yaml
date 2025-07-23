@@ -58,7 +58,7 @@ repos:
     name: Lint python files
     language: system
     entry: uvx ruff check
-    files: ^scripts/.*\.py$
+    files: ^l3build-wrapper/.*\.py$
 # https://pre-commit.com/#meta-hooks
 # "pre-commit run --hook-stage manual"
 - repo: meta

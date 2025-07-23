@@ -5,12 +5,14 @@
 
 ## Components
 
-- `./scripts/l3build-wrapper.py`\
-  A `l3build` wrapper which makes checking and saving selective `l3build` tests easier
-- `./zutil`\
-  Utility macros in expl3; documented in its own [README](./zutil/README.md).
-- `./tabularray`\
-  The [`tabularray`](https://ctan.org/pkg/tabularray) LaTeX package with experimental improvements (currently out-of-date)
+- `l3build-wrapper`\
+  Check and save selective `l3build` tests easier
+- `zutil`\
+  Utility macros in expl3; documented in its [README](./zutil/README.md).
+- `tabularray`\
+  The [`tabularray`][ctan-tabularray] LaTeX package with experimental improvements (currently out-of-date)
+
+[ctan-tabularray]: https://ctan.org/pkg/tabularray
 
 ## Development
 
