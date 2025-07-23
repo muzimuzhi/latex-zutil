@@ -8,7 +8,7 @@
 # Python 3.12 is needed by the `type` alias statement.
 # Required python version is also recorded in `ruff.toml`.
 
-"""Check and save l3build tests easier."""
+"""Check and save selective l3build tests made easier."""
 
 import argparse
 import os
@@ -186,7 +186,7 @@ def debug_logging_enabled() -> bool:
 
 
 def wrap_l3build(args: argparse.Namespace) -> None:  # noqa: C901
-    """Run l3build on each test suite."""
+    """Process names and run l3build on one test suite a time."""
     target: str = args.target
     testsuites_run: dict[str, TestSuiteRun] = {
         ts.name: TestSuiteRun(ts) for ts in L3BUILD_TESTSUITES
@@ -236,7 +236,7 @@ def wrap_l3build(args: argparse.Namespace) -> None:  # noqa: C901
 # Unlike in vanilla l3build, options can be intermixed with names,
 # and short flags are mergeable (`-qs` is the same as `-q -s`).
 parser = argparse.ArgumentParser(
-    description='Check and save l3build tests easier',
+    description='Check and save selective l3build tests made easier',
     usage='%(prog)s target [options] name...',
     epilog='Not all l3build options are supported.',
     formatter_class=argparse.ArgumentDefaultsHelpFormatter,

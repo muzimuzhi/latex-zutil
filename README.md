@@ -6,7 +6,7 @@
 ## Components
 
 - `./scripts/l3build-wrapper.py`\
-  A `l3build` wrapper which makes checking and saving `l3build` tests easier
+  A `l3build` wrapper which makes checking and saving selective `l3build` tests easier
 - `./zutil`\
   Utility macros in expl3; documented in its own [README](./zutil/README.md).
 - `./tabularray`\
