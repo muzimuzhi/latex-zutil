@@ -122,6 +122,24 @@ class TestSuiteRun:
         if args.show_log_on_error:
             self._add_option('--show-log-on-error')
 
+    def run_l3build(self, target: str) -> bool:
+        """Run l3build on this test suite."""
+        if not self.run_as_whole and not self.names:
+            return False
+
+        self.finalize_names(args)
+        self.set_options(args)
+
+        commands = ['l3build', target, *self.options, *self.names]
+        if args.dry_run or args.verbose:
+            print(f'[l3build-wrapper.py] Running "{" ".join(commands)}" in directory "{self.ts.path}"')  # noqa: E501 # fmt: skip
+        if not args.dry_run:
+            try:
+                run(commands, cwd=self.ts.path, check=True)  # noqa: S603
+            except CalledProcessError:
+                sys.exit(1)
+        return True
+
 
 zutil = TestSuite(
     name='zutil',
@@ -185,52 +203,41 @@ def debug_logging_enabled() -> bool:
     )
 
 
-def wrap_l3build(args: argparse.Namespace) -> None:  # noqa: C901
-    """Process names and run l3build on one test suite a time."""
-    target: str = args.target
-    testsuites_run: dict[str, TestSuiteRun] = {
-        ts.name: TestSuiteRun(ts) for ts in L3BUILD_TESTSUITES
-    }
-
-    # process names
-    names: set[str] = set(args.names)
-    _names: set[str] = names.copy()
-    for name in names:
+def parse_known_names(
+    names: list[str],
+    testsuites_run: dict[str, TestSuiteRun],
+) -> None:
+    """Parse names received from the command line."""
+    _names = set(names)
+    for name in _names.copy():
         for ts in L3BUILD_TESTSUITES:
             ts_run = testsuites_run[ts.name]
             if name in (ts.name, ts.alias):
                 # `name` is a testsuite name (or alias)
-                _names.discard(name)
+                _names.remove(name)
                 ts_run.run_as_whole = True
             elif name in ts.get_names():
                 # `name` is a test name
-                _names.discard(name)
+                _names.remove(name)
                 ts_run.add_name(name)
-
     if _names:
         raise UnknownNameError(_names.pop())
 
-    # compose and run l3build commands
-    l3build_called: bool = False
-    for ts_run in testsuites_run.values():
-        if not ts_run.run_as_whole and not ts_run.names:
-            continue
-        l3build_called = True
 
-        ts_run.finalize_names(args)
-        ts_run.set_options(args)
+def wrap_l3build(args: argparse.Namespace) -> None:
+    """Run l3build on one test suite a time."""
+    testsuites_run: dict[str, TestSuiteRun] = {
+        ts.name: TestSuiteRun(ts) for ts in L3BUILD_TESTSUITES
+    }
 
-        commands = ['l3build', target, *ts_run.options, *ts_run.names]
-        if args.dry_run or args.verbose:
-            print(f'[l3build-wrapper.py] Running "{" ".join(commands)}" in directory "{ts_run.ts.path}"')  # noqa: E501 # fmt: skip
-        if not args.dry_run:
-            try:
-                run(commands, cwd=ts_run.ts.path, check=True)  # noqa: S603
-            except CalledProcessError:
-                sys.exit(1)
-
-    if not l3build_called:
+    if not args.names:
         raise NameRequiredError
+
+    parse_known_names(args.names, testsuites_run)
+
+    # run l3build
+    for ts_run in testsuites_run.values():
+        ts_run.run_l3build(args.target)
 
 
 # Unlike in vanilla l3build, options can be intermixed with names,
