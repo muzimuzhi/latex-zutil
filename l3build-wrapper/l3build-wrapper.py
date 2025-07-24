@@ -13,6 +13,7 @@
 import argparse
 import os
 import sys
+from enum import UNIQUE, StrEnum, verify
 from pathlib import Path
 from subprocess import CalledProcessError, run
 from typing import Final
@@ -23,6 +24,14 @@ type Test = str
 # suggested by https://stackoverflow.com/a/60465422
 class L3buildWrapperError(Exception):
     """Base class for L3buildWrapper exceptions."""
+
+
+class UnknownTargetError(L3buildWrapperError):
+    """Unknown target was provided."""
+
+    def __init__(self, target: str) -> None:
+        super().__init__(f'Unknown target: "{target}".')
+        self.target = target
 
 
 # https://docs.astral.sh/ruff/rules/raise-vanilla-args/
@@ -39,6 +48,22 @@ class UnknownNameError(L3buildWrapperError):
     def __init__(self, name: str) -> None:
         super().__init__(f'Unknown name: "{name}".')
         self.name = name
+
+
+@verify(UNIQUE)
+class Target(StrEnum):
+    """Enum for l3build targets."""
+
+    CHECK = 'check'
+    SAVE = 'save'
+
+    @classmethod
+    def from_str(cls, target: str) -> 'Target':
+        """Convert a string to a Target enum."""
+        try:
+            return cls[target.upper()]
+        except KeyError:
+            raise UnknownTargetError(target) from None
 
 
 class TestSuite:
@@ -93,10 +118,10 @@ class TestSuiteRun:
         """Adjust collected test names at final stage."""
         if self.run_as_whole:
             # `save` a testsuite means saving all names in it
-            if args.target == 'save':
+            if args.target == Target.SAVE:
                 self.names = list(self.ts.get_names())
             # `check` a testsuite means checking with no names
-            elif args.target == 'check':
+            elif args.target == Target.CHECK:
                 self.names = []
 
     def set_options(self, args: argparse.Namespace) -> None:  # noqa: C901
@@ -113,7 +138,7 @@ class TestSuiteRun:
             self._add_option('-v')
         if args.halt_on_error:
             self._add_option('-H')
-        if args.target == 'check' and args.show_saves:
+        if args.target == Target.CHECK and args.show_saves:
             self._add_option('-S')
         if args.dev:
             self._add_option('--dev')
@@ -122,7 +147,7 @@ class TestSuiteRun:
         if args.show_log_on_error:
             self._add_option('--show-log-on-error')
 
-    def run_l3build(self, target: str) -> bool:
+    def run_l3build(self, target: Target) -> bool:
         """Run l3build on this test suite."""
         if not self.run_as_whole and not self.names:
             return False
@@ -168,8 +193,6 @@ L3BUILD_TESTSUITES: Final[tuple[TestSuite, ...]] = (zutil, tblr, tblr_old)
 L3BUILD_TESTSUITES_MAP: Final[dict[str, TestSuite]] = {
     ts.alias: ts for ts in L3BUILD_TESTSUITES if ts.alias
 } | {ts.name: ts for ts in L3BUILD_TESTSUITES}
-
-L3BUILD_COMMANDS: Final[tuple[str, ...]] = ('check', 'save')
 
 
 def l3build_patched() -> bool:
@@ -249,10 +272,9 @@ parser = argparse.ArgumentParser(
     formatter_class=argparse.ArgumentDefaultsHelpFormatter,
 )
 # fmt: off
-parser.add_argument('target', type=str,
-                    choices=L3BUILD_COMMANDS,
-                    metavar='target',
-                    help=f'the l3build target to run {L3BUILD_COMMANDS}')
+parser.add_argument('target',
+                    type=Target.from_str,
+                    help=f'the l3build target to run {[t.value for t in Target]}')
 parser.add_argument('names', type=str, nargs='*', metavar='name',
                     help='a test suite or test')
 
