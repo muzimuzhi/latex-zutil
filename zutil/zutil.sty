@@ -25,18 +25,18 @@
   }
 
 % option "presets" internals
-\cs_new_protected:Npn \__zutil_use_presets_none: { } % noqa: w401
-\cs_new_protected:Npn \__zutil_use_presets_util: % noqa: w401
+\cs_new_protected:Npn \__zutil_use_presets_none: { }  % noqa: w401
+\cs_new_protected:Npn \__zutil_use_presets_util:  % noqa: w401
   {
     \zutil_load_module:n { l3extras }
   }
-\cs_new_protected:Npn \__zutil_use_presets_test: % noqa: w401
+\cs_new_protected:Npn \__zutil_use_presets_test:  % noqa: w401
   {
     \__zutil_use_presets_util:
     \zutil_load_module:n { debug }
     \zutil_load_module:n { softerror }
   }
-\cs_new_protected:Npn \__zutil_use_presets_all: % noqa: w401
+\cs_new_protected:Npn \__zutil_use_presets_all:  % noqa: w401
   {
     \__zutil_use_presets_test:
   }
@@ -81,11 +81,11 @@
         % scheme for modules, especially for the description arg of
         % \ProvidesExplFile.
         \@pushfilename
-        \xdef\@currname{zutil-#1.code.tex} % noqa: s204
+        \xdef\@currname{zutil-#1.code.tex}  % noqa: s204
         \makeatletter
         \ExplSyntaxOff
         % \file_input:n doesn't use file hooks
-        \InputIfFileExists{\@currname}{}{ % noqa: s204
+        \InputIfFileExists{\@currname}{}{  % noqa: s204
           \msg_error:nne { zutil } { _shared }
             { Unknown~module~'#1'.~ File~'\@currname'~not~found. }
         }
@@ -96,7 +96,7 @@
 \@onlypreamble \zutil_load_module:n
 
 % process package options
-\SetKeys [ zutil ] { presets = util } % noqa: w302
+\SetKeys [ zutil ] { presets = util }  % noqa: w302
 \ProcessKeyOptions [ zutil ]
 
 \use:c { __zutil_use_presets_ \l__zutil_presets_tl : }

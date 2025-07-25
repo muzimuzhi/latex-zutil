@@ -37,7 +37,7 @@
     \str_set:Ne \l__zutil_tmp_str
       {
         \exp_last_unbraced:Nf \use_i:nnn
-          \cs_split_function:N #1 % noqa: w302
+          \cs_split_function:N #1  % noqa: w302
       }
     % stores the collector of base form #1
     \tl_set:Ne \l__zutil_tmp_tl
@@ -50,7 +50,7 @@
       }
   }
 
-\IfExplAtLeastTF{2024-12-07} % noqa: S204
+\IfExplAtLeastTF{2024-12-07}  % noqa: S204
   {
     % #1 and #2 are curried
     \cs_new_protected:Npn \__zutil_debug_gput_collector:Nn
@@ -217,7 +217,7 @@
 \cs_new_protected:Npn \__zutil_debug_decr_level:
   {
     \int_decr:N \l__zutil_debug_level_int
-    \int_compare:nNnT \l__zutil_debug_level_int < \c_zero_int % noqa: w302
+    \int_compare:nNnT \l__zutil_debug_level_int < \c_zero_int  % noqa: w302
       {
         \msg_error:nn { zutil } { debug/negative-level }
         \int_zero:N \l__zutil_debug_level_int
@@ -338,12 +338,12 @@
 %     \ZutilDebug[label=x]{msg}
 %     \ExpandArgs{e}\ZutilDebug{\value{page}}[label=x]
 %     \ExpandArgs{c}\ZutilDebugCmd{__tblr_...}
-\NewDocumentCommand \ZutilDebug { O{} m O{} } % noqa: S204
+\NewDocumentCommand \ZutilDebug { O{} m O{} }  % noqa: S204
   {
     \zutil_debug:nn {#1,#3} {#2}
   }
 
-\NewDocumentCommand \ZutilDebugCmd { O{} m O{} } % noqa: S204
+\NewDocumentCommand \ZutilDebugCmd { O{} m O{} }  % noqa: S204
   {
     \zutil_debug:nN {#1,#3} #2
   }
