@@ -272,21 +272,19 @@ def parse_known_names(
         for ts in L3BUILD_TESTSUITES:
             ts_run = testsuites_run[ts.name]
             if name in (ts.name, ts.alias):
-                # `name` is a testsuite name (or alias)
                 _names.remove(name)
                 ts_run.run_as_whole = True
                 logger.debug(
-                    'Name "%s" recognized as test suite "%s"',
+                    'Name "%s" recognized as a test suite "%s"',
                     name, ts.name,
-                )
+                )  # fmt: skip
             elif name in ts.get_names():
-                # `name` is a test name
                 _names.remove(name)
                 ts_run.add_name(name)
                 logger.debug(
                     'Name "%s" recognized as a test in test suite "%s"',
                     name, ts.name,
-                )
+                )  # fmt: skip
     if _names:
         raise UnknownNameError(_names.pop())
 
