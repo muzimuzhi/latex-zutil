@@ -25,7 +25,7 @@ type Test = str
 logging.basicConfig(
     format='[%(name)s] %(levelname)s: %(message)s',
 )
-logger = logging.getLogger('l3build-wrapper')
+logger = logging.getLogger('wrapper')
 
 
 # suggested by https://stackoverflow.com/a/60465422
