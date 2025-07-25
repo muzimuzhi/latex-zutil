@@ -8,8 +8,8 @@
 \prg_new_conditional:Npnn \zutil_cs_if_function:N #1 { p, T, F, TF }
   {
     \if_bool:N
-        \exp_last_unbraced:Nf \use_iii:nnn \cs_split_function:N #1 % noqa: w302
-      \prg_return_true: % noqa: w302
+        \exp_last_unbraced:Nf \use_iii:nnn \cs_split_function:N #1  % noqa: w302
+      \prg_return_true:  % noqa: w302
     \else:
       \prg_return_false:
     \fi:
@@ -18,7 +18,7 @@
 \cs_new:Npn \zutil_cs_function_name:N #1
   {
     \exp_last_unbraced:Nf \__zutil_cs_function_name:nnN
-      \cs_split_function:N #1 % noqa: w302
+      \cs_split_function:N #1  % noqa: w302
   }
 \cs_new:Npn \__zutil_cs_function_name:nnN #1#2#3
   {
@@ -32,7 +32,7 @@
 \cs_new:Npn \zutil_cs_function_signature:N #1
   {
     \exp_last_unbraced:Nf \__zutil_cs_function_signature:nnN
-      \cs_split_function:N #1 % noqa: w302
+      \cs_split_function:N #1  % noqa: w302
   }
 \cs_new:Npn \__zutil_cs_function_signature:nnN #1#2#3
   {
@@ -44,7 +44,7 @@
 \cs_new:Npn \zutil_cs_base_function:N #1
   {
     \exp_last_unbraced:Nf \__zutil_cs_base_function:nnN
-      \cs_split_function:N #1 % noqa: w302
+      \cs_split_function:N #1  % noqa: w302
   }
 \cs_new:Npn \__zutil_cs_base_function:nnN #1#2#3
   {
@@ -98,7 +98,7 @@
         % As the result starts with "{", possible leading spaces in <name>
         % won't be gobbled by f-type expansion.
         \exp_last_unbraced:Nf \__zutil_cs_generate_variant:nnN
-          \cs_split_function:N #1 % noqa: w302
+          \cs_split_function:N #1  % noqa: w302
       }
   }
 \cs_new_protected:Npn \zutil_cs_generate_variant:n #1
@@ -143,18 +143,18 @@
 % space for time. l3doc uses a \str_case:nnTF in
 % \@@_signature_base_form_aux:n (<@@=codedoc>)
 % Specifiers 'w' and 'D' are _not_ accepted.
-\cs_new:Npn \__zutil_cs_sig_base_form_N: { N } % noqa: w401
-\cs_new:Npn \__zutil_cs_sig_base_form_c: { N } % noqa: w401
-\cs_new:Npn \__zutil_cs_sig_base_form_n: { n } % noqa: w401
-\cs_new:Npn \__zutil_cs_sig_base_form_o: { n } % noqa: w401
-\cs_new:Npn \__zutil_cs_sig_base_form_f: { n } % noqa: w401
-\cs_new:Npn \__zutil_cs_sig_base_form_e: { n } % noqa: w401
-\cs_new:Npn \__zutil_cs_sig_base_form_x: { n } % noqa: w401
-\cs_new:Npn \__zutil_cs_sig_base_form_V: { n } % noqa: w401
-\cs_new:Npn \__zutil_cs_sig_base_form_v: { n } % noqa: w401
-\cs_new:Npn \__zutil_cs_sig_base_form_p: { p } % noqa: w401
-\cs_new:Npn \__zutil_cs_sig_base_form_T: { T } % noqa: w401
-\cs_new:Npn \__zutil_cs_sig_base_form_F: { F } % noqa: w401
+\cs_new:Npn \__zutil_cs_sig_base_form_N: { N }  % noqa: w401
+\cs_new:Npn \__zutil_cs_sig_base_form_c: { N }  % noqa: w401
+\cs_new:Npn \__zutil_cs_sig_base_form_n: { n }  % noqa: w401
+\cs_new:Npn \__zutil_cs_sig_base_form_o: { n }  % noqa: w401
+\cs_new:Npn \__zutil_cs_sig_base_form_f: { n }  % noqa: w401
+\cs_new:Npn \__zutil_cs_sig_base_form_e: { n }  % noqa: w401
+\cs_new:Npn \__zutil_cs_sig_base_form_x: { n }  % noqa: w401
+\cs_new:Npn \__zutil_cs_sig_base_form_V: { n }  % noqa: w401
+\cs_new:Npn \__zutil_cs_sig_base_form_v: { n }  % noqa: w401
+\cs_new:Npn \__zutil_cs_sig_base_form_p: { p }  % noqa: w401
+\cs_new:Npn \__zutil_cs_sig_base_form_T: { T }  % noqa: w401
+\cs_new:Npn \__zutil_cs_sig_base_form_F: { F }  % noqa: w401
 
 
 %%
@@ -198,7 +198,7 @@
 \cs_new_protected:Npn \zutil_prg_new_conditional_tl_if_in:Nnn #1
   {
     \exp_args:Ne \__zutil_prg_new_conditional_tl_if_in:nNnn
-      { \exp_last_unbraced:Nf \use_i:nnn \cs_split_function:N #1 } #1 % noqa: w302
+      { \exp_last_unbraced:Nf \use_i:nnn \cs_split_function:N #1 } #1  % noqa: w302
   }
 % #1: str = name, #2: func = cs, #3: tl = test-in, #4: clist = conditions
 \cs_new_protected:Npn \__zutil_prg_new_conditional_tl_if_in:nNnn #1#2#3#4
