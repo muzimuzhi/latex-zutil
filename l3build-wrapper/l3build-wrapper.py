@@ -211,6 +211,7 @@ VERBOSITY_TO_LEVEL: Final[dict[int, int]] = {
     2: logging.DEBUG,
 }
 
+
 def l3build_patched() -> bool:
     """Check if the l3build is patched (aka, run locally)."""
     try:
@@ -274,10 +275,18 @@ def parse_known_names(
                 # `name` is a testsuite name (or alias)
                 _names.remove(name)
                 ts_run.run_as_whole = True
+                logger.debug(
+                    'Name "%s" recognized as test suite "%s"',
+                    name, ts.name,
+                )
             elif name in ts.get_names():
                 # `name` is a test name
                 _names.remove(name)
                 ts_run.add_name(name)
+                logger.debug(
+                    'Name "%s" recognized as a test in test suite "%s"',
+                    name, ts.name,
+                )
     if _names:
         raise UnknownNameError(_names.pop())
 
@@ -354,6 +363,10 @@ if __name__ == '__main__':
         wrap_l3build(args)
     except (argparse.ArgumentError, argparse.ArgumentTypeError) as e:
         logger.error(str(e))
+        parser.print_usage()
+        sys.exit(2)
+    except NameRequiredError as e:
+        logger.error(e)
         parser.print_usage()
         sys.exit(2)
     except L3buildWrapperError as e:
