@@ -354,10 +354,7 @@ if __name__ == '__main__':
         wrap_l3build(args)
     except (argparse.ArgumentError, argparse.ArgumentTypeError) as e:
         logger.error(str(e))
-        sys.exit(2)
-    except NameRequiredError as e:
         parser.print_usage()
-        logger.error(e)
         sys.exit(2)
     except L3buildWrapperError as e:
         # TODO: logger.exception() logs exception info without color
