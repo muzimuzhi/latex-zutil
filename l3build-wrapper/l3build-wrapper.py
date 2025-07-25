@@ -23,9 +23,9 @@ type Test = str
 
 
 logging.basicConfig(
-    format='%(levelname)s - %(filename)s:%(lineno)d - %(funcName)s - %(levelname)s - %(message)s',  # noqa: E501
+    format='[%(name)s] %(levelname)s: %(message)s',
 )
-logger = logging.getLogger('l3build-wrapper.py')
+logger = logging.getLogger('l3build-wrapper')
 
 
 # suggested by https://stackoverflow.com/a/60465422
@@ -46,7 +46,7 @@ class NameRequiredError(L3buildWrapperError):
     """No names were provided."""
 
     def __init__(self) -> None:
-        super().__init__('No test suite nor test names.')
+        super().__init__('Need at least one name.')
 
 
 class UnknownNameError(L3buildWrapperError):
@@ -205,6 +205,11 @@ L3BUILD_TESTSUITES_MAP: Final[dict[str, TestSuite]] = {
     ts.alias: ts for ts in L3BUILD_TESTSUITES if ts.alias
 } | {ts.name: ts for ts in L3BUILD_TESTSUITES}
 
+VERBOSITY_TO_LEVEL: Final[dict[int, int]] = {
+    0: logging.WARNING,
+    1: logging.INFO,
+    2: logging.DEBUG,
+}
 
 def l3build_patched() -> bool:
     """Check if the l3build is patched (aka, run locally)."""
@@ -236,6 +241,26 @@ def debug_logging_enabled() -> bool:
     )
 
 
+def init_logging() -> None:
+    """Initialize logging configuration."""
+    if debug_logging_enabled():
+        logging.basicConfig(
+            format='%(levelname)s - %(filename)s:%(lineno)d - %(funcName)s - %(levelname)s - %(message)s',  # noqa: E501
+        )
+        logger.setLevel(logging.DEBUG)
+        logger.debug('Debug logging is enabled')
+    else:
+        logger.setLevel(logging.WARNING)
+
+
+def update_logging(verbosity: int) -> None:
+    """Update logging level based on verbosity."""
+    level = VERBOSITY_TO_LEVEL.get(verbosity, logging.DEBUG)
+    if level < logger.getEffectiveLevel():
+        logger.setLevel(level)
+        logger.debug('Logging level set to %s', logging.getLevelName(logger.level))
+
+
 def parse_known_names(
     names: list[str],
     testsuites_run: dict[str, TestSuiteRun],
@@ -259,6 +284,7 @@ def parse_known_names(
 
 def wrap_l3build(args: argparse.Namespace) -> None:
     """Run l3build on one test suite a time."""
+    target = Target.from_str(args.target)
     testsuites_run: dict[str, TestSuiteRun] = {
         ts.name: TestSuiteRun(ts) for ts in L3BUILD_TESTSUITES
     }
@@ -270,7 +296,7 @@ def wrap_l3build(args: argparse.Namespace) -> None:
 
     # run l3build
     for ts_run in testsuites_run.values():
-        ts_run.run_l3build(args.target)
+        ts_run.run_l3build(target)
 
 
 # Unlike in vanilla l3build, options can be intermixed with names,
@@ -279,20 +305,20 @@ parser = argparse.ArgumentParser(
     description='Check and save selective l3build tests made easier',
     usage='%(prog)s target [options] name...',
     epilog='Not all l3build options are supported.',
+    exit_on_error=False,
     formatter_class=argparse.ArgumentDefaultsHelpFormatter,
 )
 # fmt: off
-parser.add_argument('target',
-                    type=Target.from_str,
+parser.add_argument('target', type=str,
                     help=f'the l3build target to run {[t.value for t in Target]}')
 parser.add_argument('names', type=str, nargs='*', metavar='name',
                     help='a test suite or test')
 
-# wrapper-only options
+# new, wrapper-only options
 parser.add_argument('-n', '--dry-run', action='store_true', default=False,
                     help='print what l3build command(s) would be executed without execution')  # noqa: E501
-parser.add_argument('-v', '--verbose', action='store_true', default=False,
-                    help='print debug information (also passed to "l3build" if patched l3build is detected)')  # noqa: E501
+parser.add_argument('-v', '--verbose', action='count', default=0,
+                    help='print more information; can be used multiple times (passed to "l3build" if patched l3build is detected)')  # noqa: E501
 
 _inherited = parser.add_argument_group('inherited l3build options')
 # commonly used l3build options
@@ -319,16 +345,23 @@ _improved.add_argument('-q', '--quiet',
 
 if __name__ == '__main__':
     try:
+        init_logging()
+
         args = parser.parse_intermixed_args()
-
-        if args.verbose or debug_logging_enabled():
-            logger.setLevel(logging.DEBUG)
-            args.verbose = True
-
-        if args.verbose:
-            logger.debug('Parsed args: %s', args)
+        update_logging(args.verbose)
+        logger.debug('Parsed args: %s', args)
 
         wrap_l3build(args)
+    except (argparse.ArgumentError, argparse.ArgumentTypeError) as e:
+        logger.error(str(e))
+        sys.exit(2)
+    except NameRequiredError as e:
+        parser.print_usage()
+        logger.error(e)
+        sys.exit(2)
     except L3buildWrapperError as e:
         # TODO: logger.exception() logs exception info without color
-        logger.error(e)  # noqa: TRY400
+        logger.error(e)
+        sys.exit(1)
+    except Exception:
+        logger.exception('Unexpected error')

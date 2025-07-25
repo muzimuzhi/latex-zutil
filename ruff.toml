@@ -14,6 +14,8 @@ ignore = [
   'T201',   # uses of `print()`
   'TD002',  # Missing author in TODO
   'TD003',  # Missing issue link for this TODO
+  'TRY400', # use `logging.error` instead of `logging.exception` when logging
+            #   an exception
   'PGH004', # blanket `noqa` annotation which suppresses all diagnostics
 ]
 extend-ignore = [
