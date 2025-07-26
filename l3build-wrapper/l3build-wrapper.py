@@ -45,8 +45,9 @@ class UnknownTargetError(L3buildWrapperError):
 class NameRequiredError(L3buildWrapperError):
     """No names were provided."""
 
-    def __init__(self) -> None:
-        super().__init__('Need at least one name.')
+    def __init__(self, target: str) -> None:
+        super().__init__(f'Target "{target}" needs at least one name.')
+        self.target = target
 
 
 class UnknownNameError(L3buildWrapperError):
@@ -63,14 +64,6 @@ class Target(StrEnum):
 
     CHECK = 'check'
     SAVE = 'save'
-
-    @classmethod
-    def from_str(cls, target: str) -> 'Target':
-        """Convert a string to a Target enum."""
-        try:
-            return cls[target.upper()]
-        except KeyError:
-            raise UnknownTargetError(target) from None
 
 
 class TestSuite:
@@ -291,15 +284,22 @@ def parse_known_names(
 
 def wrap_l3build(args: argparse.Namespace) -> None:
     """Run l3build on one test suite a time."""
-    target = Target.from_str(args.target)
+    target = args.target
+    if target not in Target:
+        raise UnknownTargetError(target)
+
     testsuites_run: dict[str, TestSuiteRun] = {
         ts.name: TestSuiteRun(ts) for ts in L3BUILD_TESTSUITES
     }
 
     if not args.names:
-        raise NameRequiredError
-
-    parse_known_names(args.names, testsuites_run)
+        if target == Target.SAVE:
+            raise NameRequiredError(target)
+        logger.info('Checking all test suites')
+        for ts_run in testsuites_run.values():
+            ts_run.run_as_whole = True
+    else:
+        parse_known_names(args.names, testsuites_run)
 
     # run l3build
     for ts_run in testsuites_run.values():
