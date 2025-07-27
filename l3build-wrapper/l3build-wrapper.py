@@ -170,7 +170,7 @@ class TestSuiteRun:
                 names_unknown.append(name)
         return names_unknown
 
-    def run_l3build(self, args: argparse.Namespace) -> bool:
+    def invoke_l3build(self, args: argparse.Namespace) -> bool:
         """Run l3build on this test suite."""
         if not self.run_as_whole and not self.names:
             return False
@@ -303,9 +303,12 @@ def wrap_l3build(args: argparse.Namespace) -> None:
             raise UnknownNameError(unknown.pop())
 
     # run l3build
+    invoked = False
     for ts_run in testsuites_run.values():
-        ts_run.run_l3build(args)
-
+        invoked |= ts_run.invoke_l3build(args)
+    if not invoked:
+        # should not happen, but just in case
+        logger.warning('No l3build commands were invoked.')
 
 # Unlike in vanilla l3build, options can be intermixed with names,
 # and short flags are mergeable (`-qs` is the same as `-q -s`).
