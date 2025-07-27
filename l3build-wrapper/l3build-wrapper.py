@@ -146,6 +146,30 @@ class TestSuiteRun:
         if args.show_log_on_error:
             self._add_option('--show-log-on-error')
 
+    def parse_known_names(
+        self,
+        names: set[str],
+    ) -> list[str]:
+        """Parse names received from the command line."""
+        ts = self.ts
+        names_unknown = []
+        for name in names:
+            if name in (ts.name, ts.alias):
+                self.run_as_whole = True
+                logger.debug(
+                    'Name "%s" recognized as a test suite "%s"',
+                    name, ts.name,
+                )  # fmt: skip
+            elif name in ts.get_names():
+                self.add_name(name)
+                logger.debug(
+                    'Name "%s" recognized as a test in test suite "%s"',
+                    name, ts.name,
+                )  # fmt: skip
+            else:
+                names_unknown.append(name)
+        return names_unknown
+
     def run_l3build(self, args: argparse.Namespace) -> bool:
         """Run l3build on this test suite."""
         if not self.run_as_whole and not self.names:
@@ -252,33 +276,6 @@ def set_logging_level(args: argparse.Namespace) -> None:
     set_level(level)
 
 
-def parse_known_names(
-    names: list[str],
-    testsuites_run: dict[str, TestSuiteRun],
-) -> None:
-    """Parse names received from the command line."""
-    _names = set(names)
-    for name in _names.copy():
-        for ts in L3BUILD_TESTSUITES:
-            ts_run = testsuites_run[ts.name]
-            if name in (ts.name, ts.alias):
-                _names.remove(name)
-                ts_run.run_as_whole = True
-                logger.debug(
-                    'Name "%s" recognized as a test suite "%s"',
-                    name, ts.name,
-                )  # fmt: skip
-            elif name in ts.get_names():
-                _names.remove(name)
-                ts_run.add_name(name)
-                logger.debug(
-                    'Name "%s" recognized as a test in test suite "%s"',
-                    name, ts.name,
-                )  # fmt: skip
-    if _names:
-        raise UnknownNameError(_names.pop())
-
-
 def wrap_l3build(args: argparse.Namespace) -> None:
     """Run l3build on one test suite a time."""
     target = args.target
@@ -297,7 +294,13 @@ def wrap_l3build(args: argparse.Namespace) -> None:
         for ts_run in testsuites_run.values():
             ts_run.run_as_whole = True
     else:
-        parse_known_names(args.names, testsuites_run)
+        # parse names
+        names = set(args.names)
+        unknown = names.copy()
+        for ts_run in testsuites_run.values():
+            unknown = unknown.intersection(ts_run.parse_known_names(names))
+        if unknown:
+            raise UnknownNameError(unknown.pop())
 
     # run l3build
     for ts_run in testsuites_run.values():
