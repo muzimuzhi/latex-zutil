@@ -149,6 +149,9 @@ class TestSuiteRun:
         if self.run_as_whole:
             # `save` a testsuite means saving all names in it
             if self.target == Target.SAVE:
+                logger.info(
+                    'Saving all tests in test suite "%s"', self.ts.name,
+                )
                 self.names = list(self.ts.get_names())
             # `check` a testsuite means checking with no names
             elif self.target == Target.CHECK:
