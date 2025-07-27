@@ -106,7 +106,6 @@ class TestSuiteRun:
         self.names: list[Test] = []
         self.run_as_whole: bool = False
 
-
     @classmethod
     def set_shared_target(cls, target: Target) -> None:
         """Set the target for all test suite runs."""
@@ -115,6 +114,7 @@ class TestSuiteRun:
     @classmethod
     def set_shared_options(cls, args: argparse.Namespace) -> None:
         """Set options for all test suite runs."""
+
         def add_option(option: str) -> None:
             _options.append(option)
 
@@ -137,12 +137,10 @@ class TestSuiteRun:
             add_option('--show-log-on-error')
         cls.options = _options
 
-
     def add_name(self, name: Test) -> None:
         """Add a test name to the test suite run."""
         if name not in self.names:
             self.names.append(name)
-
 
     def finalize_names(self) -> None:
         """Adjust collected test names at final stage."""
@@ -150,7 +148,8 @@ class TestSuiteRun:
             # `save` a testsuite means saving all names in it
             if self.target == Target.SAVE:
                 logger.info(
-                    'Saving all tests in test suite "%s"', self.ts.name,
+                    'Saving all tests in test suite "%s"',
+                    self.ts.name,
                 )
                 self.names = list(self.ts.get_names())
             # `check` a testsuite means checking with no names
@@ -159,6 +158,7 @@ class TestSuiteRun:
 
     def set_options(self, args: argparse.Namespace) -> None:
         """Compose l3build options."""
+
         def add_option(option: str) -> None:
             self.options.append(option)
 
@@ -235,7 +235,9 @@ tblr_old = TestSuite(
 )
 
 LOGGING_DEFAULT_FORMAT = '[%(name)s] %(levelname)s: %(message)s'
-LOGGING_DEBUG_FORMAT = '[%(name)s] %(levelname)s - %(filename)s:%(lineno)d - %(funcName)s - %(message)s'  # noqa: E501
+LOGGING_DEBUG_FORMAT = (
+    '[%(name)s] %(levelname)s - %(filename)s:%(lineno)d - %(funcName)s - %(message)s'
+)
 
 L3BUILD_TESTSUITES: Final[tuple[TestSuite, ...]] = (zutil, tblr, tblr_old)
 L3BUILD_TESTSUITES_MAP: Final[dict[str, TestSuite]] = {
@@ -265,22 +267,24 @@ def on_ci() -> bool:
     # https://docs.github.com/en/actions/reference/variables-reference#default-environment-variables
     return os.getenv('CI') == 'true'
 
+
 def github_debug_logging_enabled() -> bool:
     """Check if GitHub Actions debug logging is enabled."""
     # https://docs.github.com/en/actions/how-tos/monitoring-and-troubleshooting-workflows/troubleshooting-workflows/enabling-debug-logging
-    return os.getenv('ACTIONS_RUNNER_DEBUG') == 'true' or \
-        os.getenv('ACTIONS_STEP_DEBUG') == 'true'
+    return (
+        os.getenv('ACTIONS_RUNNER_DEBUG') == 'true'
+        or os.getenv('ACTIONS_STEP_DEBUG') == 'true'
+    )
 
 
 def debug_logging_enabled() -> bool:
     """Check if debug logging is enabled by environment variables."""
-    return 'DEBUG' in os.environ or (
-        on_ci() and github_debug_logging_enabled()
-    )
+    return 'DEBUG' in os.environ or (on_ci() and github_debug_logging_enabled())
 
 
 def set_logging_level(args: argparse.Namespace) -> None:
     """Set logging level."""
+
     def set_level(level: int) -> None:
         if level == logging.DEBUG:
             logging.basicConfig(format=LOGGING_DEBUG_FORMAT)
