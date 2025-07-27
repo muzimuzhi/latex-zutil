@@ -156,12 +156,7 @@ class TestSuiteRun:
 
         commands = ['l3build', self.target, *self.options, *self.names]
         path = self.ts.path
-        if args.dry_run or args.verbose:
-            logger.info(
-                'Running "%s" in directory "%s"',
-                ' '.join(commands),
-                path,
-            )
+        logger.info('Running "%s" in directory "%s"', ' '.join(commands), path)
         if not args.dry_run:
             try:
                 run(commands, cwd=path, check=True)  # noqa: S603
