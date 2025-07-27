@@ -346,12 +346,12 @@ _inherited.add_argument('-H', '--halt-on-error', action='store_true',
 _inherited.add_argument('--show-log-on-error', action='store_true',
                         default=False)
 
-_improved = parser.add_argument_group('improved l3build options')
+_improved = parser.add_argument_group('enhanced l3build options')
 # modified options
 _improved.add_argument('-q', '--quiet',
                        action=argparse.BooleanOptionalAction,
                        default=True,
-                       help='suppress TeX standard output (local patch added support for "save" target)')  # noqa: E501
+                       help='suppress TeX standard output (support for "save" target needs local l3build patch)')  # noqa: E501
 # fmt: on
 
 if __name__ == '__main__':
