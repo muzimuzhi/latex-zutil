@@ -221,17 +221,17 @@ def on_ci() -> bool:
     # https://docs.github.com/en/actions/reference/variables-reference#default-environment-variables
     return os.getenv('CI') == 'true'
 
+def github_debug_logging_enabled() -> bool:
+    """Check if GitHub Actions debug logging is enabled."""
+    # https://docs.github.com/en/actions/how-tos/monitoring-and-troubleshooting-workflows/troubleshooting-workflows/enabling-debug-logging
+    return os.getenv('ACTIONS_RUNNER_DEBUG') == 'true' or \
+        os.getenv('ACTIONS_STEP_DEBUG') == 'true'
+
 
 def debug_logging_enabled() -> bool:
-    """Check if debug logging is enabled."""
-    # debug logging envvars
-    # https://docs.github.com/en/actions/how-tos/monitoring-and-troubleshooting-workflows/troubleshooting-workflows/enabling-debug-logging
+    """Check if debug logging is enabled by environment variables."""
     return 'DEBUG' in os.environ or (
-        on_ci()
-        and (
-            os.getenv('ACTIONS_RUNNER_DEBUG') == 'true'
-            or os.getenv('ACTIONS_STEP_DEBUG') == 'true'
-        )
+        on_ci() and github_debug_logging_enabled()
     )
 
 
