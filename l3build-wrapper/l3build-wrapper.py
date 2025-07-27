@@ -22,9 +22,6 @@ from typing import Final
 type Test = str
 
 
-logging.basicConfig(
-    format='[%(name)s] %(levelname)s: %(message)s',
-)
 logger = logging.getLogger('wrapper')
 
 
@@ -193,6 +190,9 @@ tblr_old = TestSuite(
     tests=['testfiles-old/*.tex'],
 )
 
+LOGGING_DEFAULT_FORMAT = '[%(name)s] %(levelname)s: %(message)s'
+LOGGING_DEBUG_FORMAT = '%(levelname)s - %(filename)s:%(lineno)d - %(funcName)s - %(levelname)s - %(message)s'  # noqa: E501
+
 L3BUILD_TESTSUITES: Final[tuple[TestSuite, ...]] = (zutil, tblr, tblr_old)
 L3BUILD_TESTSUITES_MAP: Final[dict[str, TestSuite]] = {
     ts.alias: ts for ts in L3BUILD_TESTSUITES if ts.alias
@@ -235,24 +235,23 @@ def debug_logging_enabled() -> bool:
     )
 
 
-def init_logging() -> None:
-    """Initialize logging configuration."""
-    if debug_logging_enabled():
-        logging.basicConfig(
-            format='%(levelname)s - %(filename)s:%(lineno)d - %(funcName)s - %(levelname)s - %(message)s',  # noqa: E501
-        )
-        logger.setLevel(logging.DEBUG)
-        logger.debug('Debug logging is enabled')
-    else:
-        logger.setLevel(logging.WARNING)
-
-
-def update_logging(verbosity: int) -> None:
-    """Update logging level based on verbosity."""
-    level = VERBOSITY_TO_LEVEL.get(verbosity, logging.DEBUG)
-    if level < logger.getEffectiveLevel():
+def set_logging_level(args: argparse.Namespace) -> None:
+    """Set logging level."""
+    def set_level(level: int) -> None:
+        if level == logging.DEBUG:
+            logging.basicConfig(format=LOGGING_DEBUG_FORMAT)
+        else:
+            logging.basicConfig(format=LOGGING_DEFAULT_FORMAT)
         logger.setLevel(level)
-        logger.debug('Logging level set to %s', logging.getLevelName(logger.level))
+        logger.debug('Logging level set to %s', logging.getLevelName(level))
+
+    level = VERBOSITY_TO_LEVEL.get(args.verbose, logging.DEBUG)
+    if debug_logging_enabled():
+        level = min(level, logging.DEBUG)
+    elif args.dry_run:
+        level = min(level, logging.INFO)
+
+    set_level(level)
 
 
 def parse_known_names(
@@ -352,10 +351,8 @@ _improved.add_argument('-q', '--quiet',
 
 if __name__ == '__main__':
     try:
-        init_logging()
-
         args = parser.parse_intermixed_args()
-        update_logging(args.verbose)
+        set_logging_level(args)
         logger.debug('Parsed args: %s', args)
 
         wrap_l3build(args)
