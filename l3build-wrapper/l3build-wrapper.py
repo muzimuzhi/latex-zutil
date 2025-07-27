@@ -137,11 +137,6 @@ class TestSuiteRun:
             add_option('--show-log-on-error')
         cls.options_shared = _options
 
-    def add_name(self, name: Test) -> None:
-        """Add a test name to the test suite run."""
-        if name not in self.names:
-            self.names.append(name)
-
     def finalize_names(self) -> None:
         """Adjust collected test names at final stage."""
         if self.run_as_whole:
@@ -172,6 +167,12 @@ class TestSuiteRun:
         names: set[str],
     ) -> list[str]:
         """Parse names received from the command line."""
+
+        def add_name(name: Test) -> None:
+            """Add a test name."""
+            if name not in self.names:
+                self.names.append(name)
+
         ts = self.ts
         names_unknown = []
         for name in names:
@@ -182,7 +183,7 @@ class TestSuiteRun:
                     name, ts.name,
                 )  # fmt: skip
             elif name in ts.get_names():
-                self.add_name(name)
+                add_name(name)
                 logger.debug(
                     'Name "%s" recognized as a test in test suite "%s"',
                     name, ts.name,
