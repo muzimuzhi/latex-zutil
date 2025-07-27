@@ -96,6 +96,8 @@ class TestSuite:
 class TestSuiteRun:
     """Data needed by running l3build on a single test suite."""
 
+    target: Target
+
     def __init__(self, ts: TestSuite) -> None:
         self.name = ts.name
         self.ts = ts
@@ -111,14 +113,14 @@ class TestSuiteRun:
     def _add_option(self, option: str) -> None:
         self.options.append(option)
 
-    def finalize_names(self, args: argparse.Namespace) -> None:
+    def finalize_names(self) -> None:
         """Adjust collected test names at final stage."""
         if self.run_as_whole:
             # `save` a testsuite means saving all names in it
-            if args.target == Target.SAVE:
+            if self.target == Target.SAVE:
                 self.names = list(self.ts.get_names())
             # `check` a testsuite means checking with no names
-            elif args.target == Target.CHECK:
+            elif self.target == Target.CHECK:
                 self.names = []
 
     def set_options(self, args: argparse.Namespace) -> None:  # noqa: C901
@@ -135,7 +137,7 @@ class TestSuiteRun:
             self._add_option('-v')
         if args.halt_on_error:
             self._add_option('-H')
-        if args.target == Target.CHECK and args.show_saves:
+        if self.target == Target.CHECK and args.show_saves:
             self._add_option('-S')
         if args.dev:
             self._add_option('--dev')
@@ -144,24 +146,25 @@ class TestSuiteRun:
         if args.show_log_on_error:
             self._add_option('--show-log-on-error')
 
-    def run_l3build(self, target: Target) -> bool:
+    def run_l3build(self, args: argparse.Namespace) -> bool:
         """Run l3build on this test suite."""
         if not self.run_as_whole and not self.names:
             return False
 
-        self.finalize_names(args)
+        self.finalize_names()
         self.set_options(args)
 
-        commands = ['l3build', target, *self.options, *self.names]
+        commands = ['l3build', self.target, *self.options, *self.names]
+        path = self.ts.path
         if args.dry_run or args.verbose:
             logger.info(
                 'Running "%s" in directory "%s"',
                 ' '.join(commands),
-                self.ts.path,
+                path,
             )
         if not args.dry_run:
             try:
-                run(commands, cwd=self.ts.path, check=True)  # noqa: S603
+                run(commands, cwd=path, check=True)  # noqa: S603
             except CalledProcessError:
                 sys.exit(1)
         return True
@@ -287,6 +290,7 @@ def wrap_l3build(args: argparse.Namespace) -> None:
     if target not in Target:
         raise UnknownTargetError(target)
 
+    TestSuiteRun.target = Target(target)
     testsuites_run: dict[str, TestSuiteRun] = {
         ts.name: TestSuiteRun(ts) for ts in L3BUILD_TESTSUITES
     }
@@ -302,7 +306,7 @@ def wrap_l3build(args: argparse.Namespace) -> None:
 
     # run l3build
     for ts_run in testsuites_run.values():
-        ts_run.run_l3build(target)
+        ts_run.run_l3build(args)
 
 
 # Unlike in vanilla l3build, options can be intermixed with names,
