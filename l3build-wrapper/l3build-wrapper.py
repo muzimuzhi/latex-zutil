@@ -113,7 +113,7 @@ class TestSuiteRun:
 
     @classmethod
     def set_shared_options(cls, args: argparse.Namespace) -> None:
-        """Set options for all test suite runs."""
+        """Compose options for all test suite runs."""
 
         def add_option(option: str) -> None:
             _options.append(option)
@@ -147,12 +147,12 @@ class TestSuiteRun:
                     self.ts.name,
                 )
                 self.names = list(self.ts.get_names())
-            # `check` a testsuite means checking with no names
+            # `check` a testsuite means checking with no explicit names
             elif self.target == Target.CHECK:
                 self.names = []
 
     def set_options(self, args: argparse.Namespace) -> None:
-        """Compose l3build options."""
+        """Compose l3build options specific to this test suite."""
 
         def add_option(option: str) -> None:
             self.options.append(option)
