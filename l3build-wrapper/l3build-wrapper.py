@@ -97,6 +97,7 @@ class TestSuiteRun:
     """Data needed by running l3build on a single test suite."""
 
     target: Target
+    options: list[str]
 
     def __init__(self, ts: TestSuite) -> None:
         self.name = ts.name
@@ -105,13 +106,43 @@ class TestSuiteRun:
         self.names: list[Test] = []
         self.run_as_whole: bool = False
 
+
+    @classmethod
+    def set_shared_target(cls, target: Target) -> None:
+        """Set the target for all test suite runs."""
+        cls.target = target
+
+    @classmethod
+    def set_shared_options(cls, args: argparse.Namespace) -> None:
+        """Set options for all test suite runs."""
+        def add_option(option: str) -> None:
+            _options.append(option)
+
+        _options = []
+        if args.stdengine:
+            add_option('-s')
+        if args.quiet:
+            add_option('-q')
+        if logger.getEffectiveLevel() == logging.DEBUG and l3build_patched():
+            add_option('-v')
+        if args.halt_on_error:
+            add_option('-H')
+        if cls.target == Target.CHECK and args.show_saves:
+            add_option('-S')
+        if args.dev:
+            add_option('--dev')
+        if args.dirty:
+            add_option('--dirty')
+        if args.show_log_on_error:
+            add_option('--show-log-on-error')
+        cls.options = _options
+
+
     def add_name(self, name: Test) -> None:
         """Add a test name to the test suite run."""
         if name not in self.names:
             self.names.append(name)
 
-    def _add_option(self, option: str) -> None:
-        self.options.append(option)
 
     def finalize_names(self) -> None:
         """Adjust collected test names at final stage."""
@@ -123,28 +154,15 @@ class TestSuiteRun:
             elif self.target == Target.CHECK:
                 self.names = []
 
-    def set_options(self, args: argparse.Namespace) -> None:  # noqa: C901
+    def set_options(self, args: argparse.Namespace) -> None:
         """Compose l3build options."""
+        def add_option(option: str) -> None:
+            self.options.append(option)
+
         if self.ts.config:
-            self._add_option(f'-c{self.ts.config}')
+            add_option(f'-c{self.ts.config}')
         if args.engine:
-            self._add_option(f'-e{args.engine}')
-        if args.stdengine:
-            self._add_option('-s')
-        if args.quiet:
-            self._add_option('-q')
-        if logger.getEffectiveLevel() == logging.DEBUG and l3build_patched():
-            self._add_option('-v')
-        if args.halt_on_error:
-            self._add_option('-H')
-        if self.target == Target.CHECK and args.show_saves:
-            self._add_option('-S')
-        if args.dev:
-            self._add_option('--dev')
-        if args.dirty:
-            self._add_option('--dirty')
-        if args.show_log_on_error:
-            self._add_option('--show-log-on-error')
+            add_option(f'-e{args.engine}')
 
     def parse_known_names(
         self,
@@ -177,6 +195,7 @@ class TestSuiteRun:
 
         self.finalize_names()
         self.set_options(args)
+        self.options.extend(TestSuiteRun.options)
 
         commands = ['l3build', self.target, *self.options, *self.names]
         path = self.ts.path
@@ -282,7 +301,11 @@ def wrap_l3build(args: argparse.Namespace) -> None:
     if target not in Target:
         raise UnknownTargetError(target)
 
-    TestSuiteRun.target = Target(target)
+    TestSuiteRun.set_shared_target(Target(target))
+    logger.debug('Shared target: "%s"', target)
+    TestSuiteRun.set_shared_options(args)
+    logger.debug('Shared options: %s', TestSuiteRun.options)
+
     testsuites_run: dict[str, TestSuiteRun] = {
         ts.name: TestSuiteRun(ts) for ts in L3BUILD_TESTSUITES
     }
@@ -309,6 +332,7 @@ def wrap_l3build(args: argparse.Namespace) -> None:
     if not invoked:
         # should not happen, but just in case
         logger.warning('No l3build commands were invoked.')
+
 
 # Unlike in vanilla l3build, options can be intermixed with names,
 # and short flags are mergeable (`-qs` is the same as `-q -s`).
