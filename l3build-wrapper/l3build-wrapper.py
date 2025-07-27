@@ -97,7 +97,7 @@ class TestSuiteRun:
     """Data needed by running l3build on a single test suite."""
 
     target: Target
-    options: list[str]
+    options_shared: list[str]
 
     def __init__(self, ts: TestSuite) -> None:
         self.name = ts.name
@@ -135,7 +135,7 @@ class TestSuiteRun:
             add_option('--dirty')
         if args.show_log_on_error:
             add_option('--show-log-on-error')
-        cls.options = _options
+        cls.options_shared = _options
 
     def add_name(self, name: Test) -> None:
         """Add a test name to the test suite run."""
@@ -198,7 +198,7 @@ class TestSuiteRun:
 
         self.finalize_names()
         self.set_options(args)
-        self.options.extend(TestSuiteRun.options)
+        self.options.extend(TestSuiteRun.options_shared)
 
         commands = ['l3build', self.target, *self.options, *self.names]
         path = self.ts.path
@@ -311,7 +311,7 @@ def wrap_l3build(args: argparse.Namespace) -> None:
     TestSuiteRun.set_shared_target(Target(target))
     logger.debug('Shared target: "%s"', target)
     TestSuiteRun.set_shared_options(args)
-    logger.debug('Shared options: %s', TestSuiteRun.options)
+    logger.debug('Shared options: %s', TestSuiteRun.options_shared)
 
     testsuites_run: dict[str, TestSuiteRun] = {
         ts.name: TestSuiteRun(ts) for ts in L3BUILD_TESTSUITES
