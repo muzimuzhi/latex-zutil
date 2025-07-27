@@ -13,10 +13,10 @@
 import argparse
 import logging
 import os
+import subprocess
 import sys
 from enum import UNIQUE, StrEnum, verify
 from pathlib import Path
-from subprocess import CalledProcessError, run
 from typing import Final
 
 type Test = str
@@ -143,7 +143,7 @@ class TestSuiteRun:
             # `save` a testsuite means saving all names in it
             if self.target == Target.SAVE:
                 logger.info(
-                    'Saving all tests in test suite "%s"',
+                    'Save all tests in test suite "%s"',
                     self.ts.name,
                 )
                 self.names = list(self.ts.get_names())
@@ -194,6 +194,17 @@ class TestSuiteRun:
 
     def invoke_l3build(self, args: argparse.Namespace) -> bool:
         """Run l3build on this test suite."""
+
+        def run_l3build() -> None:
+            logger.info('Run "%s" in directory "%s"', ' '.join(commands), path)
+            if args.dry_run:
+                return
+            try:
+                subprocess.run(commands, cwd=path, check=True)  # noqa: S603
+            except subprocess.CalledProcessError:
+                logger.error('Failed to run l3build')
+                sys.exit(1)
+
         if not self.run_as_whole and not self.names:
             return False
 
@@ -203,12 +214,14 @@ class TestSuiteRun:
 
         commands = ['l3build', self.target, *self.options, *self.names]
         path = self.ts.path
-        logger.info('Running "%s" in directory "%s"', ' '.join(commands), path)
-        if not args.dry_run:
-            try:
-                run(commands, cwd=path, check=True)  # noqa: S603
-            except CalledProcessError:
-                sys.exit(1)
+        run_l3build()
+
+        if self.target == Target.SAVE and args.re_check:
+            logger.info('Re-check test suite "%s" after saving', self.ts.name)
+            # always set --show-saves when re-checking
+            self.options.append('-S')
+            commands = ['l3build', Target.CHECK, *self.options, *self.names]
+            run_l3build()
         return True
 
 
@@ -253,8 +266,8 @@ VERBOSITY_TO_LEVEL: Final[dict[int, int]] = {
 def l3build_patched() -> bool:
     """Check if the l3build is patched (aka, run locally)."""
     try:
-        rst = run(['l3build', '--version'], check=True, capture_output=True)  # noqa: S607
-    except CalledProcessError:
+        rst = subprocess.run(['l3build', '--version'], check=True, capture_output=True)  # noqa: S607
+    except subprocess.CalledProcessError:
         logger.exception('"l3build --version" failed.')
 
     return '(with patch)' in rst.stdout.decode('utf-8')
@@ -333,7 +346,7 @@ def wrap_l3build(args: argparse.Namespace) -> None:
         if unknown:
             raise UnknownNameError(unknown.pop())
 
-    # run l3build
+    # invoke l3build
     invoked = False
     for ts_run in testsuites_run.values():
         invoked |= ts_run.invoke_l3build(args)
@@ -360,6 +373,8 @@ parser.add_argument('names', type=str, nargs='*', metavar='name',
 # new, wrapper-only options
 parser.add_argument('-n', '--dry-run', action='store_true', default=False,
                     help='print what l3build command(s) would be executed without execution')  # noqa: E501
+parser.add_argument('--re-check', action='store_true', default=False,
+                    help='after saving, rerun checks using the same arguments')
 parser.add_argument('-v', '--verbose', action='count', default=0,
                     help='print more information; given twice enables debug logging and would be passed to "l3build" if patched l3build is detected)')  # noqa: E501
 
