@@ -236,7 +236,7 @@ tblr_old = TestSuite(
 
 LOGGING_DEFAULT_FORMAT = '[%(name)s] %(levelname)s: %(message)s'
 LOGGING_DEBUG_FORMAT = (
-    '[%(name)s] %(levelname)s - %(filename)s:%(lineno)d - %(funcName)s - %(message)s'
+    '[%(name)s] %(levelname)-5s - %(filename)s:%(lineno)d - %(funcName)-17s - %(message)s'  # noqa: E501
 )
 
 L3BUILD_TESTSUITES: Final[tuple[TestSuite, ...]] = (zutil, tblr, tblr_old)
