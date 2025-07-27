@@ -133,7 +133,7 @@ class TestSuiteRun:
             self._add_option('-s')
         if args.quiet:
             self._add_option('-q')
-        if args.verbose and l3build_patched():
+        if logger.getEffectiveLevel() == logging.DEBUG and l3build_patched():
             self._add_option('-v')
         if args.halt_on_error:
             self._add_option('-H')
@@ -329,7 +329,7 @@ parser.add_argument('names', type=str, nargs='*', metavar='name',
 parser.add_argument('-n', '--dry-run', action='store_true', default=False,
                     help='print what l3build command(s) would be executed without execution')  # noqa: E501
 parser.add_argument('-v', '--verbose', action='count', default=0,
-                    help='print more information; can be used multiple times (passed to "l3build" if patched l3build is detected)')  # noqa: E501
+                    help='print more information; given twice enables debug logging and would be passed to "l3build" if patched l3build is detected)')  # noqa: E501
 
 _inherited = parser.add_argument_group('inherited l3build options')
 # commonly used l3build options
