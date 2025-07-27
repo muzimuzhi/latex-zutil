@@ -304,6 +304,8 @@ def set_logging_level(args: argparse.Namespace) -> None:
 
 def wrap_l3build(args: argparse.Namespace) -> None:
     """Run l3build on one test suite a time."""
+    logger.debug('Parsed args: %s', args)
+
     target = args.target
     if target not in Target:
         raise UnknownTargetError(target)
@@ -389,8 +391,6 @@ if __name__ == '__main__':
     try:
         args = parser.parse_intermixed_args()
         set_logging_level(args)
-        logger.debug('Parsed args: %s', args)
-
         wrap_l3build(args)
     except (argparse.ArgumentError, argparse.ArgumentTypeError) as e:
         logger.error(str(e))
