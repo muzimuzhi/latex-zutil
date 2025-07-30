@@ -408,6 +408,9 @@ if __name__ == '__main__':
         args: argparse.Namespace = parser.parse_intermixed_args()
         set_logging(args)
         wrap_l3build(args)
+    except KeyboardInterrupt:
+        logger.warning('Interrupted by user')
+        sys.exit(1)
     except (argparse.ArgumentError, argparse.ArgumentTypeError) as e:
         logger.error(str(e))
         parser.print_usage()
