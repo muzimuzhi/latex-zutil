@@ -377,30 +377,26 @@ parser.add_argument('names', type=str, nargs='*', metavar='name',
                     help='a test suite or test')
 
 # new, wrapper-only options and flags
-parser.add_argument('-n', '--dry-run', action='store_true', default=False,
+parser.add_argument('-n', '--dry-run', action='store_true',
                     help='print what l3build command(s) would be executed without execution')  # noqa: E501
-parser.add_argument('--re-check', action='store_true', default=False,
+parser.add_argument('--re-check', action='store_true',
                     help='after saving, rerun checks using the same arguments')
 parser.add_argument('-v', '--verbose', action='count', default=0,
                     help='print more information; given twice enables debug logging and would be passed to "l3build" if patched l3build is detected)')  # noqa: E501
 
 # inherited l3build options and flags
 inherited = parser.add_argument_group('inherited l3build options')
-inherited.add_argument('--dev', action='store_true', default=False)
-inherited.add_argument('--dirty', action='store_true', default=False)
+inherited.add_argument('--dev', action='store_true')
+inherited.add_argument('--dirty', action='store_true')
 inherited.add_argument('-e', '--engine', type=str)
-inherited.add_argument('-H', '--halt-on-error', action='store_true',
-                       default=False)
+inherited.add_argument('-H', '--halt-on-error', action='store_true')
 inherited.add_argument('-q', '--quiet',
                        action=argparse.BooleanOptionalAction,
                        default=True,
                        help='suppress TeX standard output (support for "save" target needs local l3build patch)')  # noqa: E501
-inherited.add_argument('--show-log-on-error', action='store_true',
-                       default=False)
-inherited.add_argument('-S', '--show-saves', action='store_true',
-                       default=False)
-inherited.add_argument('-s', '--stdengine', action='store_true',
-                       default=False)
+inherited.add_argument('--show-log-on-error', action='store_true')
+inherited.add_argument('-S', '--show-saves', action='store_true')
+inherited.add_argument('-s', '--stdengine', action='store_true')
 # fmt: on
 
 if __name__ == '__main__':
