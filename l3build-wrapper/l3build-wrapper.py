@@ -293,14 +293,17 @@ def debug_logging_enabled() -> bool:
     return 'DEBUG' in os.environ or (on_ci() and github_debug_logging_enabled())
 
 
-def set_logging_level(args: argparse.Namespace) -> None:
-    """Set logging level."""
+def init_logging() -> None:
+    """Initialize logging."""
+    logging.basicConfig(format=LOGGING_DEFAULT_FORMAT)
+
+
+def set_logging(args: argparse.Namespace) -> None:
+    """Update logging settings."""
 
     def set_level(level: int) -> None:
         if level == logging.DEBUG:
             logging.basicConfig(format=LOGGING_DEBUG_FORMAT)
-        else:
-            logging.basicConfig(format=LOGGING_DEFAULT_FORMAT)
         logger.setLevel(level)
         logger.debug('Logging level set to %s', logging.getLevelName(level))
 
@@ -401,8 +404,9 @@ inherited.add_argument('-s', '--stdengine', action='store_true',
 
 if __name__ == '__main__':
     try:
-        args = parser.parse_intermixed_args()
-        set_logging_level(args)
+        init_logging()
+        args: argparse.Namespace = parser.parse_intermixed_args()
+        set_logging(args)
         wrap_l3build(args)
     except (argparse.ArgumentError, argparse.ArgumentTypeError) as e:
         logger.error(str(e))
