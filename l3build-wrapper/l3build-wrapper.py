@@ -273,24 +273,23 @@ def l3build_patched() -> bool:
     return '(with patch)' in rst.stdout.decode('utf-8')
 
 
-def on_ci() -> bool:
-    """Check if the script is running on a CI environment."""
-    # GitHub Actions sets 'CI'
-    # https://docs.github.com/en/actions/reference/variables-reference#default-environment-variables
-    return os.getenv('CI') == 'true'
-
-
-def github_debug_logging_enabled() -> bool:
-    """Check if GitHub Actions debug logging is enabled."""
-    # https://docs.github.com/en/actions/how-tos/monitoring-and-troubleshooting-workflows/troubleshooting-workflows/enabling-debug-logging
-    return (
-        os.getenv('ACTIONS_RUNNER_DEBUG') == 'true'
-        or os.getenv('ACTIONS_STEP_DEBUG') == 'true'
-    )
-
-
 def debug_logging_enabled() -> bool:
     """Check if debug logging is enabled by environment variables."""
+
+    def on_ci() -> bool:
+        """Check if the script is running on a CI environment."""
+        # GitHub Actions sets 'CI'
+        # https://docs.github.com/en/actions/reference/variables-reference#default-environment-variables
+        return os.getenv('CI') == 'true'
+
+    def github_debug_logging_enabled() -> bool:
+        """Check if GitHub Actions debug logging is enabled."""
+        # https://docs.github.com/en/actions/how-tos/monitoring-and-troubleshooting-workflows/troubleshooting-workflows/enabling-debug-logging
+        return (
+            os.getenv('ACTIONS_RUNNER_DEBUG') == 'true'
+            or os.getenv('ACTIONS_STEP_DEBUG') == 'true'
+        )
+
     return 'DEBUG' in os.environ or (on_ci() and github_debug_logging_enabled())
 
 
@@ -355,8 +354,10 @@ def wrap_l3build(args: argparse.Namespace) -> None:
         logger.warning('No l3build commands were invoked.')
 
 
-# Unlike in vanilla l3build, options can be intermixed with names,
-# and short flags are mergeable (`-qs` is the same as `-q -s`).
+# Unlike in vanilla l3build,
+# - options can be intermixed with names,
+# - quite some options are made flags, i.e., they don't take arguments,
+# - short flags are mergeable (`-qs` is the same as `-q -s`).
 parser = argparse.ArgumentParser(
     description='Check and save selective l3build tests made easier',
     usage='%(prog)s target [options] name...',
