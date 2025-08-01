@@ -267,10 +267,11 @@ def l3build_patched() -> bool:
     """Check if the l3build is patched (aka, run locally)."""
     try:
         rst = subprocess.run(['l3build', '--version'], check=True, capture_output=True)  # noqa: S607
+        return '(with patch)' in rst.stdout.decode('utf-8')
     except subprocess.CalledProcessError:
         logger.exception('"l3build --version" failed.')
 
-    return '(with patch)' in rst.stdout.decode('utf-8')
+    return False
 
 
 def debug_logging_enabled() -> bool:
