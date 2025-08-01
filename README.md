@@ -42,8 +42,8 @@ $ just
 # list commands that would run by RECIPE
 $ just -n/--dry-run RECIPE
 
-# (just recipes `check` and `save` both use `l3build-wrapper.py`)
-# print help text of `l3build-wrapper.py`
+# (just recipes `check` and `save` both use `l3build_wrapper.py`)
+# print help text of `l3build_wrapper.py`
 $ just [check|save] -h
 # check/save one or more tests and/or testsuites
 $ just check zutil tblr
