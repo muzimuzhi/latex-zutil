@@ -430,6 +430,8 @@ parser.add_argument('names', type=str, nargs='*', metavar='name',
                     help='a test suite or test')
 
 # new, wrapper-only options and flags
+parser.add_argument('--all-engines', action='store_true',
+                    help='save or update all existing test results')
 parser.add_argument('-n', '--dry-run', action='store_true',
                     help='print what l3build command(s) would be executed without execution')  # noqa: E501
 parser.add_argument('--re-check', action='store_true',
