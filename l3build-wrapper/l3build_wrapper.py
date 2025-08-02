@@ -34,6 +34,14 @@ class L3buildWrapperError(Exception):
     """Base class for L3buildWrapper exceptions."""
 
 
+class DirectoryNotFoundError(L3buildWrapperError):
+    """Directory was not found."""
+
+    def __init__(self, path: str) -> None:
+        super().__init__(f'Directory not found: "{path}".')
+        self.path = path
+
+
 class InvalidExtensionError(L3buildWrapperError):
     """Invalid file extension was provided."""
 
@@ -110,7 +118,7 @@ class TestSuite:
         # validate l3build variables
         test_dir = Path(self.path) / self.testfiledir
         if not (Path(self.path) / self.testfiledir).is_dir():
-            raise ValueError(f'TestSuite testfiledir "{self.testfiledir}" is not a directory in "{self.path}".')  # noqa: TRY003, EM102, E501
+            raise DirectoryNotFoundError(str(test_dir))
         self.test_dir: Path = test_dir
 
         if not self.stdengine:
