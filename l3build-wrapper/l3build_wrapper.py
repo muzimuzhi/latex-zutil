@@ -81,10 +81,12 @@ class TestSuite:
     config: str
     # start of l3build variables
     testfiledir: str
+    checkengines: list[str]
     lvtext: str
     tlgext: str
     pvtext: str
     pdfext: str
+    stdengine: str | None = None
     # end of l3build variables
     alias: str | None = None
     test_names: set[Test] | None = None
@@ -92,11 +94,11 @@ class TestSuite:
     def derive(self, **changes: Any) -> 'TestSuite':  # noqa: ANN401
         """Derive a new concrete TestSuite."""
         ts = replace(self, **changes)
-        ts.verify()
+        ts.validate_and_init()
         return ts
 
-    def verify(self) -> None:
-        """Run simple validations."""
+    def validate_and_init(self) -> None:
+        """Verify and initialize TestSuite parameters."""
         if not self.name:
             raise ValueError('TestSuite name cannot be empty.')  # noqa: TRY003, EM101
         if not self.path:
@@ -107,6 +109,9 @@ class TestSuite:
         if not (Path(self.path) / self.testfiledir).is_dir():
             raise ValueError(f'TestSuite testfiledir "{self.testfiledir}" is not a directory in "{self.path}".')  # noqa: TRY003, EM102, E501
         self.test_dir: Path = test_dir
+
+        if not self.stdengine:
+            self.stdengine = self.checkengines[0]
 
         for ext in (self.lvtext, self.tlgext, self.pvtext, self.pdfext):
             if not ext.startswith('.'):
@@ -263,6 +268,7 @@ TESTSUITE_DEFAULT: Final = TestSuite(
     path='',
     config='build',
     testfiledir='testfiles',
+    checkengines=['pdftex', 'luatex', 'xetex'],
     lvtext='.lvt',
     tlgext='.tlg',
     pvtext='.pvt',
