@@ -87,7 +87,7 @@ class TestSuite:
     pdfext: str
     # end of l3build variables
     alias: str | None = None
-    test_names: tuple[Test, ...] | None = None
+    test_names: set[Test] | None = None
 
     def derive(self, **changes: Any) -> 'TestSuite':  # noqa: ANN401
         """Derive a new concrete TestSuite."""
@@ -112,14 +112,20 @@ class TestSuite:
             if not ext.startswith('.'):
                 raise InvalidExtensionError(ext)
 
-    def get_names(self) -> tuple[Test, ...]:
+    def get_names(self) -> set[Test]:
         """Generate test names from the test patterns."""
         if self.test_names is not None:
             return self.test_names
 
-        test_names = []
-        test_names.extend([p.stem for p in self.test_dir.glob('*' + self.lvtext)])
-        self.test_names = tuple(test_names)
+        # {i for i in iterable} is set comprehension
+        log_based = {p.stem for p in self.test_dir.glob('*' + self.lvtext)}
+        pdf_based = {p.stem for p in self.test_dir.glob('*' + self.pvtext)}
+        if log_based & pdf_based:
+            logger.warning(
+                'Some tests have both log and pdf files: %s',
+                ', '.join(log_based & pdf_based),
+            )
+        self.test_names = log_based | pdf_based
         return self.test_names
 
 
@@ -133,7 +139,7 @@ class TestSuiteRun:
         self.name = ts.name
         self.ts = ts
         self.options: list[str] = []
-        self.names: list[Test] = []
+        self.names: set[Test] = set()
         self.run_as_whole: bool = False
 
     @classmethod
@@ -176,10 +182,10 @@ class TestSuiteRun:
                     'Save all tests in test suite "%s"',
                     self.ts.name,
                 )
-                self.names = list(self.ts.get_names())
+                self.names = self.ts.get_names()
             # `check` a testsuite means checking with no explicit names
             elif self.target == Target.CHECK:
-                self.names = []
+                self.names = set()
 
     def set_options(self, args: argparse.Namespace) -> None:
         """Compose l3build options specific to this test suite."""
@@ -197,12 +203,6 @@ class TestSuiteRun:
         names: set[str],
     ) -> list[str]:
         """Parse names received from the command line."""
-
-        def add_name(name: Test) -> None:
-            """Add a test name."""
-            if name not in self.names:
-                self.names.append(name)
-
         ts = self.ts
         names_unknown = []
         for name in names:
@@ -213,7 +213,7 @@ class TestSuiteRun:
                     name, ts.name,
                 )  # fmt: skip
             elif name in ts.get_names():
-                add_name(name)
+                self.names.add(name)
                 logger.debug(
                     'Name "%s" recognized as a test in test suite "%s"',
                     name, ts.name,
