@@ -22,7 +22,7 @@ from pathlib import Path
 from typing import Any, Final, NewType
 
 TestNames = NewType('TestNames', set[str])
-TestEngines = NewType('TestEngines', tuple[str])
+TestEngines = NewType('TestEngines', tuple[str, ...])
 
 
 logger = logging.getLogger('wrapper')
