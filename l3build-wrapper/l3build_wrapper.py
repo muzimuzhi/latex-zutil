@@ -219,7 +219,7 @@ class TestSuiteRun:
 
         if self.ts.config:
             add_option(f'-c{self.ts.config}')
-        if args.engine not in (self.ts.stdengine, _OPTION_ALL_ENGINES):
+        if args.engine and args.engine not in (self.ts.stdengine, _OPTION_ALL_ENGINES):
             add_option(f'-e{args.engine}')
 
     def parse_known_names(
