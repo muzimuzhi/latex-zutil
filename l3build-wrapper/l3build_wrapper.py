@@ -83,6 +83,8 @@ class TestSuite:
     testfiledir: str
     lvtext: str
     tlgext: str
+    pvtext: str
+    pdfext: str
     # end of l3build variables
     alias: str | None = None
     test_names: tuple[Test, ...] | None = None
@@ -106,10 +108,9 @@ class TestSuite:
             raise ValueError(f'TestSuite testfiledir "{self.testfiledir}" is not a directory in "{self.path}".')  # noqa: TRY003, EM102, E501
         self.test_dir: Path = test_dir
 
-        if not self.lvtext.startswith('.'):
-            raise InvalidExtensionError(self.lvtext)
-        if not self.tlgext.startswith('.'):
-            raise InvalidExtensionError(self.tlgext)
+        for ext in (self.lvtext, self.tlgext, self.pvtext, self.pdfext):
+            if not ext.startswith('.'):
+                raise InvalidExtensionError(ext)
 
     def get_names(self) -> tuple[Test, ...]:
         """Generate test names from the test patterns."""
@@ -264,6 +265,8 @@ TESTSUITE_DEFAULT: Final = TestSuite(
     testfiledir='testfiles',
     lvtext='.lvt',
     tlgext='.tlg',
+    pvtext='.pvt',
+    pdfext='.pdf',
 )
 
 zutil: Final[TestSuite] = TESTSUITE_DEFAULT.derive(
