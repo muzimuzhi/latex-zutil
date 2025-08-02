@@ -31,6 +31,14 @@ class L3buildWrapperError(Exception):
     """Base class for L3buildWrapper exceptions."""
 
 
+class InvalidExtensionError(L3buildWrapperError):
+    """Invalid file extension was provided."""
+
+    def __init__(self, ext: str) -> None:
+        super().__init__(f'Invalid file extension: "{ext}". Should start with a dot.')
+        self.ext = ext
+
+
 class UnknownTargetError(L3buildWrapperError):
     """Unknown target was provided."""
 
@@ -91,6 +99,12 @@ class TestSuite:
             raise ValueError('TestSuite name cannot be empty.')  # noqa: TRY003, EM101
         if not self.path:
             self.path = self.name
+
+        # validate l3build variables
+        if not self.lvtext.startswith('.'):
+            raise InvalidExtensionError(self.lvtext)
+        if not self.tlgext.startswith('.'):
+            raise InvalidExtensionError(self.tlgext)
 
     def get_names(self) -> tuple[Test, ...]:
         """Generate test names from the test patterns."""
