@@ -21,8 +21,8 @@ from enum import UNIQUE, StrEnum, verify
 from pathlib import Path
 from typing import Any, Final, NewType
 
-TestNames = NewType('TestNames', set[str])
 TestEngines = NewType('TestEngines', tuple[str, ...])
+TestNames = NewType('TestNames', set[str])
 
 
 logger = logging.getLogger('wrapper')
@@ -88,7 +88,7 @@ class TestSuite:
     tlgext: str
     pvtext: str
     pdfext: str
-    stdengine: str | None = None
+    stdengine: str = ''
     # end of l3build variables
     alias: str | None = None
     test_names: TestNames | None = None
@@ -239,20 +239,42 @@ class TestSuiteRun:
                 rst.append(engine)  # noqa: PERF401
         return TestEngines(tuple(rst))
 
+    def _invoke_l3build(
+        self,
+        target: Target,
+        options: list[str],
+        names: TestNames,
+    ) -> None:
+        """Run l3build with the given options and names."""
+        path = self.ts.path
+        commands = ['l3build', target, *options, *names]
+        logger.info('Run "%s" in directory "%s"', ' '.join(commands), path)
+        if args.dry_run:
+            return
+        try:
+            subprocess.run(commands, cwd=path, check=True)  # noqa: S603
+        except subprocess.CalledProcessError:
+            logger.error('Failed to run l3build')
+            sys.exit(1)
+
     def invoke_l3build(self, args: argparse.Namespace) -> bool:
         """Run l3build on this test suite."""
 
-        def run_l3build(options: list[str], names: TestNames) -> None:
-            path = self.ts.path
-            commands = ['l3build', self.target, *options, *names]
-            logger.info('Run "%s" in directory "%s"', ' '.join(commands), path)
-            if args.dry_run:
-                return
-            try:
-                subprocess.run(commands, cwd=path, check=True)  # noqa: S603
-            except subprocess.CalledProcessError:
-                logger.error('Failed to run l3build')
-                sys.exit(1)
+        def save_for_all_engines() -> None:
+            name_groups: dict[TestEngines, TestNames] = {}
+            for name in self.names:
+                engines: TestEngines = self.get_engine_specific_results(name)
+                if engines in name_groups:
+                    name_groups[engines].add(name)
+                else:
+                    name_groups[engines] = TestNames({name})
+
+            for engines, names in name_groups.items():
+                logger.info('Save tests "%s" with engines "%s"', names, engines)
+                options = [op for op in self.options if not op.startswith('-e')]
+                if engines:
+                    options.append(f'-e{",".join(engines)}')
+                self._invoke_l3build(self.target, options, names)
 
         if not self.run_as_whole and not self.names:
             return False
@@ -261,30 +283,17 @@ class TestSuiteRun:
         self.set_options(args)
         self.options.extend(TestSuiteRun.options_shared)
 
-        ts = self.ts
         if self.target == Target.SAVE and args.all_engines:
-            # a map from engine-specific result combination to test names
-            engine_groups: dict[TestEngines, TestNames] = {}
-            for name in self.names:
-                engines: TestEngines = self.get_engine_specific_results(name)
-                if engines in engine_groups:
-                    engine_groups[engines].add(name)
-                else:
-                    engine_groups[engines] = TestNames({name})
-            # run l3build on names grouped by engines
-            for engines, names in engine_groups.items():
-                options = [op for op in self.options if not op.startswith('-e')]
-                if engines:
-                    options.append(f'-e{",".join(engines)}')
-                run_l3build(options, names)
+            save_for_all_engines()
         else:
-            run_l3build(self.options, self.names)
+            # simple case, run l3build on the test suite
+            self._invoke_l3build(self.target, self.options, self.names)
 
         if self.target == Target.SAVE and args.re_check:
-            logger.info('Re-check test suite "%s" after saving', ts.name)
+            logger.info('Re-check test suite "%s" after saving', self.ts.name)
             # always set --show-saves when re-checking
             self.options.append('-S')
-            run_l3build(self.options, self.names)
+            self._invoke_l3build(self.target, self.options, self.names)
         return True
 
 
@@ -448,6 +457,8 @@ parser.add_argument('names', type=str, nargs='*', metavar='name',
                     help='a test suite or test')
 
 # new, wrapper-only options and flags
+# TODO: currently `--all-engines` always overwrite `-e/--engine`, no matter
+#       which option is specified last
 parser.add_argument('--all-engines', action='store_true',
                     help='save or update all existing test results')
 parser.add_argument('-n', '--dry-run', action='store_true',
