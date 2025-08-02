@@ -15,6 +15,7 @@ import logging
 import os
 import subprocess
 import sys
+from dataclasses import dataclass
 from enum import UNIQUE, StrEnum, verify
 from pathlib import Path
 from typing import Final
@@ -63,23 +64,16 @@ class Target(StrEnum):
     SAVE = 'save'
 
 
+@dataclass
 class TestSuite:
     """A l3build test suite."""
 
-    def __init__(
-        self,
-        name: str,
-        path: str,
-        config: str,
-        tests: list[Test],
-        alias: str | None = None,
-    ) -> None:
-        self.name = name
-        self.alias = alias
-        self.path = path
-        self.config = config
-        self.tests = tests
-        self.test_names: tuple[Test, ...] | None = None
+    name: str
+    path: str
+    config: str
+    tests: list[Test]
+    alias: str | None = None
+    test_names: tuple[Test, ...] | None = None
 
     def get_names(self) -> tuple[Test, ...]:
         """Generate test names from the test patterns."""
