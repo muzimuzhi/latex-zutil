@@ -274,7 +274,8 @@ class TestSuiteRun:
             # run l3build on names grouped by engines
             for engines, names in engine_groups.items():
                 options = [op for op in self.options if not op.startswith('-e')]
-                options.append(f'-e{",".join(engines)}')
+                if engines:
+                    options.append(f'-e{",".join(engines)}')
                 run_l3build(options, names)
         else:
             run_l3build(self.options, self.names)
