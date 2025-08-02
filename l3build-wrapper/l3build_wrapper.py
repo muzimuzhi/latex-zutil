@@ -15,10 +15,10 @@ import logging
 import os
 import subprocess
 import sys
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from enum import UNIQUE, StrEnum, verify
 from pathlib import Path
-from typing import Final
+from typing import Any, Final
 
 type Test = str
 
@@ -74,6 +74,19 @@ class TestSuite:
     tests: list[Test]
     alias: str | None = None
     test_names: tuple[Test, ...] | None = None
+
+    def derive(self, **changes: Any) -> 'TestSuite':  # noqa: ANN401
+        """Derive a new concrete TestSuite."""
+        ts = replace(self, **changes)
+        ts.verify()
+        return ts
+
+    def verify(self) -> None:
+        """Run simple validations."""
+        if not self.name:
+            raise ValueError('TestSuite name cannot be empty.')  # noqa: TRY003, EM101
+        if not self.path:
+            self.path = self.name
 
     def get_names(self) -> tuple[Test, ...]:
         """Generate test names from the test patterns."""
@@ -219,29 +232,24 @@ class TestSuiteRun:
         return True
 
 
-TS_DEFAULT = TestSuite(
+LOGGING_DEFAULT_FORMAT = '[%(name)s] %(levelname)s: %(message)s'
+LOGGING_DEBUG_FORMAT = '[%(name)s] %(levelname)-5s - %(filename)s:%(lineno)d - %(funcName)-17s - %(message)s'  # noqa: E501
+
+TESTSUITE_DEFAULT: Final = TestSuite(
     name='',
-    path='default',
+    path='',
     config='build',
     tests=['testfiles/*.lvt'],
 )
 
-zutil = TestSuite(
+zutil: Final[TestSuite] = TESTSUITE_DEFAULT.derive(
     name='zutil',
-    path='zutil',
-    config='build',
-    tests=['testfiles/*.lvt'],
 )
-
-tblr = TestSuite(
+tblr: Final[TestSuite] = TESTSUITE_DEFAULT.derive(
     name='tabularray',
     alias='tblr',
-    path='tabularray',
-    config='build',
-    tests=['testfiles/*.lvt'],
 )
-
-tblr_old = TestSuite(
+tblr_old: Final[TestSuite] = TESTSUITE_DEFAULT.derive(
     name='tabularray-old',
     alias='tblr-old',
     path='tabularray',
@@ -249,10 +257,11 @@ tblr_old = TestSuite(
     tests=['testfiles-old/*.tex'],
 )
 
-LOGGING_DEFAULT_FORMAT = '[%(name)s] %(levelname)s: %(message)s'
-LOGGING_DEBUG_FORMAT = '[%(name)s] %(levelname)-5s - %(filename)s:%(lineno)d - %(funcName)-17s - %(message)s'  # noqa: E501
-
-L3BUILD_TESTSUITES: Final[tuple[TestSuite, ...]] = (zutil, tblr, tblr_old)
+L3BUILD_TESTSUITES: Final[tuple[TestSuite, ...]] = (
+    zutil,
+    tblr,
+    tblr_old,
+)
 L3BUILD_TESTSUITES_MAP: Final[dict[str, TestSuite]] = {
     ts.alias: ts for ts in L3BUILD_TESTSUITES if ts.alias
 } | {ts.name: ts for ts in L3BUILD_TESTSUITES}
