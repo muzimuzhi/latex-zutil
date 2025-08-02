@@ -235,7 +235,7 @@ class TestSuiteRun:
         rst = []
         # TODO: support pdf-based tests; what if a test has both log and pdf files?
         for engine in ts.checkengines:
-            if (ts.test_dir / f'{name}.{engine}{ts.lvtext}').is_file():
+            if (ts.test_dir / f'{name}.{engine}{ts.tlgext}').is_file():
                 rst.append(engine)  # noqa: PERF401
         return TestEngines(tuple(rst))
 
