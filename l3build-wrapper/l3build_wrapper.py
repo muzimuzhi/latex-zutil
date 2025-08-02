@@ -72,6 +72,8 @@ class TestSuite:
     path: str
     config: str
     tests: list[Test]
+    # l3build variables
+    testfiledir: str
     alias: str | None = None
     test_names: tuple[Test, ...] | None = None
 
@@ -93,9 +95,10 @@ class TestSuite:
         if self.test_names is not None:
             return self.test_names
 
+        test_dir = Path(self.path) / self.testfiledir
         test_names = []
         for test in self.tests:
-            test_names.extend([p.stem for p in Path(self.path).glob(test)])
+            test_names.extend([p.stem for p in test_dir.glob(test)])
         self.test_names = tuple(test_names)
         return self.test_names
 
@@ -239,7 +242,8 @@ TESTSUITE_DEFAULT: Final = TestSuite(
     name='',
     path='',
     config='build',
-    tests=['testfiles/*.lvt'],
+    testfiledir='./testfiles',
+    tests=['*.lvt'],
 )
 
 zutil: Final[TestSuite] = TESTSUITE_DEFAULT.derive(
@@ -254,7 +258,8 @@ tblr_old: Final[TestSuite] = TESTSUITE_DEFAULT.derive(
     alias='tblr-old',
     path='tabularray',
     config='config-old',
-    tests=['testfiles-old/*.tex'],
+    testfiledir='./testfiles-old',
+    tests=['*.tex'],
 )
 
 L3BUILD_TESTSUITES: Final[tuple[TestSuite, ...]] = (
