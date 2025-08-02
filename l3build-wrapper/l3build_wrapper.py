@@ -219,6 +219,13 @@ class TestSuiteRun:
         return True
 
 
+TS_DEFAULT = TestSuite(
+    name='',
+    path='default',
+    config='build',
+    tests=['testfiles/*.lvt'],
+)
+
 zutil = TestSuite(
     name='zutil',
     path='zutil',
