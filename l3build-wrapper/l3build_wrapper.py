@@ -101,6 +101,11 @@ class TestSuite:
             self.path = self.name
 
         # validate l3build variables
+        test_dir = Path(self.path) / self.testfiledir
+        if not (Path(self.path) / self.testfiledir).is_dir():
+            raise ValueError(f'TestSuite testfiledir "{self.testfiledir}" is not a directory in "{self.path}".')  # noqa: TRY003, EM102, E501
+        self.test_dir: Path = test_dir
+
         if not self.lvtext.startswith('.'):
             raise InvalidExtensionError(self.lvtext)
         if not self.tlgext.startswith('.'):
@@ -111,9 +116,8 @@ class TestSuite:
         if self.test_names is not None:
             return self.test_names
 
-        test_dir = Path(self.path) / self.testfiledir
         test_names = []
-        test_names.extend([p.stem for p in test_dir.glob('*' + self.lvtext)])
+        test_names.extend([p.stem for p in self.test_dir.glob('*' + self.lvtext)])
         self.test_names = tuple(test_names)
         return self.test_names
 
@@ -257,7 +261,7 @@ TESTSUITE_DEFAULT: Final = TestSuite(
     name='',
     path='',
     config='build',
-    testfiledir='./testfiles',
+    testfiledir='testfiles',
     lvtext='.lvt',
     tlgext='.tlg',
 )
@@ -273,7 +277,7 @@ tblr_old: Final[TestSuite] = tblr.derive(
     name='tabularray-old',
     alias='tblr-old',
     config='config-old',
-    testfiledir='./testfiles-old',
+    testfiledir='testfiles-old',
     lvtext='.tex',
 )
 
