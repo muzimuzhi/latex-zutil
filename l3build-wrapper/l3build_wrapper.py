@@ -255,10 +255,9 @@ tblr: Final[TestSuite] = TESTSUITE_DEFAULT.derive(
     name='tabularray',
     alias='tblr',
 )
-tblr_old: Final[TestSuite] = TESTSUITE_DEFAULT.derive(
+tblr_old: Final[TestSuite] = tblr.derive(
     name='tabularray-old',
     alias='tblr-old',
-    path='tabularray',
     config='config-old',
     testfiledir='./testfiles-old',
     lvtext='.tex',
