@@ -96,7 +96,6 @@ class _TestSuiteDefault:
     """Base class for l3build test suite defaults."""
 
     config: str
-    # start of l3build variables
     testfiledir: str
     checkengines: list[str]
     lvtext: str
