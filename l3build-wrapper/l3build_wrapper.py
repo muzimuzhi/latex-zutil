@@ -203,7 +203,7 @@ class TestSuiteRun:
 
         if self.ts.config:
             add_option(f'-c{self.ts.config}')
-        if args.engine:
+        if args.engine not in (self.ts.stdengine, _OPTION_ALL_ENGINES):
             add_option(f'-e{args.engine}')
 
     def parse_known_names(
@@ -271,10 +271,20 @@ class TestSuiteRun:
                     name_groups[engines] = Names({name})
 
             for engines, names in name_groups.items():
-                logger.info('Save tests "%s" with engines "%s"', names, engines)
-                options = [op for op in self.options if not op.startswith('-e')]
-                if engines:
-                    options.append(f'-e{",".join(engines)}')
+                if not engines:
+                    # save in stdengine only
+                    logger.info('Save test(s) "%s" in stdengine', ', '.join(names))
+                    options = self.options
+                else:
+                    # save in stdengine and extra engines
+                    _engines = Engines((self.ts.stdengine, *engines))
+                    logger.info(
+                        'Save test(s) "%s" in engines "%s"',
+                        ', '.join(names),
+                        ', '.join(_engines),
+                    )
+                    options = [op for op in self.options if not op.startswith('-e')]
+                    options.append(f'-e{",".join(_engines)}')
                 self._invoke_l3build(self.target, Options(options), names)
 
         if not self.run_as_whole and not self.names:
@@ -284,7 +294,7 @@ class TestSuiteRun:
         self.set_options(args)
         self.options.extend(TestSuiteRun.options_shared)
 
-        if self.target == Target.SAVE and args.all_engines:
+        if self.target == Target.SAVE and args.engine == _OPTION_ALL_ENGINES:
             save_for_all_engines()
         else:
             # simple case, run l3build on the test suite
@@ -300,6 +310,8 @@ class TestSuiteRun:
 
 LOGGING_DEFAULT_FORMAT = '[%(name)s] %(levelname)s: %(message)s'
 LOGGING_DEBUG_FORMAT = '[%(name)s] %(levelname)-5s - %(filename)s:%(lineno)d - %(funcName)-17s - %(message)s'  # noqa: E501
+
+_OPTION_ALL_ENGINES: Final[str] = '_option_all_engines'
 
 TESTSUITE_DEFAULT: Final = TestSuite(
     name='',
@@ -458,10 +470,13 @@ parser.add_argument('names', type=str, nargs='*', metavar='name',
                     help='a test suite or test')
 
 # new, wrapper-only options and flags
-# TODO: currently `--all-engines` always overwrite `-e/--engine`, no matter
-#       which option is specified last
-parser.add_argument('--all-engines', action='store_true',
-                    help='save or update all existing test results')
+# `--all-engines` and `-e/--engine` overwrite each other so the last one wins
+parser.add_argument('--all-engines',
+                    dest='engine',
+                    action='store_const',
+                    const=_OPTION_ALL_ENGINES,
+                    help='run on all existing test results; '
+                         'useful for auto-saving engine-specific tests')
 parser.add_argument('-n', '--dry-run', action='store_true',
                     help='print what l3build command(s) would be executed without execution')  # noqa: E501
 parser.add_argument('--re-check', action='store_true',
