@@ -227,6 +227,16 @@ class TestSuiteRun:
                 names_unknown.append(name)
         return names_unknown
 
+    def get_engine_specific_results(self, name: str) -> list[str]:
+        """Get list of engines from engine-specific test results."""
+        ts = self.ts
+        rst = []
+        for ext in (ts.tlgext, ts.pdfext):
+            for engine in ts.checkengines:
+                if (ts.test_dir / f'{name}.{engine}{ext}').is_file():
+                    rst.append(engine)  # noqa: PERF401
+        return rst
+
     def invoke_l3build(self, args: argparse.Namespace) -> bool:
         """Run l3build on this test suite."""
 
