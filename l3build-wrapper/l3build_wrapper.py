@@ -1,11 +1,12 @@
 #!/usr/bin/env -S uv run --script
 #
 # /// script
-# requires-python = ">=3.12"
+# requires-python = ">=3.10"
 # dependencies = []
 # ///
 
-# Python 3.12 is needed by the `type` alias statement.
+# Python 3.10 is needed by the union type expression `X | Y`.
+# https://docs.python.org/3/library/stdtypes.html#types-union
 # Required python version is also recorded in `ruff.toml`.
 
 """Check and save selective l3build tests made easier."""
