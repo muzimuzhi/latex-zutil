@@ -16,10 +16,10 @@ import logging
 import os
 import subprocess
 import sys
-from dataclasses import dataclass, replace
+from dataclasses import asdict, dataclass, replace
 from enum import UNIQUE, StrEnum, verify
 from pathlib import Path
-from typing import Any, Final, NewType
+from typing import Final, NewType
 
 Engines = NewType('Engines', tuple[str, ...])
 Names = NewType('Names', set[str])
@@ -32,6 +32,14 @@ logger = logging.getLogger('wrapper')
 # suggested by https://stackoverflow.com/a/60465422
 class L3buildWrapperError(Exception):
     """Base class for L3buildWrapper exceptions."""
+
+
+class MissingTestSuiteNameError(L3buildWrapperError):
+    """Test suite name is missing."""
+
+    def __init__(self, name: str) -> None:
+        super().__init__(f'Missing name: test suite "{name}".')
+        self.name = name
 
 
 class DirectoryNotFoundError(L3buildWrapperError):
@@ -84,11 +92,9 @@ class Target(StrEnum):
 
 
 @dataclass
-class TestSuite:
-    """A l3build test suite."""
+class _TestSuiteDefault:
+    """Base class for l3build test suite defaults."""
 
-    name: str
-    path: str
     config: str
     # start of l3build variables
     testfiledir: str
@@ -97,21 +103,23 @@ class TestSuite:
     tlgext: str
     pvtext: str
     pdfext: str
+
+
+@dataclass
+class TestSuite(_TestSuiteDefault):
+    """A l3build test suite."""
+
+    name: str
+    path: str | None = None
     stdengine: str = ''
-    # end of l3build variables
     alias: str | None = None
     test_names: Names | None = None
 
-    def derive(self, **changes: Any) -> 'TestSuite':  # noqa: ANN401
-        """Derive a new concrete TestSuite."""
-        ts = replace(self, **changes)
-        ts.validate_and_init()
-        return ts
-
-    def validate_and_init(self) -> None:
-        """Verify and initialize TestSuite parameters."""
+    def __post_init__(self) -> None:
+        """More initialization with checks."""
         if not self.name:
-            raise ValueError('TestSuite name cannot be empty.')  # noqa: TRY003, EM101
+            raise MissingTestSuiteNameError(self.name)
+
         if not self.path:
             self.path = self.name
 
@@ -321,9 +329,7 @@ LOGGING_DEBUG_FORMAT = '[%(name)s] %(levelname)-5s - %(filename)s:%(lineno)d - %
 
 _OPTION_ALL_ENGINES: Final[str] = '_option_all_engines'
 
-TESTSUITE_DEFAULT: Final = TestSuite(
-    name='',
-    path='',
+TESTSUITE_DEFAULT: Final = _TestSuiteDefault(
     config='build',
     testfiledir='testfiles',
     checkengines=['pdftex', 'luatex', 'xetex'],
@@ -332,15 +338,19 @@ TESTSUITE_DEFAULT: Final = TestSuite(
     pvtext='.pvt',
     pdfext='.pdf',
 )
+_DEFAULT: Final = asdict(TESTSUITE_DEFAULT)
 
-zutil: Final[TestSuite] = TESTSUITE_DEFAULT.derive(
+zutil: Final[TestSuite] = TestSuite(
+    **_DEFAULT,
     name='zutil',
 )
-tblr: Final[TestSuite] = TESTSUITE_DEFAULT.derive(
+tblr: Final[TestSuite] = TestSuite(
+    **_DEFAULT,
     name='tabularray',
     alias='tblr',
 )
-tblr_old: Final[TestSuite] = tblr.derive(
+tblr_old: Final[TestSuite] = replace(
+    tblr,
     name='tabularray-old',
     alias='tblr-old',
     config='config-old',
