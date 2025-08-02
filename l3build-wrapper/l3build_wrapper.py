@@ -227,20 +227,22 @@ class TestSuiteRun:
                 names_unknown.append(name)
         return names_unknown
 
-    def get_engine_specific_results(self, name: str) -> list[str]:
+    def get_engine_specific_results(self, name: str) -> tuple[str]:
         """Get list of engines from engine-specific test results."""
         ts = self.ts
         rst = []
-        for ext in (ts.tlgext, ts.pdfext):
-            for engine in ts.checkengines:
-                if (ts.test_dir / f'{name}.{engine}{ext}').is_file():
-                    rst.append(engine)  # noqa: PERF401
-        return rst
+        # TODO: support pdf-based tests; what if a test has both log and pdf files?
+        for engine in ts.checkengines:
+            if (ts.test_dir / f'{name}.{engine}{ts.lvtext}').is_file():
+                rst.append(engine)  # noqa: PERF401
+        return tuple(rst)
 
     def invoke_l3build(self, args: argparse.Namespace) -> bool:
         """Run l3build on this test suite."""
 
-        def run_l3build() -> None:
+        def run_l3build(options: list[str], names: set[str]) -> None:
+            path = self.ts.path
+            commands = ['l3build', self.target, *options, *names]
             logger.info('Run "%s" in directory "%s"', ' '.join(commands), path)
             if args.dry_run:
                 return
@@ -257,16 +259,29 @@ class TestSuiteRun:
         self.set_options(args)
         self.options.extend(TestSuiteRun.options_shared)
 
-        commands = ['l3build', self.target, *self.options, *self.names]
-        path = self.ts.path
-        run_l3build()
+        ts = self.ts
+        if self.target == Target.SAVE and args.all_engines:
+            # a map from engine-specific result combination to test names
+            engine_groups: dict[tuple[str], set[str]] = {}
+            for name in self.names:
+                engines: tuple[str] = self.get_engine_specific_results(name)
+                if engines in engine_groups:
+                    engine_groups[engines].add(name)
+                else:
+                    engine_groups[engines] = {name}
+            # run l3build on names grouped by engines
+            for engines, names in engine_groups.items():
+                options = [op for op in self.options if not op.startswith('-e')]
+                options.append(f'-e{",".join(engines)}')
+                run_l3build(options, names)
+        else:
+            run_l3build(self.options, self.names)
 
         if self.target == Target.SAVE and args.re_check:
-            logger.info('Re-check test suite "%s" after saving', self.ts.name)
+            logger.info('Re-check test suite "%s" after saving', ts.name)
             # always set --show-saves when re-checking
             self.options.append('-S')
-            commands = ['l3build', Target.CHECK, *self.options, *self.names]
-            run_l3build()
+            run_l3build(self.options, self.names)
         return True
 
 
