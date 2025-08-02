@@ -248,11 +248,15 @@ class TestSuiteRun:
     def get_engine_specific_results(self, name: str) -> Engines:
         """Get list of engines from engine-specific test results."""
         ts = self.ts
-        rst = []
-        # TODO: support pdf-based tests; what if a test has both log and pdf files?
-        for engine in ts.checkengines:
-            if (ts.test_dir / f'{name}.{engine}{ts.tlgext}').is_file():
-                rst.append(engine)  # noqa: PERF401
+        engines = ts.checkengines
+        # assume a name belongs to only one test type
+        #
+        # if "name.tlg" and "name.pdf" both exist, but different sets of
+        # engine-specific results exist, `l3build save -e... name` would
+        # create new and unneeded test results.
+        # TODO: check the behavior of l3build
+        ext = ts.tlgext if (ts.test_dir / f'{name}{ts.tlgext}').is_file() else ts.pdfext
+        rst = [e for e in engines if (ts.test_dir / f'{name}.{e}{ext}').is_file()]
         return Engines(tuple(rst))
 
     def _invoke_l3build(
