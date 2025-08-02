@@ -18,9 +18,10 @@ import sys
 from dataclasses import dataclass, replace
 from enum import UNIQUE, StrEnum, verify
 from pathlib import Path
-from typing import Any, Final
+from typing import Any, Final, NewType
 
-type Test = str
+TestNames = NewType('TestNames', set[str])
+TestEngines = NewType('TestEngines', tuple[str])
 
 
 logger = logging.getLogger('wrapper')
@@ -89,7 +90,7 @@ class TestSuite:
     stdengine: str | None = None
     # end of l3build variables
     alias: str | None = None
-    test_names: set[Test] | None = None
+    test_names: TestNames | None = None
 
     def derive(self, **changes: Any) -> 'TestSuite':  # noqa: ANN401
         """Derive a new concrete TestSuite."""
@@ -117,7 +118,7 @@ class TestSuite:
             if not ext.startswith('.'):
                 raise InvalidExtensionError(ext)
 
-    def get_names(self) -> set[Test]:
+    def get_names(self) -> TestNames:
         """Generate test names from the test patterns."""
         if self.test_names is not None:
             return self.test_names
@@ -130,7 +131,7 @@ class TestSuite:
                 'Some tests have both log and pdf files: %s',
                 ', '.join(log_based & pdf_based),
             )
-        self.test_names = log_based | pdf_based
+        self.test_names = TestNames(log_based | pdf_based)
         return self.test_names
 
 
@@ -144,7 +145,7 @@ class TestSuiteRun:
         self.name = ts.name
         self.ts = ts
         self.options: list[str] = []
-        self.names: set[Test] = set()
+        self.names: TestNames = TestNames(set())
         self.run_as_whole: bool = False
 
     @classmethod
@@ -190,7 +191,7 @@ class TestSuiteRun:
                 self.names = self.ts.get_names()
             # `check` a testsuite means checking with no explicit names
             elif self.target == Target.CHECK:
-                self.names = set()
+                self.names = TestNames(set())
 
     def set_options(self, args: argparse.Namespace) -> None:
         """Compose l3build options specific to this test suite."""
@@ -205,7 +206,7 @@ class TestSuiteRun:
 
     def parse_known_names(
         self,
-        names: set[str],
+        names: TestNames,
     ) -> list[str]:
         """Parse names received from the command line."""
         ts = self.ts
@@ -227,7 +228,7 @@ class TestSuiteRun:
                 names_unknown.append(name)
         return names_unknown
 
-    def get_engine_specific_results(self, name: str) -> tuple[str]:
+    def get_engine_specific_results(self, name: str) -> TestEngines:
         """Get list of engines from engine-specific test results."""
         ts = self.ts
         rst = []
@@ -235,12 +236,12 @@ class TestSuiteRun:
         for engine in ts.checkengines:
             if (ts.test_dir / f'{name}.{engine}{ts.lvtext}').is_file():
                 rst.append(engine)  # noqa: PERF401
-        return tuple(rst)
+        return TestEngines(tuple(rst))
 
     def invoke_l3build(self, args: argparse.Namespace) -> bool:
         """Run l3build on this test suite."""
 
-        def run_l3build(options: list[str], names: set[str]) -> None:
+        def run_l3build(options: list[str], names: TestNames) -> None:
             path = self.ts.path
             commands = ['l3build', self.target, *options, *names]
             logger.info('Run "%s" in directory "%s"', ' '.join(commands), path)
@@ -262,13 +263,13 @@ class TestSuiteRun:
         ts = self.ts
         if self.target == Target.SAVE and args.all_engines:
             # a map from engine-specific result combination to test names
-            engine_groups: dict[tuple[str], set[str]] = {}
+            engine_groups: dict[TestEngines, TestNames] = {}
             for name in self.names:
-                engines: tuple[str] = self.get_engine_specific_results(name)
+                engines: TestEngines = self.get_engine_specific_results(name)
                 if engines in engine_groups:
                     engine_groups[engines].add(name)
                 else:
-                    engine_groups[engines] = {name}
+                    engine_groups[engines] = TestNames({name})
             # run l3build on names grouped by engines
             for engines, names in engine_groups.items():
                 options = [op for op in self.options if not op.startswith('-e')]
@@ -410,7 +411,7 @@ def wrap_l3build(args: argparse.Namespace) -> None:
             ts_run.run_as_whole = True
     else:
         # parse names
-        names = set(args.names)
+        names = TestNames(set(args.names))
         unknown = names.copy()
         for ts_run in testsuites_run.values():
             unknown = unknown.intersection(ts_run.parse_known_names(names))
