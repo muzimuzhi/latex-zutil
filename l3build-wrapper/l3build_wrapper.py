@@ -98,6 +98,7 @@ class TestSuite(_TestSuiteDefault):
     stdengine: str = ''
     alias: str | None = None
     test_names: Names | None = None
+    test_results: Names | None = None
 
     def __post_init__(self) -> None:  # noqa: C901
         """More initialization with checks."""
@@ -138,27 +139,44 @@ class TestSuite(_TestSuiteDefault):
             if not ext.startswith('.'):
                 raise InvalidTestSuiteError(ext, 'Invalid file extension')
 
+    def _glob_to_names(self, glob: str) -> Names:
+        """Get set of names matching the given glob pattern."""
+        # {i for i in iterable} is set comprehension
+        return Names({p.stem for p in self.test_dir.glob(glob) if p.is_file()})
+
     def get_names(self) -> Names:
         """Generate test names from the test patterns."""
         if self.test_names is not None:
             return self.test_names
 
-        # {i for i in iterable} is set comprehension
-        log_based = {
-            p.stem for p in self.test_dir.glob('*' + self.lvtext) if p.is_file()
-        }
-        pdf_based = {
-            p.stem for p in self.test_dir.glob('*' + self.pvtext) if p.is_file()
-        }
-        if log_based & pdf_based:
-            logger.warning(
-                'Name(s) having both log- and pdf-based tests: %s',
-                ', '.join(log_based & pdf_based),
-            )
-        self.test_names = Names(log_based | pdf_based)
-        if not self.test_names:
+        names = Names(set())
+        for ext in (self.lvtext, self.pvtext):
+            _names = self._glob_to_names('*' + ext)
+            if names & _names:
+                logger.warning(
+                    'Same name(s) exist in multiple test types: %s',
+                    ', '.join(names & _names),
+                )
+            names |= _names
+
+        if not names:
             logger.warning('No tests found for test suite "%s"', self.name)
-        return self.test_names
+        self.test_names = names
+        return names
+
+    def get_results(self) -> Names:
+        """Get test results for this test suite."""
+        if self.test_results is not None:
+            return self.test_results
+
+        names = Names(set())
+        for ext in (self.tlgext, self.pdfext):
+            names |= self._glob_to_names('*' + ext)
+
+        if not names:
+            logger.warning('No test results found for test suite "%s"', self.name)
+        self.test_results = names
+        return names
 
 
 class TestSuiteRun:
