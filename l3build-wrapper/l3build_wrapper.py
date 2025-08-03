@@ -144,8 +144,12 @@ class TestSuite(_TestSuiteDefault):
             return self.test_names
 
         # {i for i in iterable} is set comprehension
-        log_based = {p.stem for p in self.test_dir.glob('*' + self.lvtext)}
-        pdf_based = {p.stem for p in self.test_dir.glob('*' + self.pvtext)}
+        log_based = {
+            p.stem for p in self.test_dir.glob('*' + self.lvtext) if p.is_file()
+        }
+        pdf_based = {
+            p.stem for p in self.test_dir.glob('*' + self.pvtext) if p.is_file()
+        }
         if log_based & pdf_based:
             logger.warning(
                 'Name(s) having both log- and pdf-based tests: %s',
