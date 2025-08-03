@@ -113,6 +113,8 @@ class TestSuite(_TestSuiteDefault):
             raise InvalidTestSuiteError(str(test_dir), 'Directory not found')
         self.test_dir: Path = test_dir
 
+        if not self.checkengines:
+            raise InvalidTestSuiteError(str(self.checkengines), 'Empty checkengines')
         if not self.stdengine:
             self.stdengine = self.checkengines[0]
 
