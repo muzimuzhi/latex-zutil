@@ -34,28 +34,13 @@ class L3buildWrapperError(Exception):
     """Base class for L3buildWrapper exceptions."""
 
 
-class MissingTestSuiteNameError(L3buildWrapperError):
-    """Test suite name is missing."""
+class InvalidTestSuiteError(L3buildWrapperError):
+    """Invalid test suite was provided."""
 
-    def __init__(self, name: str) -> None:
-        super().__init__(f'Missing name: test suite "{name}".')
-        self.name = name
-
-
-class DirectoryNotFoundError(L3buildWrapperError):
-    """Directory was not found."""
-
-    def __init__(self, path: str) -> None:
-        super().__init__(f'Directory not found: "{path}".')
-        self.path = path
-
-
-class InvalidExtensionError(L3buildWrapperError):
-    """Invalid file extension was provided."""
-
-    def __init__(self, ext: str) -> None:
-        super().__init__(f'Invalid file extension: "{ext}". Should start with a dot.')
-        self.ext = ext
+    def __init__(self, value: str, reason: str, note: str = '') -> None:
+        msg = f'{reason}: "{value}".' + ('' if note else f' {note}')
+        super().__init__(msg)
+        self.msg = msg
 
 
 class UnknownTargetError(L3buildWrapperError):
@@ -109,7 +94,7 @@ class TestSuite(_TestSuiteDefault):
     """A l3build test suite."""
 
     name: str
-    path: str | None = None
+    path: str = ''
     stdengine: str = ''
     alias: str | None = None
     test_names: Names | None = None
@@ -117,7 +102,7 @@ class TestSuite(_TestSuiteDefault):
     def __post_init__(self) -> None:
         """More initialization with checks."""
         if not self.name:
-            raise MissingTestSuiteNameError(self.name)
+            raise InvalidTestSuiteError(self.name, 'Missing test suite name')
 
         if not self.path:
             self.path = self.name
@@ -125,7 +110,7 @@ class TestSuite(_TestSuiteDefault):
         # validate l3build variables
         test_dir = Path(self.path) / self.testfiledir
         if not (Path(self.path) / self.testfiledir).is_dir():
-            raise DirectoryNotFoundError(str(test_dir))
+            raise InvalidTestSuiteError(str(test_dir), 'Directory not found')
         self.test_dir: Path = test_dir
 
         if not self.stdengine:
@@ -133,7 +118,7 @@ class TestSuite(_TestSuiteDefault):
 
         for ext in (self.lvtext, self.tlgext, self.pvtext, self.pdfext):
             if not ext.startswith('.'):
-                raise InvalidExtensionError(ext)
+                raise InvalidTestSuiteError(ext, 'Invalid file extension')
 
     def get_names(self) -> Names:
         """Generate test names from the test patterns."""
