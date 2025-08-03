@@ -18,7 +18,10 @@ ignore = [
             #   an exception
   'PGH004', # blanket `noqa` annotation which suppresses all diagnostics
 ]
+# relatively temp ignorance
 extend-ignore = [
+  'COM812', # Trailing comma missing
+            #   tracking issue https://github.com/astral-sh/ruff/issues/9216
   'FIX002', # Line contains TODO, consider resolving the issue
 ]
 flake8-quotes.inline-quotes = 'single'

@@ -64,7 +64,10 @@ class UnknownNameError(L3buildWrapperError):
     """Unknown name was provided."""
 
     def __init__(self, name: str) -> None:
-        super().__init__(f'Unknown name: "{name}".')
+        super().__init__(
+            f'Unknown name: "{name}". '
+            'It matches neither a test suite nor a test in any test suites.'
+        )
         self.name = name
 
 
