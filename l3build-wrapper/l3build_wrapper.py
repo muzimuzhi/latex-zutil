@@ -295,7 +295,7 @@ class TestSuiteRun:
     ) -> None:
         """Run l3build with the given options and names."""
         path = self.ts.path
-        commands = ['l3build', target, *options, *names]
+        commands = ['l3build', target, *options, *sorted(names)]
         logger.info('Run "%s" in directory "%s"', ' '.join(commands), path)
         if args.dry_run:
             return
