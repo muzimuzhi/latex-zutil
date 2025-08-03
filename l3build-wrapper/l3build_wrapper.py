@@ -81,7 +81,6 @@ class _TestSuiteDefault:
     """Base class for l3build test suite defaults."""
 
     config: str
-    testfiledir: str
     checkengines: list[str]
     lvtext: str
     tlgext: str
@@ -95,11 +94,12 @@ class TestSuite(_TestSuiteDefault):
 
     name: str
     path: str = ''
+    testfiledir: str = ''
     stdengine: str = ''
     alias: str | None = None
     test_names: Names | None = None
 
-    def __post_init__(self) -> None:
+    def __post_init__(self) -> None:  # noqa: C901
         """More initialization with checks."""
         if not self.name:
             raise InvalidTestSuiteError(self.name, 'Missing test suite name')
@@ -107,9 +107,25 @@ class TestSuite(_TestSuiteDefault):
         if not self.path:
             self.path = self.name
 
-        # validate l3build variables
-        test_dir = Path(self.path) / self.testfiledir
-        if not (Path(self.path) / self.testfiledir).is_dir():
+        base_dir = Path(self.path)
+        if not base_dir.is_dir():
+            raise InvalidTestSuiteError(str(base_dir), 'Directory not found')
+
+        config_file = base_dir / (self.config + '.lua')
+        if not config_file.is_file():
+            raise InvalidTestSuiteError(
+                str(config_file),
+                'Configuration file not found',
+            )
+
+        # autoset testfiledir
+        if not self.testfiledir:
+            if self.config == 'build':
+                self.testfiledir = 'testfiles'
+            elif self.config.startswith('config-'):
+                self.testfiledir = 'testfiles-' + self.config.removeprefix('config-')
+        test_dir = base_dir / self.testfiledir
+        if not test_dir.is_dir():
             raise InvalidTestSuiteError(str(test_dir), 'Directory not found')
         self.test_dir: Path = test_dir
 
@@ -323,7 +339,6 @@ _OPTION_ALL_ENGINES: Final[str] = '_option_all_engines'
 
 TESTSUITE_DEFAULT: Final = _TestSuiteDefault(
     config='build',
-    testfiledir='testfiles',
     checkengines=['pdftex', 'luatex', 'xetex'],
     lvtext='.lvt',
     tlgext='.tlg',
