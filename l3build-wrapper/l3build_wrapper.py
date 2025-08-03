@@ -132,10 +132,12 @@ class TestSuite(_TestSuiteDefault):
         pdf_based = {p.stem for p in self.test_dir.glob('*' + self.pvtext)}
         if log_based & pdf_based:
             logger.warning(
-                'Some tests have both log and pdf files: %s',
+                'Name(s) having both log- and pdf-based tests: %s',
                 ', '.join(log_based & pdf_based),
             )
         self.test_names = Names(log_based | pdf_based)
+        if not self.test_names:
+            logger.warning('No tests found for test suite "%s"', self.name)
         return self.test_names
 
 
