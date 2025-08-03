@@ -1,11 +1,12 @@
 #!/usr/bin/env -S uv run --script
 #
 # /// script
-# requires-python = ">=3.12"
+# requires-python = ">=3.10"
 # dependencies = []
 # ///
 
-# Python 3.12 is needed by the `type` alias statement.
+# Python 3.10 is needed by the union type expression `X | Y`.
+# https://docs.python.org/3/library/stdtypes.html#types-union
 # Required python version is also recorded in `ruff.toml`.
 
 """Check and save selective l3build tests made easier."""
@@ -15,11 +16,14 @@ import logging
 import os
 import subprocess
 import sys
+from dataclasses import asdict, dataclass, replace
 from enum import UNIQUE, StrEnum, verify
 from pathlib import Path
-from typing import Final
+from typing import Final, NewType
 
-type Test = str
+Engines = NewType('Engines', tuple[str, ...])
+Names = NewType('Names', set[str])
+Options = NewType('Options', list[str])
 
 
 logger = logging.getLogger('wrapper')
@@ -28,6 +32,15 @@ logger = logging.getLogger('wrapper')
 # suggested by https://stackoverflow.com/a/60465422
 class L3buildWrapperError(Exception):
     """Base class for L3buildWrapper exceptions."""
+
+
+class InvalidTestSuiteError(L3buildWrapperError):
+    """Invalid test suite was provided."""
+
+    def __init__(self, value: str, reason: str, note: str = '') -> None:
+        msg = f'{reason}: "{value}".' + ('' if note else f' {note}')
+        super().__init__(msg)
+        self.msg = msg
 
 
 class UnknownTargetError(L3buildWrapperError):
@@ -63,33 +76,84 @@ class Target(StrEnum):
     SAVE = 'save'
 
 
-class TestSuite:
+@dataclass
+class _TestSuiteDefault:
+    """Base class for l3build test suite defaults."""
+
+    config: str
+    checkengines: list[str]
+    lvtext: str
+    tlgext: str
+    pvtext: str
+    pdfext: str
+
+
+@dataclass
+class TestSuite(_TestSuiteDefault):
     """A l3build test suite."""
 
-    def __init__(
-        self,
-        name: str,
-        path: str,
-        config: str,
-        tests: list[Test],
-        alias: str | None = None,
-    ) -> None:
-        self.name = name
-        self.alias = alias
-        self.path = path
-        self.config = config
-        self.tests = tests
-        self.test_names: tuple[Test, ...] | None = None
+    name: str
+    path: str = ''
+    testfiledir: str = ''
+    stdengine: str = ''
+    alias: str | None = None
+    test_names: Names | None = None
 
-    def get_names(self) -> tuple[Test, ...]:
+    def __post_init__(self) -> None:  # noqa: C901
+        """More initialization with checks."""
+        if not self.name:
+            raise InvalidTestSuiteError(self.name, 'Missing test suite name')
+
+        if not self.path:
+            self.path = self.name
+
+        base_dir = Path(self.path)
+        if not base_dir.is_dir():
+            raise InvalidTestSuiteError(str(base_dir), 'Directory not found')
+
+        config_file = base_dir / (self.config + '.lua')
+        if not config_file.is_file():
+            raise InvalidTestSuiteError(
+                str(config_file),
+                'Configuration file not found',
+            )
+
+        # autoset testfiledir
+        if not self.testfiledir:
+            if self.config == 'build':
+                self.testfiledir = 'testfiles'
+            elif self.config.startswith('config-'):
+                self.testfiledir = 'testfiles-' + self.config.removeprefix('config-')
+        test_dir = base_dir / self.testfiledir
+        if not test_dir.is_dir():
+            raise InvalidTestSuiteError(str(test_dir), 'Directory not found')
+        self.test_dir: Path = test_dir
+
+        if not self.checkengines:
+            raise InvalidTestSuiteError(str(self.checkengines), 'Empty checkengines')
+        if not self.stdengine:
+            self.stdengine = self.checkengines[0]
+
+        for ext in (self.lvtext, self.tlgext, self.pvtext, self.pdfext):
+            if not ext.startswith('.'):
+                raise InvalidTestSuiteError(ext, 'Invalid file extension')
+
+    def get_names(self) -> Names:
         """Generate test names from the test patterns."""
         if self.test_names is not None:
             return self.test_names
 
-        test_names = []
-        for test in self.tests:
-            test_names.extend([p.stem for p in Path(self.path).glob(test)])
-        self.test_names = tuple(test_names)
+        # {i for i in iterable} is set comprehension
+        log_based = {p.stem for p in self.test_dir.glob('*' + self.lvtext)}
+        pdf_based = {p.stem for p in self.test_dir.glob('*' + self.pvtext)}
+        if log_based & pdf_based:
+            logger.warning(
+                'Name(s) having both log- and pdf-based tests: %s',
+                ', '.join(log_based & pdf_based),
+            )
+        self.test_names = Names(log_based | pdf_based)
+        if not self.test_names:
+            logger.warning('No tests found for test suite "%s"', self.name)
         return self.test_names
 
 
@@ -97,13 +161,13 @@ class TestSuiteRun:
     """Data needed by running l3build on a single test suite."""
 
     target: Target
-    options_shared: list[str]
+    options_shared: Options
 
     def __init__(self, ts: TestSuite) -> None:
         self.name = ts.name
         self.ts = ts
-        self.options: list[str] = []
-        self.names: list[Test] = []
+        self.options: Options = Options([])
+        self.names: Names = Names(set())
         self.run_as_whole: bool = False
 
     @classmethod
@@ -118,7 +182,7 @@ class TestSuiteRun:
         def add_option(option: str) -> None:
             _options.append(option)
 
-        _options = []
+        _options = Options([])
         if args.stdengine:
             add_option('-s')
         if args.quiet:
@@ -146,10 +210,10 @@ class TestSuiteRun:
                     'Save all tests in test suite "%s"',
                     self.ts.name,
                 )
-                self.names = list(self.ts.get_names())
+                self.names = self.ts.get_names()
             # `check` a testsuite means checking with no explicit names
             elif self.target == Target.CHECK:
-                self.names = []
+                self.names = Names(set())
 
     def set_options(self, args: argparse.Namespace) -> None:
         """Compose l3build options specific to this test suite."""
@@ -159,22 +223,16 @@ class TestSuiteRun:
 
         if self.ts.config:
             add_option(f'-c{self.ts.config}')
-        if args.engine:
+        if args.engine and args.engine not in (self.ts.stdengine, _OPTION_ALL_ENGINES):
             add_option(f'-e{args.engine}')
 
     def parse_known_names(
         self,
-        names: set[str],
-    ) -> list[str]:
+        names: Names,
+    ) -> Names:
         """Parse names received from the command line."""
-
-        def add_name(name: Test) -> None:
-            """Add a test name."""
-            if name not in self.names:
-                self.names.append(name)
-
         ts = self.ts
-        names_unknown = []
+        names_unknown = Names(set())
         for name in names:
             if name in (ts.name, ts.alias):
                 self.run_as_whole = True
@@ -183,27 +241,75 @@ class TestSuiteRun:
                     name, ts.name,
                 )  # fmt: skip
             elif name in ts.get_names():
-                add_name(name)
+                self.names.add(name)
                 logger.debug(
                     'Name "%s" recognized as a test in test suite "%s"',
                     name, ts.name,
                 )  # fmt: skip
             else:
-                names_unknown.append(name)
+                names_unknown.add(name)
         return names_unknown
+
+    def get_engine_specific_results(self, name: str) -> Engines:
+        """Get list of engines from engine-specific test results."""
+        ts = self.ts
+        engines = ts.checkengines
+        # assume a name belongs to only one test type
+        #
+        # if "name.tlg" and "name.pdf" both exist, but different sets of
+        # engine-specific results exist, `l3build save -e... name` would
+        # create new and unneeded test results.
+        # TODO: check the behavior of l3build
+        ext = ts.tlgext if (ts.test_dir / f'{name}{ts.tlgext}').is_file() else ts.pdfext
+        rst = [e for e in engines if (ts.test_dir / f'{name}.{e}{ext}').is_file()]
+        return Engines(tuple(rst))
+
+    def _invoke_l3build(
+        self,
+        target: Target,
+        options: Options,
+        names: Names,
+    ) -> None:
+        """Run l3build with the given options and names."""
+        path = self.ts.path
+        commands = ['l3build', target, *options, *names]
+        logger.info('Run "%s" in directory "%s"', ' '.join(commands), path)
+        if args.dry_run:
+            return
+        try:
+            subprocess.run(commands, cwd=path, check=True)  # noqa: S603
+        except subprocess.CalledProcessError:
+            logger.error('Failed to run l3build')
+            sys.exit(1)
 
     def invoke_l3build(self, args: argparse.Namespace) -> bool:
         """Run l3build on this test suite."""
 
-        def run_l3build() -> None:
-            logger.info('Run "%s" in directory "%s"', ' '.join(commands), path)
-            if args.dry_run:
-                return
-            try:
-                subprocess.run(commands, cwd=path, check=True)  # noqa: S603
-            except subprocess.CalledProcessError:
-                logger.error('Failed to run l3build')
-                sys.exit(1)
+        def save_for_all_engines() -> None:
+            name_groups: dict[Engines, Names] = {}
+            for name in self.names:
+                engines: Engines = self.get_engine_specific_results(name)
+                if engines in name_groups:
+                    name_groups[engines].add(name)
+                else:
+                    name_groups[engines] = Names({name})
+
+            for engines, names in name_groups.items():
+                if not engines:
+                    # save in stdengine only
+                    logger.info('Save test(s) "%s" in stdengine', ', '.join(names))
+                    options = self.options
+                else:
+                    # save in stdengine and extra engines
+                    _engines = Engines((self.ts.stdengine, *engines))
+                    logger.info(
+                        'Save test(s) "%s" in engines "%s"',
+                        ', '.join(names),
+                        ', '.join(_engines),
+                    )
+                    options = [op for op in self.options if not op.startswith('-e')]
+                    options.append(f'-e{",".join(_engines)}')
+                self._invoke_l3build(self.target, Options(options), names)
 
         if not self.run_as_whole and not self.names:
             return False
@@ -212,46 +318,58 @@ class TestSuiteRun:
         self.set_options(args)
         self.options.extend(TestSuiteRun.options_shared)
 
-        commands = ['l3build', self.target, *self.options, *self.names]
-        path = self.ts.path
-        run_l3build()
+        if self.target == Target.SAVE and args.engine == _OPTION_ALL_ENGINES:
+            save_for_all_engines()
+        else:
+            # simple case, run l3build on the test suite
+            self._invoke_l3build(self.target, self.options, self.names)
 
         if self.target == Target.SAVE and args.re_check:
             logger.info('Re-check test suite "%s" after saving', self.ts.name)
             # always set --show-saves when re-checking
             self.options.append('-S')
-            commands = ['l3build', Target.CHECK, *self.options, *self.names]
-            run_l3build()
+            self._invoke_l3build(self.target, self.options, self.names)
         return True
 
-
-zutil = TestSuite(
-    name='zutil',
-    path='zutil',
-    config='build',
-    tests=['testfiles/*.lvt'],
-)
-
-tblr = TestSuite(
-    name='tabularray',
-    alias='tblr',
-    path='tabularray',
-    config='build',
-    tests=['testfiles/*.lvt'],
-)
-
-tblr_old = TestSuite(
-    name='tabularray-old',
-    alias='tblr-old',
-    path='tabularray',
-    config='config-old',
-    tests=['testfiles-old/*.tex'],
-)
 
 LOGGING_DEFAULT_FORMAT = '[%(name)s] %(levelname)s: %(message)s'
 LOGGING_DEBUG_FORMAT = '[%(name)s] %(levelname)-5s - %(filename)s:%(lineno)d - %(funcName)-17s - %(message)s'  # noqa: E501
 
-L3BUILD_TESTSUITES: Final[tuple[TestSuite, ...]] = (zutil, tblr, tblr_old)
+_OPTION_ALL_ENGINES: Final[str] = '_option_all_engines'
+
+TESTSUITE_DEFAULT: Final = _TestSuiteDefault(
+    config='build',
+    checkengines=['pdftex', 'luatex', 'xetex'],
+    lvtext='.lvt',
+    tlgext='.tlg',
+    pvtext='.pvt',
+    pdfext='.pdf',
+)
+_DEFAULT: Final = asdict(TESTSUITE_DEFAULT)
+
+zutil: Final[TestSuite] = TestSuite(
+    **_DEFAULT,
+    name='zutil',
+)
+tblr: Final[TestSuite] = TestSuite(
+    **_DEFAULT,
+    name='tabularray',
+    alias='tblr',
+)
+tblr_old: Final[TestSuite] = replace(
+    tblr,
+    name='tabularray-old',
+    alias='tblr-old',
+    config='config-old',
+    testfiledir='testfiles-old',
+    lvtext='.tex',
+)
+
+L3BUILD_TESTSUITES: Final[tuple[TestSuite, ...]] = (
+    zutil,
+    tblr,
+    tblr_old,
+)
 L3BUILD_TESTSUITES_MAP: Final[dict[str, TestSuite]] = {
     ts.alias: ts for ts in L3BUILD_TESTSUITES if ts.alias
 } | {ts.name: ts for ts in L3BUILD_TESTSUITES}
@@ -342,7 +460,7 @@ def wrap_l3build(args: argparse.Namespace) -> None:
             ts_run.run_as_whole = True
     else:
         # parse names
-        names = set(args.names)
+        names = Names(set(args.names))
         unknown = names.copy()
         for ts_run in testsuites_run.values():
             unknown = unknown.intersection(ts_run.parse_known_names(names))
@@ -377,30 +495,33 @@ parser.add_argument('names', type=str, nargs='*', metavar='name',
                     help='a test suite or test')
 
 # new, wrapper-only options and flags
-parser.add_argument('-n', '--dry-run', action='store_true', default=False,
+# `--all-engines` and `-e/--engine` overwrite each other so the last one wins
+parser.add_argument('--all-engines',
+                    dest='engine',
+                    action='store_const',
+                    const=_OPTION_ALL_ENGINES,
+                    help='run on all existing test results; '
+                         'useful for auto-saving engine-specific tests')
+parser.add_argument('-n', '--dry-run', action='store_true',
                     help='print what l3build command(s) would be executed without execution')  # noqa: E501
-parser.add_argument('--re-check', action='store_true', default=False,
+parser.add_argument('--re-check', action='store_true',
                     help='after saving, rerun checks using the same arguments')
 parser.add_argument('-v', '--verbose', action='count', default=0,
                     help='print more information; given twice enables debug logging and would be passed to "l3build" if patched l3build is detected)')  # noqa: E501
 
 # inherited l3build options and flags
 inherited = parser.add_argument_group('inherited l3build options')
-inherited.add_argument('--dev', action='store_true', default=False)
-inherited.add_argument('--dirty', action='store_true', default=False)
+inherited.add_argument('--dev', action='store_true')
+inherited.add_argument('--dirty', action='store_true')
 inherited.add_argument('-e', '--engine', type=str)
-inherited.add_argument('-H', '--halt-on-error', action='store_true',
-                       default=False)
+inherited.add_argument('-H', '--halt-on-error', action='store_true')
 inherited.add_argument('-q', '--quiet',
                        action=argparse.BooleanOptionalAction,
                        default=True,
                        help='suppress TeX standard output (support for "save" target needs local l3build patch)')  # noqa: E501
-inherited.add_argument('--show-log-on-error', action='store_true',
-                       default=False)
-inherited.add_argument('-S', '--show-saves', action='store_true',
-                       default=False)
-inherited.add_argument('-s', '--stdengine', action='store_true',
-                       default=False)
+inherited.add_argument('--show-log-on-error', action='store_true')
+inherited.add_argument('-S', '--show-saves', action='store_true')
+inherited.add_argument('-s', '--stdengine', action='store_true')
 # fmt: on
 
 if __name__ == '__main__':
