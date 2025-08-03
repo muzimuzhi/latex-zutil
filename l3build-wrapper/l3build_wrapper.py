@@ -12,6 +12,7 @@
 """Check and save selective l3build tests made easier."""
 
 import argparse
+import fnmatch
 import logging
 import os
 import subprocess
@@ -259,16 +260,17 @@ class TestSuiteRun:
         ts = self.ts
         names_unknown = Names(set())
         for name in names:
+            # a name is either a test suite or a test glob, but not both
             if name in (ts.name, ts.alias):
                 self.run_as_whole = True
                 logger.debug(
                     'Name "%s" recognized as a test suite "%s"',
                     name, ts.name,
                 )  # fmt: skip
-            elif name in ts.get_names():
-                self.names.add(name)
+            elif _glob_names := fnmatch.filter(ts.get_names(), name):
+                self.names.update(_glob_names)
                 logger.debug(
-                    'Name "%s" recognized as a test in test suite "%s"',
+                    'Name glob "%s" recognized as test(s) in test suite "%s"',
                     name, ts.name,
                 )  # fmt: skip
             else:
@@ -293,7 +295,7 @@ class TestSuiteRun:
     ) -> None:
         """Run l3build with the given options and names."""
         path = self.ts.path
-        commands = ['l3build', target, *options, *names]
+        commands = ['l3build', target, *options, *sorted(names)]
         logger.info('Run "%s" in directory "%s"', ' '.join(commands), path)
         if args.dry_run:
             return
@@ -513,7 +515,7 @@ parser = argparse.ArgumentParser(
 parser.add_argument('target', type=str,
                     help=f'a l3build target to run {[t.value for t in Target]}')
 parser.add_argument('names', type=str, nargs='*', metavar='name',
-                    help='a test suite or test')
+                    help='a name of test suite or a glob for test name(s)')
 
 # new, wrapper-only options and flags
 # `--all-engines` and `-e/--engine` overwrite each other so the last one wins
