@@ -12,6 +12,7 @@
 """Check and save selective l3build tests made easier."""
 
 import argparse
+import fnmatch
 import logging
 import os
 import subprocess
@@ -259,16 +260,17 @@ class TestSuiteRun:
         ts = self.ts
         names_unknown = Names(set())
         for name in names:
+            # a name is either a test suite or a test, but not both
             if name in (ts.name, ts.alias):
                 self.run_as_whole = True
                 logger.debug(
                     'Name "%s" recognized as a test suite "%s"',
                     name, ts.name,
                 )  # fmt: skip
-            elif name in ts.get_names():
-                self.names.add(name)
+            elif _glob_names := fnmatch.filter(ts.get_names(), name):
+                self.names.update(_glob_names)
                 logger.debug(
-                    'Name "%s" recognized as a test in test suite "%s"',
+                    'Name glob "%s" recognized as test(s) in test suite "%s"',
                     name, ts.name,
                 )  # fmt: skip
             else:
