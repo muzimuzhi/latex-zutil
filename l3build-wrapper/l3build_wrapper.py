@@ -260,7 +260,7 @@ class TestSuiteRun:
         ts = self.ts
         names_unknown = Names(set())
         for name in names:
-            # a name is either a test suite or a test, but not both
+            # a name is either a test suite or a test glob, but not both
             if name in (ts.name, ts.alias):
                 self.run_as_whole = True
                 logger.debug(
@@ -515,7 +515,7 @@ parser = argparse.ArgumentParser(
 parser.add_argument('target', type=str,
                     help=f'a l3build target to run {[t.value for t in Target]}')
 parser.add_argument('names', type=str, nargs='*', metavar='name',
-                    help='a test suite or test')
+                    help='a test suite name or a test name glob')
 
 # new, wrapper-only options and flags
 # `--all-engines` and `-e/--engine` overwrite each other so the last one wins
