@@ -515,7 +515,7 @@ parser = argparse.ArgumentParser(
 parser.add_argument('target', type=str,
                     help=f'a l3build target to run {[t.value for t in Target]}')
 parser.add_argument('names', type=str, nargs='*', metavar='name',
-                    help='a test suite name or a test name glob')
+                    help='a name of test suite or a glob for test name(s)')
 
 # new, wrapper-only options and flags
 # `--all-engines` and `-e/--engine` overwrite each other so the last one wins
