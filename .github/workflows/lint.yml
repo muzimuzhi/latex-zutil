@@ -10,19 +10,14 @@ on:
       [opened, ready_for_review, reopened, synchronize]
   push:
   workflow_call:
-    inputs:
+    inputs: &inputs
       runs-on:
         description: "Image to run on"
         required: false
         type: string
         default: "ubuntu-latest"
   workflow_dispatch:
-    inputs:
-      runs-on:
-        description: "Image to run on"
-        required: false
-        type: string
-        default: "ubuntu-latest"
+    inputs: *inputs
 
 jobs:
   lint:
