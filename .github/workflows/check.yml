@@ -14,7 +14,9 @@ on:
       - ".github/workflows/lint.yml"
       - ".pre-commit-config.yaml"
   workflow_call:
-    inputs:
+    # yaml anchor is supported in Aug, 2025
+    # https://github.com/actions/runner/issues/1182
+    inputs: &inputs
       images:
         description: "Array of images to run on"
         required: false
@@ -36,27 +38,7 @@ on:
         type: boolean
         default: false
   workflow_dispatch:
-    inputs:
-      images:
-        description: "Array of images to run on"
-        required: false
-        type: string
-        default: '["ubuntu-latest"]'
-      update-cache:
-        description: "Update the TeX live cache?"
-        required: false
-        type: boolean
-        default: false
-      update-texlive-packages:
-        description: "Update TeX Live packages?"
-        required: false
-        type: boolean
-        default: true
-      test-tblr-old:
-        description: "Run tests with the old tabularray configuration?"
-        required: false
-        type: boolean
-        default: false
+    inputs: *inputs
 
 jobs:
   check:
