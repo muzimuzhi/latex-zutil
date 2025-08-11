@@ -292,12 +292,13 @@ class TestSuiteRun:
         target: Target,
         options: Options,
         names: Names,
+        dry_run: bool,  # noqa: FBT001
     ) -> None:
-        """Run l3build with the given options and names."""
+        """Invoke l3build."""
         path = self.ts.path
         commands = ['l3build', target, *options, *sorted(names)]
         logger.info('Run "%s" in directory "%s"', ' '.join(commands), path)
-        if args.dry_run:
+        if dry_run:
             return
         try:
             subprocess.run(commands, cwd=path, check=True)  # noqa: S603
@@ -330,9 +331,11 @@ class TestSuiteRun:
                         ', '.join(names),
                         ', '.join(_engines),
                     )
-                    options = [op for op in self.options if not op.startswith('-e')]
+                    options = Options(
+                        [op for op in self.options if not op.startswith('-e')]
+                    )
                     options.append(f'-e{",".join(_engines)}')
-                self._invoke_l3build(self.target, Options(options), names)
+                self._invoke_l3build(self.target, options, names, args.dry_run)
 
         if not self.run_as_whole and not self.names:
             return False
@@ -345,14 +348,14 @@ class TestSuiteRun:
             save_for_all_engines()
         else:
             # simple case, run l3build on the test suite
-            self._invoke_l3build(self.target, self.options, self.names)
+            self._invoke_l3build(self.target, self.options, self.names, args.dry_run)
 
         if self.target == Target.SAVE and args.re_check:
             logger.info('Re-check test suite "%s" after saving', self.ts.name)
             # always set `-S, --show-saves` when re-checking
             if '-S' not in self.options:
                 self.options.append('-S')
-            self._invoke_l3build(Target.CHECK, self.options, self.names)
+            self._invoke_l3build(Target.CHECK, self.options, self.names, args.dry_run)
         return True
 
 
@@ -548,12 +551,25 @@ inherited.add_argument('-S', '--show-saves', action='store_true')
 inherited.add_argument('-s', '--stdengine', action='store_true')
 # fmt: on
 
+
+def main(argv: list[str] | None = None) -> None:
+    """Main function to run the l3build wrapper."""  # noqa: D401
+    args: argparse.Namespace
+
+    init_logging()
+    if argv is None:
+        args = parser.parse_intermixed_args(args=argv)
+    else:
+        # by default `args=sys.argv[1:]`
+        args = parser.parse_intermixed_args()
+
+    set_logging(args)
+    wrap_l3build(args)
+
+
 if __name__ == '__main__':
     try:
-        init_logging()
-        args: argparse.Namespace = parser.parse_intermixed_args()
-        set_logging(args)
-        wrap_l3build(args)
+        main()
     except KeyboardInterrupt:
         logger.warning('Interrupted by user')
         sys.exit(1)
