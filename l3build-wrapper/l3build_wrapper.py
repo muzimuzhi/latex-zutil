@@ -319,11 +319,11 @@ class TestSuiteRun:
 
             for engines, names in name_groups.items():
                 if not engines:
-                    # save in stdengine only
+                    # save for stdengine only
                     logger.info('Save test(s) "%s" in stdengine', ', '.join(names))
                     options = self.options
                 else:
-                    # save in stdengine and extra engines
+                    # save for stdengine and extra engines
                     _engines = Engines((self.ts.stdengine, *engines))
                     logger.info(
                         'Save test(s) "%s" in engines "%s"',
@@ -349,8 +349,9 @@ class TestSuiteRun:
 
         if self.target == Target.SAVE and args.re_check:
             logger.info('Re-check test suite "%s" after saving', self.ts.name)
-            # always set --show-saves when re-checking
-            self.options.append('-S')
+            # always set `-S, --show-saves` when re-checking
+            if '-S' not in self.options:
+                self.options.append('-S')
             self._invoke_l3build(Target.CHECK, self.options, self.names)
         return True
 
