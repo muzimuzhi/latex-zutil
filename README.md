@@ -23,10 +23,10 @@
     - auto triggered by `git commit` (`pre-commit` git hook in use)
     - run `pre-commit run` manually
   - full run
-    - run `just lint-all` or `pre-commit run -a`
+    - run `just lint` or `pre-commit run -a`
 - Slow checks (`l3build` test suites)
-  - run actively maintained test suites `just check zutil tblr`
-  - run all test suites `just test-all`
+  - run actively maintained test suites `just test-quick`
+  - run all test suites `just test`
 - Full checks
   - run `just all`
 - Checks run on CI
@@ -47,7 +47,7 @@ $ just -n/--dry-run RECIPE
 $ just [check|save] -h
 # check/save one or more tests and/or testsuites
 $ just check zutil tblr
-$ just save zutil-001 tblr-loading
+$ just save --all-engines zutil-001 tblr-loading
 ```
 
 Note: As configured by `.justfile` in this repository, `just` invoked from any subdirectories acts the same as being invoked from the top-level directory.

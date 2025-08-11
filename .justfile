@@ -29,13 +29,16 @@ default:
     just --justfile {{justfile()}} --list --unsorted
 
 [group('*meta')]
-all: lint-all test-all
+all: lint test
 
 [group('*meta')]
-lint-all: pre-commit typos explcheck ruff
+lint: pre-commit typos explcheck ruff
 
 [group('*meta')]
-test-all: zutil tblr tblr-old tblr-ppm
+test: test-quick tblr-old tblr-ppm
+
+[group('*meta')]
+test-quick: zutil tblr
 
 ## linting recipes
 
