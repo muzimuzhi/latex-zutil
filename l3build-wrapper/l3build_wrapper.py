@@ -351,7 +351,7 @@ class TestSuiteRun:
             logger.info('Re-check test suite "%s" after saving', self.ts.name)
             # always set --show-saves when re-checking
             self.options.append('-S')
-            self._invoke_l3build(self.target, self.options, self.names)
+            self._invoke_l3build(Target.CHECK, self.options, self.names)
         return True
 
 
