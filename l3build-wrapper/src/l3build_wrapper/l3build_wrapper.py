@@ -1,12 +1,13 @@
 #!/usr/bin/env -S uv run --script
 #
 # /// script
-# requires-python = ">=3.10"
+# requires-python = ">=3.12"
 # dependencies = []
 # ///
 
-# Python 3.10 is needed by the union type expression `X | Y`.
-# https://docs.python.org/3/library/stdtypes.html#types-union
+# Python 3.12 is needed by `if type not in Target`: check if a `EnumStr` class
+# contains one of its values.
+# https://docs.python.org/3/library/enum.html#enum.EnumType.__contains__
 # Required python version is also recorded in `ruff.toml`.
 
 """Check and save selective l3build tests made easier."""
@@ -556,20 +557,16 @@ def main(argv: list[str] | None = None) -> None:
     """Main function to run the l3build wrapper."""  # noqa: D401
     args: argparse.Namespace
 
-    init_logging()
-    if argv is None:
-        args = parser.parse_intermixed_args(args=argv)
-    else:
-        # by default `args=sys.argv[1:]`
-        args = parser.parse_intermixed_args()
-
-    set_logging(args)
-    wrap_l3build(args)
-
-
-if __name__ == '__main__':
     try:
-        main()
+        init_logging()
+        if argv is None:
+            args = parser.parse_intermixed_args(args=argv)
+        else:
+            # by default `args=sys.argv[1:]`
+            args = parser.parse_intermixed_args()
+
+        set_logging(args)
+        wrap_l3build(args)
     except KeyboardInterrupt:
         logger.warning('Interrupted by user')
         sys.exit(1)
@@ -587,3 +584,7 @@ if __name__ == '__main__':
         sys.exit(1)
     except Exception:
         logger.exception('Unexpected error')
+
+
+if __name__ == '__main__':
+    main()

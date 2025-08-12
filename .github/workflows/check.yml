@@ -120,12 +120,11 @@ jobs:
 
     - name: Install uv
       uses: astral-sh/setup-uv@v6
-      with:
-        enable-cache: false
 
-    - name: Install ppmcheckpdf dependencies
-      if: inputs.test-tblr-old
-      uses: muzimuzhi/actions/ppmcheckpdf-deps@main
+    - name: Install l3build-wrapper
+      run: |
+        cd l3build-wrapper
+        uv tool install -e .
 
     # uses "L3BUILD_CHECK_OPTIONS" job env
     - name: Run zutil tests
@@ -136,6 +135,10 @@ jobs:
     - name: Run tabularray tests, config "build"
       run: |
         just tblr
+
+    - name: Install ppmcheckpdf dependencies
+      if: inputs.test-tblr-old
+      uses: muzimuzhi/actions/ppmcheckpdf-deps@main
 
     # uses "L3BUILD_CHECK_OPTIONS" job env
     - name: Run tabularray tests, config "config-old"

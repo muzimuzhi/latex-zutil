@@ -103,7 +103,7 @@ save *options="": (_l3build_wrapper "save" L3BUILD_SAVE_OPTIONS options)
 
 _l3build_wrapper command *options="":
     @echo '{{ info }}Running l3build_wrapper.py {{ command }}...{{ end_info }}'
-    @./l3build-wrapper/l3build_wrapper.py {{ command }} {{ options }}
+    l3build-wrapper {{ command }} {{ options }}
 
 # Create a new l3build test from template
 [group('dev')]
