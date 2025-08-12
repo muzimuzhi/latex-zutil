@@ -2,6 +2,11 @@
 
 # https://pre-commit.ci/#configuration
 ci:
+  autofix_commit_msg: |
+      chore(deps) auto fixes from pre-commit.com hooks
+
+      for more information, see https://pre-commit.ci
+  autoupdate_commit_msg: 'chore(deps): pre-commit autoupdate'
   skip: [check-spelling, lint-expl3, lint-python]
 
 # path separator is normalized to "/", so no need to use "[\\/]" in python
