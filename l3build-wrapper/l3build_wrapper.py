@@ -554,17 +554,13 @@ inherited.add_argument('-s', '--stdengine', action='store_true')
 
 def main(argv: list[str] | None = None) -> None:
     """Main function to run the l3build wrapper."""  # noqa: D401
-    init_logging()
-    # `args` defaults to `None`, which is equivalent to passing `sys.argv[1:]`
-    args = parser.parse_intermixed_args(args=argv)
-
-    set_logging(args)
-    wrap_l3build(args)
-
-
-if __name__ == '__main__':
     try:
-        main()
+        init_logging()
+        # `args` defaults to `None`, which is equivalent to passing `sys.argv[1:]`
+        args = parser.parse_intermixed_args(args=argv)
+
+        set_logging(args)
+        wrap_l3build(args)
     except KeyboardInterrupt:
         logger.warning('Interrupted by user')
         sys.exit(1)
@@ -582,3 +578,7 @@ if __name__ == '__main__':
         sys.exit(1)
     except Exception:
         logger.exception('Unexpected error')
+
+
+if __name__ == '__main__':
+    main()
