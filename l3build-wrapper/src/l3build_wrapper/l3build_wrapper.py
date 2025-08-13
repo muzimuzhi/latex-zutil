@@ -555,15 +555,10 @@ inherited.add_argument('-s', '--stdengine', action='store_true')
 
 def main(argv: list[str] | None = None) -> None:
     """Main function to run the l3build wrapper."""  # noqa: D401
-    args: argparse.Namespace
-
     try:
         init_logging()
-        if argv is None:
-            args = parser.parse_intermixed_args(args=argv)
-        else:
-            # by default `args=sys.argv[1:]`
-            args = parser.parse_intermixed_args()
+        # `args` defaults to `None`, which is equivalent to passing `sys.argv[1:]`
+        args = parser.parse_intermixed_args(args=argv)
 
         set_logging(args)
         wrap_l3build(args)
