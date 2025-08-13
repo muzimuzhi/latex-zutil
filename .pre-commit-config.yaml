@@ -56,8 +56,8 @@ repos:
     alias: ruff
     name: Lint python files
     language: system
-    # this command is different from that in just recipe `ruff`, because
-    # `cd dir && <command>` never failed here, even for `<command>` not found
+    # `cd <dir> && <command>` never failed here, so use a command different
+    # from that in just recipe `ruff`
     entry: uvx ruff check l3build-wrapper
     files: ^l3build-wrapper/
     # types_or: [python, pyi, jupyter]
