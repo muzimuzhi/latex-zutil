@@ -1,12 +1,13 @@
 #!/usr/bin/env -S uv run --script
 #
 # /// script
-# requires-python = ">=3.10"
+# requires-python = ">=3.12"
 # dependencies = []
 # ///
 
-# Python 3.10 is needed by the union type expression `X | Y`.
-# https://docs.python.org/3/library/stdtypes.html#types-union
+# Python 3.12 is needed by `if type not in Target`: check if a `EnumStr`
+# class contains some value.
+# https://docs.python.org/3/library/enum.html#enum.EnumType.__contains__
 # Required python version is also recorded in `ruff.toml`.
 
 """Check and save selective l3build tests made easier."""
