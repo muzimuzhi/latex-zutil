@@ -129,6 +129,10 @@ jobs:
         cd l3build-wrapper
         uv tool install .
 
+    - name: Install ppmcheckpdf dependencies
+      if: inputs.test-tblr-old
+      uses: muzimuzhi/actions/ppmcheckpdf-deps@main
+
     # uses "L3BUILD_CHECK_OPTIONS" job env
     - name: Run zutil tests
       run: |
@@ -138,10 +142,6 @@ jobs:
     - name: Run tabularray tests, config "build"
       run: |
         just tblr
-
-    - name: Install ppmcheckpdf dependencies
-      if: inputs.test-tblr-old
-      uses: muzimuzhi/actions/ppmcheckpdf-deps@main
 
     # uses "L3BUILD_CHECK_OPTIONS" job env
     - name: Run tabularray tests, config "config-old"
