@@ -50,12 +50,18 @@ repos:
     entry: explcheck
     # this file list is composed in .justfile too
     files: ^support/.*\.cfg|zutil/.*\.(sty|tex)$
+  # there exists an official ruff pre-commit
+  # https://github.com/astral-sh/ruff-pre-commit
   - id: lint-python
     alias: ruff
     name: Lint python files
     language: system
-    entry: uvx ruff check
-    files: ^l3build-wrapper/.*\.py$
+    # this command is different from that in just recipe `ruff`, because
+    # `cd dir && <command>` never failed here, even for `<command>` not found
+    entry: uvx ruff check l3build-wrapper
+    files: ^l3build-wrapper/
+    # types_or: [python, pyi, jupyter]
+    pass_filenames: false
 # https://pre-commit.com/#meta-hooks
 # "pre-commit run --hook-stage manual"
 - repo: meta
