@@ -124,9 +124,10 @@ jobs:
         enable-cache: false
 
     - name: Install l3build-wrapper
+      # no need for `-e, --editable` installation
       run: |
         cd l3build-wrapper
-        uv tool install -e .
+        uv tool install .
 
     # uses "L3BUILD_CHECK_OPTIONS" job env
     - name: Run zutil tests
