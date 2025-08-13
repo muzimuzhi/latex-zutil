@@ -19,9 +19,6 @@ build-backend = "uv_build"
 [tool.uv.build-backend]
 module-root = "src"
 
-[tool.ruff]
-target-version = 'py312'
-
 [tool.ruff.lint]
 # https://docs.astral.sh/ruff/settings/#lint
 select = ['ALL']
