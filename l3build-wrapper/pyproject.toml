@@ -1,4 +1,5 @@
 [project]
+# https://packaging.python.org/en/latest/guides/writing-pyproject-toml/
 name = "l3build-wrapper"
 version = "0.1.0"
 description = "Check and save selective l3build tests made easier"
