@@ -2,7 +2,6 @@
 name = "l3build-wrapper"
 version = "0.1.0"
 description = "Check and save selective l3build tests made easier"
-readme = "README.md"
 authors = [
     { name = "Yukai Chou", email = "muzimuzhi@gmail.com" }
 ]
