@@ -122,3 +122,9 @@ new-test module name:
     fi
     cp "$template" "$new_test"
     code "$new_test"
+
+# Reinstall l3build-wrapper in editable mode
+[group('dev')]
+install-wrapper:
+    @echo '{{ info }}Reinstalling l3build-wrapper in editable mode...{{ end_info }}'
+    cd l3build-wrapper && uv tool install --reinstall -e .
