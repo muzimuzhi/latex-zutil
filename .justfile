@@ -67,9 +67,9 @@ pre-commit *options="":
 
 [group('lint')]
 ruff command="check" *options="":
-    @echo '{{ info }}Running ruff check...{{ end_info }}'
+    @echo '{{ info }}Running ruff...{{ end_info }}'
     # `uvx` is an alias for `uv tool run`
-    uvx ruff {{ command }} {{ options }}
+    cd l3build-wrapper && uvx ruff {{ command }} {{ options }}
 
 ## testing recipes
 
@@ -102,8 +102,8 @@ check *options="": (_l3build_wrapper "check" L3BUILD_CHECK_OPTIONS options)
 save *options="": (_l3build_wrapper "save" L3BUILD_SAVE_OPTIONS options)
 
 _l3build_wrapper command *options="":
-    @echo '{{ info }}Running l3build_wrapper.py {{ command }}...{{ end_info }}'
-    @./l3build-wrapper/l3build_wrapper.py {{ command }} {{ options }}
+    @echo '{{ info }}Running l3build_wrapper...{{ end_info }}'
+    l3build-wrapper {{ command }} {{ options }}
 
 # Create a new l3build test from template
 [group('dev')]
@@ -122,3 +122,9 @@ new-test module name:
     fi
     cp "$template" "$new_test"
     code "$new_test"
+
+# Reinstall l3build-wrapper in editable mode
+[group('dev')]
+install-wrapper:
+    @echo '{{ info }}Reinstalling l3build-wrapper in editable mode...{{ end_info }}'
+    cd l3build-wrapper && uv tool install --reinstall -e .

@@ -123,6 +123,12 @@ jobs:
       with:
         enable-cache: false
 
+    - name: Install l3build-wrapper
+      # no need for `-e, --editable` installation
+      run: |
+        cd l3build-wrapper
+        uv tool install .
+
     - name: Install ppmcheckpdf dependencies
       if: inputs.test-tblr-old
       uses: muzimuzhi/actions/ppmcheckpdf-deps@main

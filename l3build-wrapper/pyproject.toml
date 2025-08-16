@@ -1,8 +1,22 @@
-include = ['l3build-wrapper/*.py']
+[project]
+# https://packaging.python.org/en/latest/guides/writing-pyproject-toml/
+name = "l3build-wrapper"
+version = "0.1.0"
+description = "Check and save selective l3build tests made easier"
+authors = [
+    { name = "Yukai Chou", email = "muzimuzhi@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = []
 
-target-version = 'py312'
+[project.scripts]
+l3build-wrapper = "l3build_wrapper:main"
 
-[lint]
+[build-system]
+requires = ["uv_build>=0.8.9,<0.9.0"]
+build-backend = "uv_build"
+
+[tool.ruff.lint]
 # https://docs.astral.sh/ruff/settings/#lint
 select = ['ALL']
 ignore = [
@@ -26,6 +40,6 @@ extend-ignore = [
 ]
 flake8-quotes.inline-quotes = 'single'
 
-[format]
+[tool.ruff.format]
 # https://docs.astral.sh/ruff/settings/#format
 quote-style = 'single'
