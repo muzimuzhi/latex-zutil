@@ -33,20 +33,12 @@
 \cs_new_protected:Npn \zutil_debug_generate_variant:Nn #1#2
   {
     \cs_generate_variant:Nn #1 { #2 }
-    % stores the cs name of base form #1, without colon and signature
-    \str_set:Ne \l__zutil_tmp_str
-      {
-        \exp_last_unbraced:Nf \use_i:nnn
-          \cs_split_function:N #1  % noqa: w302
-      }
-    % stores the collector of base form #1
-    \tl_set:Ne \l__zutil_tmp_tl
-      { \__zutil_debug_collect_args:Nw #1 }
     \clist_map_inline:nn { #2 }
       {
-        \__zutil_debug_gput_collector:co
-          { \l__zutil_tmp_str : ##1 }
-          { \l__zutil_tmp_tl }
+        \__zutil_debug_gput_collector:ce
+          { \zutil_cs_function_name:N #1 : ##1 }
+          % the collector of base form #1
+          { \__zutil_debug_collect_args:Nw #1 }
       }
   }
 
@@ -66,7 +58,7 @@
           {#1} { \exp_not:n {#2} }
       }
   }
-\cs_generate_variant:Nn \__zutil_debug_gput_collector:Nn { co }
+\cs_generate_variant:Nn \__zutil_debug_gput_collector:Nn { ce }
 
 % all args are curried
 \cs_new:Npn \__zutil_debug_collect_args:Nw
