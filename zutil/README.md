@@ -6,7 +6,8 @@
     - package option(s)
       - `presets[=util|test|all]` (default `util`)
         - `util`: load `l3extras` module
-        - `test`: `util` presets + load `debug` and `softerror` modules
+        - `test`: `util` presets + `softerror` module
+        - `debug`: `util` presets + `debug` and `unravel` modules
         - `all`: load all modules
     - `\zutil_set:n {⟨key-value list⟩}`
     - `\zutil_load_module:n {⟨module⟩}`
@@ -116,6 +117,11 @@
       - variants `nnVV`, `nnVn`, `nnnV`, `nnne`, `nnee`
     - `\zutil_msg_softerror:nnn`
       - variants `nnV`, `nne`
+
+  - `unravel` module
+    provides thin wrapper for `unravel` package
+    - `\beginunravel[⟨options⟩]⟨code⟩\endunravel`
+      - equivalent to using `\unravel[⟨options⟩]{⟨code⟩}`
 
   - `zutil-regression-test.tex` file
     - `l3build` `regression-test.tex` extended

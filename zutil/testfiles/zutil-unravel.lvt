@@ -1,0 +1,20 @@
+\input{zutil-regression-test}
+\documentclass{minimal}
+
+\usepackage[presets=none]{zutil}
+
+\ExplSyntaxOn
+
+\zutil_load_module:n { unravel }
+
+\debug_on:n { check-declarations , deprecation }
+
+\START
+
+\TEST{unravel}{
+  \beginunravel\def\x{x}\endunravel
+  \SEPARATOR
+  \beginunravel[machine]\def\x{x}\endunravel
+}
+
+\END

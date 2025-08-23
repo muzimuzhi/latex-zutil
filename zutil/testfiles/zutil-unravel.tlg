@@ -1,0 +1,34 @@
+This is a generated file for the l3build validation system.
+Don't change this file in any respect.
+============================================================
+TEST: unravel
+============================================================
+======== Welcome to the unravel package ========
+    "<|" denotes the output to TeX's stomach.
+    "||" denotes tokens waiting to be used.
+    "|>" denotes tokens that we will act on.
+    Press <enter> to continue; 'h' <enter> for help.
+|| 
+|> \def \x {x}
+[===== Step 1 =====] \def \x {x}
+|| \def \x {x}
+|> 
+[===== Step 2 =====] Set \x=macro:->x
+|| 
+|> 
+[===== End =====]
+============================================================
+[===== Start =====]
+|| 
+|> \def \x {x}
+[==========] \def \x {x}
+|| \def \x {x}
+|> 
+[==========] Set \x=macro:->x
+|| 
+|> 
+[===== End =====]
+============================================================
+***************
+[test] 0 error(s)
+[test] 0 check(s)

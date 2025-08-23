@@ -34,14 +34,14 @@ enumitem
 environ
 etoolbox
 functional
-fp          # one of "diagbox" dependencies
+fp          # one of diagbox's dependencies
 geometry
 hyperref    # also provides needed nameref.sty
 lm          # provides needed lmodern.sty
 mathtools
 multirow
 ninecolors
-pict2e      # one of "diagbox" dependencies
+pict2e      # one of diagbox's dependencies
 # shortvrb  # provided by the "latex" texlive package
 siunitx
 varwidth
@@ -49,6 +49,11 @@ zref
 xcolor
 xetex
 luatex
+##
+## zutil test dependencies
+##
+gtl        # unravel's dependency
+unravel
 ##
 ## tools
 ##

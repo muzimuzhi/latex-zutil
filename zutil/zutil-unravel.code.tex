@@ -1,0 +1,17 @@
+\ProvidesExplFile {zutil-unravel.code.tex} {2025-08-24} {0.1}
+  {Z's utilities, the unravel module}
+
+\RequirePackage {unravel}  % noqa: S204
+
+\NewDocumentCommand \beginunravel { O{} }  % noqa: S204
+  {
+    \zutil_beginunravel:nw {#1}
+  }
+\cs_new_protected:Npn \zutil_beginunravel:nw #1#2\endunravel
+  {
+    \unravel:nn
+      % TODO: maybe need only the `machine` meta key
+      { max-action=1000, max-input=1000, max-output=1000, #1 }
+      { #2 }
+  }
+\cs_new_eq:NN \endunravel \prg_do_nothing:
