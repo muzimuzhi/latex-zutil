@@ -5,18 +5,15 @@ TEST: Load zutil
 ============================================================
 (zutil.sty
 Package: zutil ....-..-.. v... Z's utilities
-(zutil-l3extras.code.tex
-File: zutil-l3extras.code.tex ....-..-.. v... Z's utilities, the l3kernel extras module
-))
+)
 ============================================================
 ============================================================
 TEST: Load module in various catcode regimes
 ============================================================
 2e-internal catcode regime
 PASSED
-(zutil-debug.code.tex
-File: zutil-debug.code.tex ....-..-.. v... Z's utilities, the debugging module
-\l__zutil_debug_level_int=\count...
+(zutil-l3extras.code.tex
+File: zutil-l3extras.code.tex ....-..-.. v... Z's utilities, the l3kernel extras module
 )
 expl3 catcode regime
 PASSED
