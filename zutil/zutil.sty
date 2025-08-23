@@ -16,7 +16,7 @@
 \DeclareKeys [ zutil ]
   {
     presets .choices:nn =
-      { none, util, test, all }
+      { none, util, test, debug, all }
       {
         \tl_set:Ne \l__zutil_presets_tl { \l_keys_choice_tl }
       }
@@ -33,14 +33,20 @@
 \cs_new_protected:Npn \__zutil_use_presets_test:  % noqa: w401
   {
     \__zutil_use_presets_util:
-    \zutil_load_module:n { debug }
     \zutil_load_module:n { softerror }
+  }
+\cs_new_protected:Npn \__zutil_use_presets_debug:  % noqa: w401
+  {
+    \zutil_load_module:n { debug }
+    \zutil_load_module:n { unravel }
   }
 \cs_new_protected:Npn \__zutil_use_presets_all:  % noqa: w401
   {
-    \__zutil_use_presets_test:
+    \zutil_load_module:n { l3extras }
+    \zutil_load_module:n { softerror }
+    \zutil_load_module:n { debug }
+    \zutil_load_module:n { unravel }
   }
-
 
 % module loading
 
