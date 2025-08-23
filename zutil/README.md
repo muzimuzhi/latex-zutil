@@ -120,7 +120,7 @@
       - variants `nnV`, `nne`
 
   - `unravel` module
-    provides thin wrapper for `unravel` package
+    - provides thin wrapper for `unravel` package
     - `\beginunravel[⟨options⟩]⟨code⟩\endunravel`
       - equivalent to using `\unravel[⟨options⟩]{⟨code⟩}`
 
