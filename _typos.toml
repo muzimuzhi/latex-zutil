@@ -35,3 +35,8 @@ extend-glob = [
   "*.lvt", # l3build log-based test file
   "*.pvt", # l3build pdf-based test file
 ]
+
+[type.toml]
+extend-glob = [
+  ".explcheckrc", # explcheck config file
+]
