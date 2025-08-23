@@ -1,9 +1,11 @@
 \input{zutil-regression-test}
 \documentclass{minimal}
 
-\usepackage{zutil}
+\usepackage[presets=none]{zutil}
 
 \ExplSyntaxOn
+
+\zutil_load_module:n { softerror }
 
 \debug_on:n { check-declarations , deprecation }
 

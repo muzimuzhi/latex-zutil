@@ -2,7 +2,7 @@
 \documentclass{minimal}
 
 \usepackage{tabularray}
-\usepackage{zutil}
+\usepackage[presets=none]{zutil}
 
 \ExplSyntaxOn
 

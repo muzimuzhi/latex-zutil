@@ -11,7 +11,7 @@
 
 \BEGINTEST{Load zutil}
 \endgroup
-\usepackage{zutil}
+\usepackage[presets=none]{zutil}
 \begingroup
 \ENDTEST
 
@@ -21,7 +21,7 @@
   \TYPE{2e-internal catcode regime}
   \makeatletter
     \ASSERT{\the\catcode`\@}{11}
-    \UseName{zutil_load_module:n} {debug}
+    \UseName{zutil_load_module:n} {l3extras}
   \makeatother
   \TYPE{expl3 catcode regime}
   \ExplSyntaxOn
@@ -36,7 +36,7 @@
 
 \TEST{Load~a~module~twice}{
   \group_end:
-  \zutil_load_module:n { debug }
+  \zutil_load_module:n { l3extras }
   \group_begin:
 }
 
