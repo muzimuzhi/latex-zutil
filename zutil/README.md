@@ -4,7 +4,8 @@
 
   - base package
     - package option(s)
-      - `presets[=util|test|all]` (default `util`)
+      - `presets[=none|util|test|debug|all]` (default `util`)
+        - `none`: load no modules
         - `util`: load `l3extras` module
         - `test`: `util` presets + `softerror` module
         - `debug`: `util` presets + `debug` and `unravel` modules
