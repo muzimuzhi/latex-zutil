@@ -50,6 +50,10 @@ xcolor
 xetex
 luatex
 ##
+## zutil test dependencies
+##
+unravel
+##
 ## tools
 ##
 expltools
