@@ -1,4 +1,4 @@
-\ProvidesExplFile {zutil-softerror.code.tex} {2025-06-19} {0.1}
+\ProvidesExplFile {zutil-softerror.code.tex} {2025-10-03} {0.1}
   {Z's utilities, the softerror module}
 
 % This module provides a new l3msg message level "softerror".
@@ -10,7 +10,7 @@
 % for log-based testing.
 
 % new message level "softerror"
-\cs_new_protected:Npn \__msg_softerror_code:nnnnnn #1#2#3#4#5#6  % noqa: w401
+\cs_new_protected:Npn \__msg_softerror_code:nnnnnn #1#2#3#4#5#6
   {
     \__msg_softerror_aux:NNnnnnnn \iow_term:n \msg_softerror_text:n
       {#1} {#2} {#3} {#4} {#5} {#6}

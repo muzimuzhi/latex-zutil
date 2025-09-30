@@ -148,18 +148,18 @@
 % space for time. l3doc uses a \str_case:nnTF in
 % \@@_signature_base_form_aux:n (<@@=codedoc>)
 % Specifiers 'w' and 'D' are _not_ accepted.
-\cs_new:Npn \__zutil_cs_sig_base_form_N: { N }  % noqa: w401
-\cs_new:Npn \__zutil_cs_sig_base_form_c: { N }  % noqa: w401
-\cs_new:Npn \__zutil_cs_sig_base_form_n: { n }  % noqa: w401
-\cs_new:Npn \__zutil_cs_sig_base_form_o: { n }  % noqa: w401
-\cs_new:Npn \__zutil_cs_sig_base_form_f: { n }  % noqa: w401
-\cs_new:Npn \__zutil_cs_sig_base_form_e: { n }  % noqa: w401
-\cs_new:Npn \__zutil_cs_sig_base_form_x: { n }  % noqa: w401
-\cs_new:Npn \__zutil_cs_sig_base_form_V: { n }  % noqa: w401
-\cs_new:Npn \__zutil_cs_sig_base_form_v: { n }  % noqa: w401
-\cs_new:Npn \__zutil_cs_sig_base_form_p: { p }  % noqa: w401
-\cs_new:Npn \__zutil_cs_sig_base_form_T: { T }  % noqa: w401
-\cs_new:Npn \__zutil_cs_sig_base_form_F: { F }  % noqa: w401
+\cs_new:Npn \__zutil_cs_sig_base_form_N: { N }
+\cs_new:Npn \__zutil_cs_sig_base_form_c: { N }
+\cs_new:Npn \__zutil_cs_sig_base_form_n: { n }
+\cs_new:Npn \__zutil_cs_sig_base_form_o: { n }
+\cs_new:Npn \__zutil_cs_sig_base_form_f: { n }
+\cs_new:Npn \__zutil_cs_sig_base_form_e: { n }
+\cs_new:Npn \__zutil_cs_sig_base_form_x: { n }
+\cs_new:Npn \__zutil_cs_sig_base_form_V: { n }
+\cs_new:Npn \__zutil_cs_sig_base_form_v: { n }
+\cs_new:Npn \__zutil_cs_sig_base_form_p: { p }
+\cs_new:Npn \__zutil_cs_sig_base_form_T: { T }
+\cs_new:Npn \__zutil_cs_sig_base_form_F: { F }
 
 
 %%
@@ -203,7 +203,7 @@
 \cs_new_protected:Npn \zutil_prg_new_conditional_tl_if_in:Nnn #1
   {
     \exp_args:Ne \__zutil_prg_new_conditional_tl_if_in:nNnn
-      { \exp_last_unbraced:Nf \use_i:nnn \cs_split_function:N #1 } #1  % noqa: w302
+      { \exp_last_unbraced:Nf \use_i:nnn \cs_split_function:N #1 } #1
   }
 % #1: str = name, #2: func = cs, #3: tl = test-in, #4: clist = conditions
 \cs_new_protected:Npn \__zutil_prg_new_conditional_tl_if_in:nNnn #1#2#3#4
