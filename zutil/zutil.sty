@@ -1,9 +1,9 @@
-\ProvidesExplPackage {zutil} {2025-07-07} {0.6.1}
+\ProvidesExplPackage {zutil} {2025-10-03} {0.6.1}
   {Z's utilities}
 
 
 % shared temp variables
-\tl_new:N    \l__zutil_tmp_tl  % noqa: W415
+\tl_new:N    \l__zutil_tmp_tl
 \str_new:N   \l__zutil_tmp_str  % noqa: W415
 
 % variable(s)
@@ -25,22 +25,22 @@
   }
 
 % option "presets" internals
-\cs_new_protected:Npn \__zutil_use_presets_none: { }  % noqa: w401
-\cs_new_protected:Npn \__zutil_use_presets_util:  % noqa: w401
+\cs_new_protected:Npn \__zutil_use_presets_none: { }
+\cs_new_protected:Npn \__zutil_use_presets_util:
   {
     \zutil_load_module:n { l3extras }
   }
-\cs_new_protected:Npn \__zutil_use_presets_test:  % noqa: w401
+\cs_new_protected:Npn \__zutil_use_presets_test:
   {
     \__zutil_use_presets_util:
     \zutil_load_module:n { softerror }
   }
-\cs_new_protected:Npn \__zutil_use_presets_debug:  % noqa: w401
+\cs_new_protected:Npn \__zutil_use_presets_debug:
   {
     \zutil_load_module:n { debug }
     \zutil_load_module:n { unravel }
   }
-\cs_new_protected:Npn \__zutil_use_presets_all:  % noqa: w401
+\cs_new_protected:Npn \__zutil_use_presets_all:
   {
     \zutil_load_module:n { l3extras }
     \zutil_load_module:n { softerror }
