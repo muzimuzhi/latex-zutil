@@ -30,6 +30,9 @@
         `\zutil_cs_if_defined_p:N ⟨cs⟩`
         - variant `c` (hand-tuned, no `\relax` issue)
         - similar to `\cs_if_exist:NTF` but treats `\relax` as defined
+      - `\zutil_exp_args_safe:Nc ⟨cs⟩ ⟨csname⟩`
+        - safe `c`-type expansion which doesn't define the `\⟨csname⟩` to `\relax` if it's undefined before
+        - expands to `\group_begin: \group_end: ⟨cs⟩ \⟨csname⟩`
     - `l3expan` extras
       - `\zutil_cs_generate_variant:N ⟨cs variant⟩`
         - similar to `\cs_generate_variant:Nn` but accepts the variant function name as argument
