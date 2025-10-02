@@ -56,6 +56,7 @@ explcheck *options="":
     explcheck {{ options }} support/*.cfg zutil/*.sty zutil/*.tex
     # explcheck --ignored-issues=s103,s204,w302 tabularray/tabularray.sty
 
+alias expl := explcheck
 alias expl3 := explcheck
 
 # Run pre-commit checks on all files
