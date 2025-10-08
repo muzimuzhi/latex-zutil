@@ -7,14 +7,19 @@ on:
     - cron: "21 12 * * 4"
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   check:
+    permissions:
+      actions: write
     uses: ./.github/workflows/check.yml
     with:
       images: '["ubuntu-latest", "macos-latest", "windows-latest"]'
       update-cache: true
       test-tblr-old: true
-    permissions:
-      actions: write
   lint:
+    permissions:
+      contents: read
     uses: ./.github/workflows/lint.yml

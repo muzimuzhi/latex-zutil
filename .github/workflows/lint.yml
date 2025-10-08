@@ -2,6 +2,9 @@ name: Lint
 
 run-name: ${{ contains(fromJSON('["workflow_call", "workflow_dispatch"]'), github.event_name) && format('Lint ({0})', github.event_name) || '' }}
 
+permissions:
+  contents: read
+
 on:
   pull_request:
     types:
