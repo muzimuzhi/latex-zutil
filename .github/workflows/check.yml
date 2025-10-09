@@ -60,10 +60,27 @@ jobs:
       ${{ matrix.options && format(', {0}', matrix.options) || '' }})"
     runs-on: ${{ matrix.runs-on }}
     timeout-minutes: 30
+
     permissions:
       # required for for "gh cache delete"
       # https://docs.github.com/en/rest/actions/cache?apiVersion=2022-11-28#delete-a-github-actions-cache-for-a-repository-using-a-cache-id
       actions: write
+
+    # Overwrite the default `pwsh` shell on Windows, to get consistent
+    # fast-fail behavior on all OSes.
+    # GitHub Actions only configs PowerShell to fast-fail on cmdlets, (by
+    # setting `$ErrorActionPreference = 'Stop'`), but not on native commands,
+    # which needs also
+    # `PSNativeCommandUseErrorActionPreference = $true` (PowerShell v7.3+).
+    # See
+    #   https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#exit-codes-and-error-action-preference
+    #   https://github.com/actions/runner-images/issues/6668
+    #   https://github.com/actions/runner-images/issues/8900
+    #   https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_preference_variables
+    defaults:
+      run:
+        shell: bash
+
     env:
       L3BUILD_CHECK_OPTIONS: >-
         --halt-on-error --show-log-on-error --show-saves ${{ matrix.options }}
@@ -100,7 +117,6 @@ jobs:
             echo "Deleting cache with id \"$id\", key \"$key\""
             gh cache delete "$id"
         done
-      shell: bash
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

@@ -28,6 +28,12 @@ jobs:
     runs-on: ${{ inputs.runs-on || 'ubuntu-latest' }}
     timeout-minutes: 30
 
+    # Overwrite the default `pwsh` shell on Windows, to get consistent
+    # fast-fail behavior on all OSes. See the comment in `check.yml`.
+    defaults:
+      run:
+        shell: bash
+
     steps:
     - uses: actions/checkout@v5
 
