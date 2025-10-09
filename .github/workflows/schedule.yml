@@ -20,7 +20,7 @@ jobs:
     uses: ./.github/workflows/check.yml
     with:
       images: '["ubuntu-latest", "macos-latest", "windows-latest"]'
-      install-texlive-cleanly: true
+      install-texlive-cleanly: ${{ inputs.install-texlive-cleanly || true}}
       test-tblr-old: true
   lint:
     permissions:
