@@ -54,7 +54,7 @@ typos *options="":
 # Lint expl3 files
 [group('lint')]
 explcheck *options="":
-    @echo '{{ info }}Linting expl3 files...{{ end_info }}'
+    @echo '{{ info }}Linting expl3 code...{{ end_info }}'
     # this file list is composed in pre-commit config too
     explcheck {{ options }} support/*.cfg zutil/*.sty zutil/*.tex
     # explcheck --ignored-issues=s103,s204,w302 tabularray/tabularray.sty
@@ -71,7 +71,7 @@ pre-commit *options="":
 
 [group('lint')]
 ruff command="check" *options="":
-    @echo '{{ info }}Running ruff...{{ end_info }}'
+    @echo '{{ info }}Linting python code...{{ end_info }}'
     # `uvx` is an alias for `uv tool run`
     cd l3build-wrapper && uvx ruff {{ command }} {{ options }}
 
