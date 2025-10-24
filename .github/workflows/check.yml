@@ -32,8 +32,8 @@ on:
         required: false
         type: boolean
         default: true
-      test-tblr-old:
-        description: "Run tests with the old tabularray configuration?"
+      test-inactive:
+        description: "Run tests for inactive packages?"
         required: false
         type: boolean
         default: false
@@ -146,25 +146,19 @@ jobs:
         uv tool install .
 
     - name: Install ppmcheckpdf dependencies
-      if: inputs.test-tblr-old
+      if: inputs.test-inactive
       uses: muzimuzhi/actions/ppmcheckpdf-deps@main
 
     # uses "L3BUILD_CHECK_OPTIONS" job env
-    - name: Run zutil tests
+    - name: Run active l3build tests
       run: |
-        just zutil
+        just test
 
     # uses "L3BUILD_CHECK_OPTIONS" job env
-    - name: Run tabularray tests, config "build"
+    - name: Run inactive l3build tests
+      if: inputs.test-inactive
       run: |
-        just tblr
-
-    # uses "L3BUILD_CHECK_OPTIONS" job env
-    - name: Run tabularray tests, config "config-old"
-      if: inputs.test-tblr-old
-      run: |
-        just tblr-old
-        just tblr-ppm
+        just test-inactive
 
     # TODO: generate a list of files related to failed tests, then
     # upload all of them (.tex, .log, .pdf, .png, .md5, etc.)

@@ -21,7 +21,7 @@ jobs:
     with:
       images: '["ubuntu-latest", "macos-latest", "windows-latest"]'
       install-texlive-cleanly: ${{ inputs.install-texlive-cleanly || true}}
-      test-tblr-old: true
+      test-inactive: true
   lint:
     permissions:
       contents: read

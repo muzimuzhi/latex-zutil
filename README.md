@@ -25,10 +25,11 @@
   - full run
     - run `just lint` or `pre-commit run -a`
 - Slow checks (`l3build` test suites)
-  - run actively maintained test suites `just test-quick`
-  - run all test suites `just test`
+  - run test suites for actively maintained packages `just test`
+  - run all test suites `just test test-inactive`
 - Full checks
   - run `just all`
+  - run `just all-all` (including inactive packages)
 - Checks run on CI
   - [`lint.yml`](./.github/workflows/lint.yml) full quick checks
   - [`check.yml`](./.github/workflows/check.yml) actively maintained slow checks (on Ubuntu)
