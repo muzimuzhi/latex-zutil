@@ -1,6 +1,5 @@
-\ProvidesExplPackage {zutil} {2025-10-03} {0.6.1}
+\ProvidesExplPackage {zutil} {2025-10-25} {0.6.2}
   {Z's utilities}
-
 
 % shared temp variables
 \tl_new:N    \l__zutil_tmp_tl
@@ -12,13 +11,26 @@
 % shared message for raising short and one-time messages
 \msg_new:nnn { zutil } { _shared } { #1 }
 
+% version guard
+\cs_set_protected:Npn \__zutil_tmp:w #1
+  {
+    \IfExplAtLeastF{#1}
+      {
+        \msg_critical:nne { zutil } { _shared }
+          {
+            Need~l3kernel~#1~or~later.~ Got~\ExplLoaderFileDate.
+          }
+      }
+  }
+\__zutil_tmp:w { 2025-10-09 } % required by \l_keys_choice_str
+
 % package options
 \DeclareKeys [ zutil ]
   {
     presets .choices:nn =
       { none, util, test, debug, all }
       {
-        \tl_set:Ne \l__zutil_presets_tl { \l_keys_choice_tl }
+        \tl_set:Ne \l__zutil_presets_tl { \l_keys_choice_str }
       }
   , presets .value_required:n = true
   , presets .usage:n    = load
