@@ -42,14 +42,16 @@ repos:
     language: system
     # same as the official `typos` hook args
     # https://github.com/crate-ci/typos/blob/ebc6aac34e3692b3ce373e13f4145e8980875396/.pre-commit-hooks.yaml
-    entry: typos --write-changes --force-exclude
+    entry: just typos
+    pass_filenames: false
   - id: lint-expl3
     alias: explcheck
     name: Lint expl3 files
     language: system
-    entry: explcheck
+    entry: just explcheck
     # this file list is composed in .justfile too
     files: ^support/.*\.cfg|zutil/.*\.(sty|tex)$
+    pass_filenames: false
   # there exists an official ruff pre-commit
   # https://github.com/astral-sh/ruff-pre-commit
   - id: lint-python
@@ -58,7 +60,7 @@ repos:
     language: system
     # `cd <dir> && <command>` never failed here, so use a command different
     # from that in just recipe `ruff`
-    entry: uvx ruff check l3build-wrapper
+    entry: just ruff check
     files: ^l3build-wrapper/
     # types_or: [python, pyi, jupyter]
     pass_filenames: false
