@@ -164,7 +164,7 @@ jobs:
     # upload all of them (.tex, .log, .pdf, .png, .md5, etc.)
     - name: Upload diff files
       if: failure()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         # example names:
         #   - zutil-diffs
