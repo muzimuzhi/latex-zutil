@@ -1,0 +1,7 @@
+# used by `rg`
+!.explcheckrc
+!.justfile
+# learned from https://github.com/BurntSushi/ripgrep/commit/387df97d85291f75511dc77329395931af348b34
+!/.github/
+!.pre-commit-config.yaml
+!.typos.toml
