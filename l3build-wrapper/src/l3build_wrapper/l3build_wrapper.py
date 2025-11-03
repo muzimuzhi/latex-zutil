@@ -535,7 +535,7 @@ parser.add_argument('-n', '--dry-run', action='store_true',
 parser.add_argument('--re-check', action='store_true',
                     help='after saving, rerun checks using the same arguments')
 parser.add_argument('-v', '--verbose', action='count', default=0,
-                    help='print more information; given twice enables debug logging and would be passed to "l3build" if patched l3build is detected)')  # noqa: E501
+                    help='print more information; given twice enables debug logging and would be passed to "l3build" if patched l3build is detected')  # noqa: E501
 
 # inherited l3build options and flags
 inherited = parser.add_argument_group('inherited l3build options')
