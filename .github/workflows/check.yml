@@ -86,7 +86,7 @@ jobs:
         --halt-on-error --show-log-on-error --show-saves ${{ matrix.options }}
 
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
 
     - name: Delete TeX Live cache(s)
       if: inputs.install-texlive-cleanly
