@@ -35,7 +35,7 @@ jobs:
         shell: bash
 
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
 
     - name: Setup TeX Live
       uses: TeX-Live/setup-texlive-action@v3
