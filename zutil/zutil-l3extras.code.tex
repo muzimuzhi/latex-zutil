@@ -166,6 +166,52 @@
 %% l3msg extras
 %%
 
+% space safe message declaration
+\cs_new_protected:Npn \zutil_msg_new_space_safe:nnnn
+  {
+    \char_set_catcode_space:N \ %
+    \__zutil_msg_new_space_safe_aux:Nnnnn \msg_new:nnnn
+  }
+\cs_new_protected:Npn \__zutil_msg_new_space_safe_aux:Nnnnn #1#2#3#4#5
+  {
+    \use:e
+      {
+        #1
+          { \tl_trim_spaces:n {#2} } { \tl_trim_spaces:n {#3} }
+          { \tl_trim_spaces:n {#4} } { \tl_trim_spaces:n {#5} }
+      }
+    \char_set_catcode_ignore:N \ %
+  }
+\cs_generate_variant:Nn \zutil_msg_new_space_safe:nnnn { nnee }
+
+\cs_new_protected:Npn \zutil_msg_new_space_safe:nnn
+  {
+    \char_set_catcode_space:N \ %
+    \__zutil_msg_new_space_safe_aux:Nnnn \msg_new:nnn
+  }
+\cs_new_protected:Npn \__zutil_msg_new_space_safe_aux:Nnnn #1#2#3#4
+  {
+    \use:e
+      {
+        #1
+          { \tl_trim_spaces:n {#2} } { \tl_trim_spaces:n {#3} }
+          { \tl_trim_spaces:n {#4} }
+      }
+    \char_set_catcode_ignore:N \ %
+  }
+\cs_generate_variant:Nn \zutil_msg_new_space_safe:nnn { nne }
+
+\cs_new_protected:Npn \zutil_msg_set_space_safe:nnnn
+  {
+    \char_set_catcode_space:N \ %
+    \__zutil_msg_new_space_safe_aux:Nnnnn \msg_set:nnnn
+  }
+\cs_new_protected:Npn \zutil_msg_set_space_safe:nnn
+  {
+    \char_set_catcode_space:N \ %
+    \__zutil_msg_new_space_safe_aux:Nnnn \msg_set:nnn
+  }
+
 % suspend debugging in \msg_<type>:nn(nnnnn) functions
 % FIXME: not tested, due to unstable benchmark results
 \cs_new_protected:Npn \zutil_msg_suspend_debug:

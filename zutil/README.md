@@ -40,6 +40,14 @@
       - `\zutil_cs_generate_variant:n {⟨cs variants list⟩}`
         - example: `\zutil_cs_generate_variant:n { \zutil_set:v, \zutil_set:e }`
     - `l3msg` extras
+      - `\zutil_msg_new_space_safe:nnnn {⟨module⟩} {⟨message⟩} {⟨text⟩} {⟨more text⟩}`\
+        `\zutil_msg_new_space_safe:nnn {⟨module⟩} {⟨message⟩} {⟨text⟩}`
+        - variants `nnee` and `nne`
+        - refined `\msg_new:nnn(n)` and `\msg_set:nnn(n)` which respect space characters locally and trim spaces from both sides of all the arguments.
+        - restriction: to ensure the catcode change works and only works locally, these functions (along with their arguments) must be used on their own line(s).
+      - `\zutil_msg_set_space_safe:nnnn {⟨module⟩} {⟨message⟩} {⟨text⟩} {⟨more text⟩}`\
+        `\zutil_msg_set_space_safe:nnn {⟨module⟩} {⟨message⟩} {⟨text⟩}`
+        - see `\zutil_msg_new_space_safe:nnnn`
       - `\zutil_msg_suspend_debug:`\
         `\zutil_msg_resume_debug:`
         - suspend and resume debugging (the same as `\debug_suspend:` and `\debug_resume:`) inside functions that issue messages (`\msg_<type>:nn...`)
