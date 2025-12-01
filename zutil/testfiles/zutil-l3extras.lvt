@@ -103,19 +103,22 @@
   \zutil_cs_generate_variant:n { \zutil_set:v, \zutil_set:e }
 }
 
-\BEGINTEST{\zutil_msg_new_space_safe:nnnn etc}
+\BEGINTEST{\zutil_msg_space_safe_on:/off:}
   \debug_on:n { log-functions }
-  \zutil_msg_new_space_safe:nnnn { test } { msg-long }
+  \zutil_msg_space_safe_on:
+  \msg_new:nnnn { test } { msg-long }
     { Text. } { More text. }
-  \zutil_msg_new_space_safe:nnnn { test } { msg-long-with-args }
+  \msg_new:nnnn { test } { msg-long-with-args }
     { Text [#1] [#2] [#3] [#4]. } { More text [#1] [#2] [#3] [#4]. }
-  \zutil_msg_new_space_safe:nnn { test } { msg } { Text. }
-  \zutil_msg_new_space_safe:nnn { test } { msg-with-args }
+  \msg_new:nnn { test } { msg } { Text. }
+  \msg_new:nnn { test } { msg-with-args }
     { Text [#1] [#2] [#3] [#4]. }
+  \zutil_msg_space_safe_off:
   \int_compare:nNnTF
     { \char_value_catcode:n { 32 } } = { 9 } % 9 is the catcode for ignore
     { \PASSED }
     { \FAILED }
+
   \msg_error:nn { test } { msg-long }
   \msg_error:nnnnnn { test } { msg-long-with-args }
     { A } { B } { C } { \ERROR }
@@ -123,17 +126,20 @@
   \msg_warning:nnnnnn { test } { msg-with-args }
     { A } { B } { C } { \ERROR }
 
-  \zutil_msg_set_space_safe:nnnn { test } { msg-long }
+  \zutil_msg_space_safe_on:
+  \msg_set:nnnn { test } { msg-long }
     { Changed. } { Even more text. }
-  \zutil_msg_set_space_safe:nnnn { test } { msg-long-with-args }
+  \msg_set:nnnn { test } { msg-long-with-args }
     { Changed [#1] [#2] [#3] [#4]. } { Even more text [#1] [#2] [#3] [#4]. }
-  \zutil_msg_set_space_safe:nnn { test } { msg } { Changed. }
-  \zutil_msg_set_space_safe:nnn { test } { msg-with-args }
+  \msg_set:nnn { test } { msg } { Changed. }
+  \msg_set:nnn { test } { msg-with-args }
     { Changed [#1] [#2] [#3] [#4]. }
+  \zutil_msg_space_safe_off:
   \int_compare:nNnTF
     { \char_value_catcode:n { 32 } } = { 9 } % 9 is the catcode for ignore
     { \PASSED }
     { \FAILED }
+
   \msg_error:nn { test } { msg-long }
   \msg_error:nnnnnn { test } { msg-long-with-args }
     { \ERROR } { B } { C } { D }
