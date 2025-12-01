@@ -256,7 +256,7 @@
     \cs_set_eq:NN \__msg_use:nnnnnnn \__zutil_msg_use_orig:nnnnnnn
   }
 
-\cs_gset_eq:NN \__zutil_msg_use_orig:nnnnnnn \__msg_use:nnnnnnn
+\cs_new_eq:NN \__zutil_msg_use_orig:nnnnnnn \__msg_use:nnnnnnn
 \cs_new_protected:Npn \__zutil_msg_use:nnnnnnn #1#2#3#4#5#6#7
   {
     \debug_suspend:
