@@ -40,11 +40,16 @@
       - `\zutil_cs_generate_variant:n {⟨cs variants list⟩}`
         - example: `\zutil_cs_generate_variant:n { \zutil_set:v, \zutil_set:e }`
     - `l3msg` extras
-      - `\zutil_msg_new_space_safe:nnnn {⟨module⟩} {⟨message⟩} {⟨text⟩} {⟨more text⟩}`\
-        `\zutil_msg_new_space_safe:nnn {⟨module⟩} {⟨message⟩} {⟨text⟩}`
-        - variants `nnee` and `nne`
-        - refined `\msg_new:nnn(n)` and `\msg_set:nnn(n)` which respect space characters locally and trim spaces from both sides of all the arguments.
-        - restriction: to ensure the catcode change works and only works locally, these functions (along with their arguments) must be used on their own line(s).
+      - `\zutil_msg_space_safe_on: ... \zutil_msg_space_safe_off:`
+        - `\msg_new:nnn(n)` and `\msg_set:nnn(n)` used in between them will respect space characters and trim spaces from both sides of all the arguments.
+        - restriction: to ensure the catcode change works and only works locally, `\zutil_msg_space_safe_(on|off):` should be used on their own line(s).
+        - example:
+          ```tex
+          \zutil_msg_space_safe_on:
+          \msg_new:nnn {⟨module⟩} {⟨message⟩} {⟨text⟩}
+          ...
+          \zutil_msg_space_safe_off:
+          ```
       - `\zutil_msg_set_space_safe:nnnn {⟨module⟩} {⟨message⟩} {⟨text⟩} {⟨more text⟩}`\
         `\zutil_msg_set_space_safe:nnn {⟨module⟩} {⟨message⟩} {⟨text⟩}`
         - see `\zutil_msg_new_space_safe:nnnn`
