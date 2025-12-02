@@ -166,41 +166,6 @@
 %% l3msg extras
 %%
 
-\cs_new_protected:Npn \__zutil_msg_new_space_trim:nnnn
-  {
-    \__zutil_msg_space_trim_aux:Nnnnn \__zutil_msg_new_orig:nnnn
-  }
-\cs_new_protected:Npn \__zutil_msg_new_space_trim:nnn
-  {
-    \__zutil_msg_space_trim_aux:Nnnn \__zutil_msg_new_orig:nnn
-  }
-\cs_new_protected:Npn \__zutil_msg_set_space_trim:nnnn
-  {
-    \__zutil_msg_space_trim_aux:Nnnnn \__zutil_msg_set_orig:nnnn
-  }
-\cs_new_protected:Npn \__zutil_msg_set_space_trim:nnn
-  {
-    \__zutil_msg_space_trim_aux:Nnnn \__zutil_msg_set_orig:nnn
-  }
-\cs_new_protected:Npn \__zutil_msg_space_trim_aux:Nnnnn #1#2#3#4#5
-  {
-    \use:e
-      {
-        #1
-          { \tl_trim_spaces:n {#2} } { \tl_trim_spaces:n {#3} }
-          { \tl_trim_spaces:n {#4} } { \tl_trim_spaces:n {#5} }
-      }
-  }
-\cs_new_protected:Npn \__zutil_msg_space_trim_aux:Nnnn #1#2#3#4
-  {
-    \use:e
-      {
-        #1
-          { \tl_trim_spaces:n {#2} } { \tl_trim_spaces:n {#3} }
-          { \tl_trim_spaces:n {#4} }
-      }
-  }
-
 % suspend debugging in \msg_<type>:nn(nnnnn) functions
 % FIXME: not tested, due to unstable benchmark results
 \cs_new_protected:Npn \zutil_msg_suspend_debug:

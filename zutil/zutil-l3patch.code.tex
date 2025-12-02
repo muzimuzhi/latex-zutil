@@ -41,3 +41,39 @@
     \bool_set_true:N \l__zutil_msg_space_safe_bool
   }
 \cs_new_protected:Npn \zutil_msg_space_safe_off: { }
+
+\cs_new_protected:Npn \__zutil_msg_new_space_trim:nnnn
+  {
+    \__zutil_trim_arg_spaces:Nnnnn \__zutil_msg_new_orig:nnnn
+  }
+\cs_new_protected:Npn \__zutil_msg_new_space_trim:nnn
+  {
+    \__zutil_trim_arg_spaces:Nnnn \__zutil_msg_new_orig:nnn
+  }
+\cs_new_protected:Npn \__zutil_msg_set_space_trim:nnnn
+  {
+    \__zutil_trim_arg_spaces:Nnnnn \__zutil_msg_set_orig:nnnn
+  }
+\cs_new_protected:Npn \__zutil_msg_set_space_trim:nnn
+  {
+    \__zutil_trim_arg_spaces:Nnnn \__zutil_msg_set_orig:nnn
+  }
+
+\cs_new:Npn \__zutil_trim_arg_spaces:Nnnnn #1#2#3#4#5
+  {
+    \use:e
+      {
+        \exp_not:N #1
+          { \tl_trim_spaces:n {#2} } { \tl_trim_spaces:n {#3} }
+          { \tl_trim_spaces:n {#4} } { \tl_trim_spaces:n {#5} }
+      }
+  }
+\cs_new:Npn \__zutil_trim_arg_spaces:Nnnn #1#2#3#4
+  {
+    \use:e
+      {
+        \exp_not:N #1
+          { \tl_trim_spaces:n {#2} } { \tl_trim_spaces:n {#3} }
+          { \tl_trim_spaces:n {#4} }
+      }
+  }
