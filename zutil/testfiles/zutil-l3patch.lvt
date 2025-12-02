@@ -56,4 +56,9 @@
     { \ERROR } { B } { C } { D }
 \ENDTEST
 
+% FIXME: due to unstable benchmark results, only usage is tested, not
+%        functionality
+\TEST{\zutil_msg_suspend_debug: / resume_debug:}{
+  \msg_warning:nn { test } { msg }
+}
 \END
