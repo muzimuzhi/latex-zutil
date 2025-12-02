@@ -77,3 +77,22 @@
           { \tl_trim_spaces:n {#4} }
       }
   }
+
+% suspend debugging in \msg_<type>:nn(nnnnn) functions
+% FIXME: not tested, due to unstable benchmark results
+\cs_new_protected:Npn \zutil_msg_suspend_debug:
+  {
+    \cs_set_eq:NN \__msg_use:nnnnnnn \__zutil_msg_use:nnnnnnn
+  }
+\cs_new_protected:Npn \zutil_msg_resume_debug:
+  {
+    \cs_set_eq:NN \__msg_use:nnnnnnn \__zutil_msg_use_orig:nnnnnnn
+  }
+
+\cs_new_eq:NN \__zutil_msg_use_orig:nnnnnnn \__msg_use:nnnnnnn
+\cs_new_protected:Npn \__zutil_msg_use:nnnnnnn #1#2#3#4#5#6#7
+  {
+    \debug_suspend:
+    \__zutil_msg_use_orig:nnnnnnn {#1} {#2} {#3} {#4} {#5} {#6} {#7}
+    \debug_resume:
+  }
