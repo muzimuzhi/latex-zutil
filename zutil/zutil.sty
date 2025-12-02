@@ -6,7 +6,7 @@
 \str_new:N   \l__zutil_tmp_str  % noqa: W415
 
 % variable(s)
-\tl_new:N   \l__zutil_presets_tl
+\str_new:N   \l__zutil_presets_str
 
 % shared message for raising short and one-time messages
 \msg_new:nnn { zutil } { _shared } { #1 }
@@ -30,10 +30,11 @@
     presets .choices:nn =
       { none, util, test, debug, all }
       {
-        \tl_set:Ne \l__zutil_presets_tl { \l_keys_choice_str }
+        \str_set_eq:NN \l__zutil_presets_str \l_keys_choice_str
       }
   , presets .value_required:n = true
   , presets .usage:n    = load
+  , presets .initial:n  = util
   }
 
 % option "presets" internals
@@ -113,10 +114,11 @@
       }
   }
 % infected by preamble-only \@pushfilename and \@popfilename
+% explcheck: the next line causes "W302 unbraced n-type function call argument"
 \@onlypreamble \zutil_load_module:n
 
 % process package options
-\SetKeys [ zutil ] { presets = util }  % noqa: w302
-\ProcessKeyOptions [ zutil ]
+% initially, "presets=util" is set
+\ProcessKeyOptions [ zutil ]  % noqa: w302
 
-\use:c { __zutil_use_presets_ \l__zutil_presets_tl : }
+\use:c { __zutil_use_presets_ \l__zutil_presets_str : }
