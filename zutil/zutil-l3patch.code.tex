@@ -42,6 +42,10 @@
   }
 \cs_new_protected:Npn \zutil_msg_space_safe_off: { }
 
+\cs_new_eq:NN \__zutil_msg_new_orig:nnnn \msg_new:nnnn
+\cs_new_eq:NN \__zutil_msg_new_orig:nnn  \msg_new:nnn
+\cs_new_eq:NN \__zutil_msg_set_orig:nnnn \msg_set:nnnn
+\cs_new_eq:NN \__zutil_msg_set_orig:nnn  \msg_set:nnn
 \cs_new_protected:Npn \__zutil_msg_new_space_trim:nnnn
   {
     \__zutil_trim_arg_spaces:Nnnnn \__zutil_msg_new_orig:nnnn
@@ -82,12 +86,15 @@
 % FIXME: not tested, due to unstable benchmark results
 \cs_new_protected:Npn \zutil_msg_suspend_debug:
   {
+    \cs_set_eq:NN \__zutil_msg_use_orig:nnnnnnn \__msg_use:nnnnnnn
     \cs_set_eq:NN \__msg_use:nnnnnnn \__zutil_msg_use:nnnnnnn
+    \cs_set_protected:Npn \zutil_msg_resume_debug:
+      {
+        \cs_set_eq:NN \__msg_use:nnnnnnn \__zutil_msg_use_orig:nnnnnnn
+        \cs_set_protected:Npn \zutil_msg_resume_debug: { }
+      }
   }
-\cs_new_protected:Npn \zutil_msg_resume_debug:
-  {
-    \cs_set_eq:NN \__msg_use:nnnnnnn \__zutil_msg_use_orig:nnnnnnn
-  }
+\cs_new_protected:Npn \zutil_msg_resume_debug: { }
 
 \cs_new_eq:NN \__zutil_msg_use_orig:nnnnnnn \__msg_use:nnnnnnn
 \cs_new_protected:Npn \__zutil_msg_use:nnnnnnn #1#2#3#4#5#6#7
