@@ -5,7 +5,7 @@
 
 \ExplSyntaxOn
 
-\zutil_load_module:n { l3extras }
+\zutil_load_module:n { l3patch }
 
 \debug_on:n { check-declarations , deprecation }
 
