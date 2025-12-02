@@ -48,9 +48,6 @@
       ...
       \zutil_msg_space_safe_off:
       ```
-  - `\zutil_msg_set_space_safe:nnnn {⟨module⟩} {⟨message⟩} {⟨text⟩} {⟨more text⟩}`\
-    `\zutil_msg_set_space_safe:nnn {⟨module⟩} {⟨message⟩} {⟨text⟩}`
-    - see `\zutil_msg_new_space_safe:nnnn`
   - `\zutil_msg_suspend_debug:`\
     `\zutil_msg_resume_debug:`
     - suspend and resume debugging (the same as `\debug_suspend:` and `\debug_resume:`) inside functions that issue messages (`\msg_<type>:nn...`)
