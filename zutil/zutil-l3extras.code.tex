@@ -170,6 +170,7 @@
 \bool_new:N \l__zutil_msg_space_safe_bool
 
 % similar to \ExplSyntaxOn and \ExplSyntaxOff
+% To patch `\msg_new:nnnn` on-the-fly, an initially empty `off:` is used.
 \cs_new_protected:Npn \zutil_msg_space_safe_on:
   {
     \bool_if:NF \l__zutil_msg_space_safe_bool
@@ -185,6 +186,12 @@
             \cs_set_protected:Npn \zutil_msg_space_safe_off: { }
           }
       }
+    % impl note: in current l3msg implementation, `nnn` functions directly call
+    %            the `nnnn` ones, with the `#4` empty.
+    \cs_set_eq:NN \__zutil_msg_new_orig:nnnn \msg_new:nnnn
+    \cs_set_eq:NN \__zutil_msg_new_orig:nnn  \msg_new:nnn
+    \cs_set_eq:NN \__zutil_msg_set_orig:nnnn \msg_set:nnnn
+    \cs_set_eq:NN \__zutil_msg_set_orig:nnn  \msg_set:nnn
     \cs_set_eq:NN \msg_new:nnnn \__zutil_msg_new_space_trim:nnnn
     \cs_set_eq:NN \msg_new:nnn  \__zutil_msg_new_space_trim:nnn
     \cs_set_eq:NN \msg_set:nnnn \__zutil_msg_set_space_trim:nnnn
@@ -192,23 +199,7 @@
     \char_set_catcode_space:N \ %
     \bool_set_true:N \l__zutil_msg_space_safe_bool
   }
-\cs_new_protected:Npn \zutil_msg_space_safe_off:
-  {
-    \cs_set_eq:NN \msg_new:nnnn \__zutil_msg_new_orig:nnnn
-    \cs_set_eq:NN \msg_new:nnn  \__zutil_msg_new_orig:nnn
-    \cs_set_eq:NN \msg_set:nnnn \__zutil_msg_set_orig:nnnn
-    \cs_set_eq:NN \msg_set:nnn  \__zutil_msg_set_orig:nnn
-    \char_set_catcode_ignore:N \ %
-    \bool_set_false:N \l__zutil_msg_space_safe_bool
-    \cs_set_protected:Npn \zutil_msg_space_safe_off: { }
-  }
-
-% impl note: in current l3msg implementation, `nnn` functions directly call
-%            the `nnnn` ones, with the `#4` empty.
-\cs_new_eq:NN \__zutil_msg_new_orig:nnnn \msg_new:nnnn
-\cs_new_eq:NN \__zutil_msg_new_orig:nnn  \msg_new:nnn
-\cs_new_eq:NN \__zutil_msg_set_orig:nnnn \msg_set:nnnn
-\cs_new_eq:NN \__zutil_msg_set_orig:nnn  \msg_set:nnn
+\cs_new_protected:Npn \zutil_msg_space_safe_off: { }
 
 \cs_new_protected:Npn \__zutil_msg_new_space_trim:nnnn
   {
