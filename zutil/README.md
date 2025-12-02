@@ -13,7 +13,7 @@
   - load a single module
 
 ## `l3extras` module
-- additions to standard `l3kernel` functions
+- additions to the `l3kernel`
 - `l3basics` extras
   - `\zutil_cs_if_function:NTF ⟨cs⟩ {⟨true code⟩} {⟨false code⟩}`\
     `\zutil_cs_if_function_p:N ⟨cs⟩`
@@ -38,16 +38,9 @@
   - `\zutil_cs_generate_variant:n {⟨cs variants list⟩}`
     - example: `\zutil_cs_generate_variant:n { \zutil_set:v, \zutil_set:e }`
 - `l3msg` extras
-  - `\zutil_msg_space_safe_on: ... \zutil_msg_space_safe_off:`
-    - `\msg_new:nnn(n)` and `\msg_set:nnn(n)` used in between them will respect space characters and trim spaces from both sides of all the arguments.
-    - restriction: to ensure the catcode change works and only works locally, `\zutil_msg_space_safe_(on|off):` should be used on their own line(s).
-    - example:
-      ```tex
-      \zutil_msg_space_safe_on:
-      \msg_new:nnn {⟨module⟩} {⟨message⟩} {⟨text⟩}
-      ...
-      \zutil_msg_space_safe_off:
-      ```
+  - `\zutil_msg_set_space_safe:nnnn {⟨module⟩} {⟨message⟩} {⟨text⟩} {⟨more text⟩}`\
+    `\zutil_msg_set_space_safe:nnn {⟨module⟩} {⟨message⟩} {⟨text⟩}`
+    - see `\zutil_msg_new_space_safe:nnnn`
   - `\zutil_msg_suspend_debug:`\
     `\zutil_msg_resume_debug:`
     - suspend and resume debugging (the same as `\debug_suspend:` and `\debug_resume:`) inside functions that issue messages (`\msg_<type>:nn...`)
@@ -62,6 +55,20 @@
     - `gset` version `\zutil_seq_gset_split_keep_braces:Nnn`
     - variants `NnV`
     - like `\seq_set_split(_keep_spaces):Nnn` but only trims surrounding spaces only, any outer braces are retained. Errors on empty `⟨delimiter⟩`.
+
+## `l3patch` module
+- additions to the `l3kernel`, involving patches
+- `l3msg` extras
+  - `\zutil_msg_space_safe_on: ... \zutil_msg_space_safe_off:`
+    - `\msg_new:nnn(n)` and `\msg_set:nnn(n)` used in between them will respect space characters and trim spaces from both sides of all the arguments.
+    - restriction: to ensure the catcode change works and only works locally, `\zutil_msg_space_safe_(on|off):` should be used on their own line(s).
+    - example:
+      ```tex
+      \zutil_msg_space_safe_on:
+      \msg_new:nnn {⟨module⟩} {⟨message⟩} {⟨text⟩}
+      ...
+      \zutil_msg_space_safe_off:
+      ```
 
 ## `debug` module
 - write debugging info to log; depends on the `l3extras` module
