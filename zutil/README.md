@@ -13,7 +13,7 @@
   - load a single module
 
 ## `l3extras` module
-- additions to standard `l3kernel` functions
+- additions to the `l3kernel`
 - `l3basics` extras
   - `\zutil_cs_if_function:NTF ⟨cs⟩ {⟨true code⟩} {⟨false code⟩}`\
     `\zutil_cs_if_function_p:N ⟨cs⟩`
@@ -37,6 +37,19 @@
     - example: `\zutil_cs_generate_variant:N \zutil_set:V`
   - `\zutil_cs_generate_variant:n {⟨cs variants list⟩}`
     - example: `\zutil_cs_generate_variant:n { \zutil_set:v, \zutil_set:e }`
+- `l3tl` extras
+  - `\zutil_prg_new_conditional_tl_if_in:Nnn \⟨name⟩:⟨arg spec⟩ {⟨test token list⟩} {⟨conditions⟩}`
+    - variants `Non`, `NVn`, `Nen`
+    - works like `\prg_new_conditional:N(p)nn` but specifically creates expandable conditional to test if `⟨test token list⟩` is in an token list
+    - example: `\zutil_prg_new_conditional_tl_if_in:Nnn \zutil_if_colon_in:n { : } { TF }` which defines expandable `\zutil_if_colon_in:nTF` with usage `\zutil_if_colon_in:nTF {⟨token list⟩} {⟨true code⟩} {⟨false code⟩}`
+- `l3seq` extras
+  - `\zutil_seq_set_split_keep_braces:Nnn ⟨seq var⟩ {⟨delimiter⟩} {⟨token list⟩}`
+    - `gset` version `\zutil_seq_gset_split_keep_braces:Nnn`
+    - variants `NnV`
+    - like `\seq_set_split(_keep_spaces):Nnn` but only trims surrounding spaces only, any outer braces are retained. Errors on empty `⟨delimiter⟩`.
+
+## `l3patch` module
+- additions to the `l3kernel`, involving patches
 - `l3msg` extras
   - `\zutil_msg_space_safe_on: ... \zutil_msg_space_safe_off:`
     - `\msg_new:nnn(n)` and `\msg_set:nnn(n)` used in between them will respect space characters and trim spaces from both sides of all the arguments.
@@ -48,20 +61,8 @@
       ...
       \zutil_msg_space_safe_off:
       ```
-  - `\zutil_msg_suspend_debug:`\
-    `\zutil_msg_resume_debug:`
-    - suspend and resume debugging (the same as `\debug_suspend:` and `\debug_resume:`) inside functions that issue messages (`\msg_<type>:nn...`)
-    - make log-based tests quicker
-- `l3tl` extras
-  - `\zutil_prg_new_conditional_tl_if_in:Nnn \⟨name⟩:⟨arg spec⟩ {⟨test token list⟩} {⟨conditions⟩}`
-    - variants `Non`, `NVn`, `Nen`
-    - works like `\prg_new_conditional:N(p)nn` but specifically creates expandable conditional to test if `⟨test token list⟩` is in an token list
-    - example: `\zutil_prg_new_conditional_tl_if_in:Nnn \zutil_if_colon_in:n { : } { TF }` which defines expandable `\zutil_if_colon_in:nTF` with usage `\zutil_if_colon_in:nTF {⟨token list⟩} {⟨true code⟩} {⟨false code⟩}`
-- `l3seq` extras
-  - `\zutil_seq_set_split_keep_braces:Nnn ⟨seq var⟩ {⟨delimiter⟩} {⟨token list⟩}`
-    - `gset` version `\zutil_seq_gset_split_keep_braces:Nnn`
-    - variants `NnV`
-    - like `\seq_set_split(_keep_spaces):Nnn` but only trims surrounding spaces only, any outer braces are retained. Errors on empty `⟨delimiter⟩`.
+  - `\zutil_msg_suspend_debug: ... \zutil_msg_resume_debug:`
+    - suspend and resume debugging (the same as `\debug_suspend:` and `\debug_resume:`) inside functions that issue messages (`\msg_<type>:nn...`), to make msg-based tests quicker
 
 ## `debug` module
 - write debugging info to log; depends on the `l3extras` module

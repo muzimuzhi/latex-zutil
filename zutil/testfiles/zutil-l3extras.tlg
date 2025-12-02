@@ -109,36 +109,6 @@ Defining \zutil_set:v on line ...
 Defining \zutil_set:e on line ...
 ============================================================
 ============================================================
-TEST: \zutil_msg_space_safe_on: /off:
-============================================================
-Defining message test/msg-long on line ...
-Defining message test/msg-long-with-args on line ...
-Defining message test/msg on line ...
-Defining message test/msg-with-args on line ...
-! Package test Error: Text.
- ...
-l. ...  \msg_error:nn { test } { msg-long }
-More text.
-! Package test Error: Text [A] [B] [C] [\ERROR ].
- ...
-l. ...    { A } { B } { C } { \ERROR }
-More text [A] [B] [C] [\ERROR ].
-Package test Warning: Text.
-Package test Warning: Text [A] [B] [C] [\ERROR ].
-! Package test Error: Changed.
- ...
-l. ...  \msg_error:nn { test } { msg-long }
-Even more text.
-! Package test Error: Changed [\ERROR ] [B] [C] [D].
- ...
-l. ...    { \ERROR } { B } { C } { D }
-Even more text [\ERROR ] [B] [C] [D].
-Package test Warning: Changed.
-Package test Warning: Changed [\ERROR ] [B] [C] [D].
-[test] 4 error(s)
-[test] 2 check(s)
-============================================================
-============================================================
 TEST: \zutil_prg_new_conditional_tl_if_in:Nnn 
 ============================================================
 Defining \test_if_colon_in_aux:w on line ...
@@ -207,5 +177,5 @@ The sequence \g_tmpa_seq is empty
 [test] 2 error(s)
 ============================================================
 ***************
-[test] 11 error(s)
-[test] 19 check(s)
+[test] 7 error(s)
+[test] 17 check(s)
