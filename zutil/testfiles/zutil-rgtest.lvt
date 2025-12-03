@@ -74,9 +74,9 @@
 }
 
 \TEST{Check~group~level~at~end~of~test}{
-  \test_type:e { GROUP-LEVEL:~\the\currentgrouplevel }
+  \zutil_test_type:e { GROUP-LEVEL:~\the\currentgrouplevel }
   \group_begin:
-  \test_type:e { GROUP-LEVEL:~\the\currentgrouplevel }
+  \zutil_test_type:e { GROUP-LEVEL:~\the\currentgrouplevel }
 }
 \group_end:
 

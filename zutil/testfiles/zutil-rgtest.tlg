@@ -65,7 +65,7 @@ TEST: Not counted: checks used in deeper groups
 ============================================================
 ! Use of \??? doesn't match its definition.
 <argument> \???  
-                 ! Package test Error: PASSED
+                 ! Package zutil/test Error: PASSED
 l. ...}
 ============================================================
 ============================================================
