@@ -284,9 +284,8 @@
 
 % end-of-file logging
 \hook_new:n { zutil/test/END }
-% before-test logging
+% per-test logging
 \hook_new:n { zutil/test/TEST/before }
-% end-of-test logging
 \hook_new_pair:nn { zutil/test/TEST/begin } { zutil/test/TEST/end }
 
 \socket_new:nn { zutil/test/count-errors } { 0 }
