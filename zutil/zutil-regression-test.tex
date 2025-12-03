@@ -476,11 +476,11 @@
 
 % % fatal errors "force a bail out" immediately, without calling \END,
 % % thus need to be patched too
-% \cs_new_eq:NN \__zutil_test__msg_fatal_exit: \__msg_fatal_exit:
+% \cs_new_eq:NN \__zutil_test_msg_fatal_exit: \__msg_fatal_exit:
 % \cs_gset_protected:Npn \__msg_fatal_exit:
 %   {
 %     \__zutil_test_log_error_count_at_end:
-%     \__msg_fatal_exit:
+%     \__zutil_test_msg_fatal_exit:
 %   }
 
 % wrap \errmessage
