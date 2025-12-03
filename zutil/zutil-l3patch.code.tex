@@ -19,48 +19,38 @@
         \cs_set_protected:Npn \zutil_msg_space_safe_off:
           {
             \cs_set_eq:NN \msg_new:nnnn \__zutil_msg_new_orig:nnnn
-            \cs_set_eq:NN \msg_new:nnn  \__zutil_msg_new_orig:nnn
             \cs_set_eq:NN \msg_set:nnnn \__zutil_msg_set_orig:nnnn
-            \cs_set_eq:NN \msg_set:nnn  \__zutil_msg_set_orig:nnn
             \char_set_catcode_ignore:N \ %
             \bool_set_false:N \l__zutil_msg_space_safe_bool
             \cs_set_protected:Npn \zutil_msg_space_safe_off: { }
           }
       }
-    % impl note: in current l3msg implementation, `nnn` functions directly call
-    %            the `nnnn` ones, with the `#4` empty.
+    % NOTE: in current l3msg implementation, `nnn` functions directly call the
+    %       `nnnn` ones with an empty `#4`.
+    %           \cs_new_protected:Npn \msg_new:nnn #1#2#3
+    %             { \msg_new:nnnn {#1} {#2} {#3} { } }
+    %           \cs_new_protected:Npn \msg_set:nnn #1#2#3
+    %             { \msg_set:nnnn {#1} {#2} {#3} { } }
+    %       So patching both `nnn` and `nnnn` would make patched
+    %       `\msg_new:nnn` do space trimming twice.
     \cs_set_eq:NN \__zutil_msg_new_orig:nnnn \msg_new:nnnn
-    \cs_set_eq:NN \__zutil_msg_new_orig:nnn  \msg_new:nnn
     \cs_set_eq:NN \__zutil_msg_set_orig:nnnn \msg_set:nnnn
-    \cs_set_eq:NN \__zutil_msg_set_orig:nnn  \msg_set:nnn
     \cs_set_eq:NN \msg_new:nnnn \__zutil_msg_new_space_trim:nnnn
-    \cs_set_eq:NN \msg_new:nnn  \__zutil_msg_new_space_trim:nnn
     \cs_set_eq:NN \msg_set:nnnn \__zutil_msg_set_space_trim:nnnn
-    \cs_set_eq:NN \msg_set:nnn  \__zutil_msg_set_space_trim:nnn
     \char_set_catcode_space:N \ %
     \bool_set_true:N \l__zutil_msg_space_safe_bool
   }
 \cs_new_protected:Npn \zutil_msg_space_safe_off: { }
 
 \cs_new_eq:NN \__zutil_msg_new_orig:nnnn \msg_new:nnnn
-\cs_new_eq:NN \__zutil_msg_new_orig:nnn  \msg_new:nnn
 \cs_new_eq:NN \__zutil_msg_set_orig:nnnn \msg_set:nnnn
-\cs_new_eq:NN \__zutil_msg_set_orig:nnn  \msg_set:nnn
 \cs_new_protected:Npn \__zutil_msg_new_space_trim:nnnn
   {
     \__zutil_trim_arg_spaces:Nnnnn \__zutil_msg_new_orig:nnnn
   }
-\cs_new_protected:Npn \__zutil_msg_new_space_trim:nnn
-  {
-    \__zutil_trim_arg_spaces:Nnnn \__zutil_msg_new_orig:nnn
-  }
 \cs_new_protected:Npn \__zutil_msg_set_space_trim:nnnn
   {
     \__zutil_trim_arg_spaces:Nnnnn \__zutil_msg_set_orig:nnnn
-  }
-\cs_new_protected:Npn \__zutil_msg_set_space_trim:nnn
-  {
-    \__zutil_trim_arg_spaces:Nnnn \__zutil_msg_set_orig:nnn
   }
 
 \cs_new:Npn \__zutil_trim_arg_spaces:Nnnnn #1#2#3#4#5
@@ -70,15 +60,6 @@
         \exp_not:N #1
           { \tl_trim_spaces:n {#2} } { \tl_trim_spaces:n {#3} }
           { \tl_trim_spaces:n {#4} } { \tl_trim_spaces:n {#5} }
-      }
-  }
-\cs_new:Npn \__zutil_trim_arg_spaces:Nnnn #1#2#3#4
-  {
-    \use:e
-      {
-        \exp_not:N #1
-          { \tl_trim_spaces:n {#2} } { \tl_trim_spaces:n {#3} }
-          { \tl_trim_spaces:n {#4} }
       }
   }
 
