@@ -398,7 +398,7 @@
   {
     \int_gset_eq:NN \g_zutil_test_group_level_int \currentgrouplevel
     % enable checking commands
-    \cs_set_eq:NN \PASSED \__zutil_test_PASSED:
+    \cs_set_eq:NN \PASSED \zutil_test_PASSED:
   }
 \cs_new:Npn \zutil_test_type:e #1
   {
@@ -458,7 +458,7 @@
   }
 
 % will be let to \PASSED at the beginning of each test
-\cs_new:Npn \__zutil_test_PASSED:
+\cs_new:Npn \zutil_test_PASSED:
   {
     \int_compare:nNnTF
       { \currentgrouplevel } > { \g_zutil_test_group_level_int }
