@@ -1,6 +1,10 @@
 \ProvidesExplFile {zutil-regression-test.tex} {2025-10-25} {0.1.0}
   { regression-test.tex extended }
 
+%%
+%% original regression-test.tex with modifications
+%%
+
 \ExplSyntaxOff
 \ifnum\interactionmode>1 \scrollmode\fi
 \errorcontextlines=-1 %
@@ -39,43 +43,43 @@
 
 \cs_new_protected:Npn \END
   {
-    % As \test_end: is used after "END-TEST-LOG" is written (in \END), it's
-    % too late to patch dynamically-used \test_end: to log error count. Thus
+    % As \zutil_test_end: is used after "END-TEST-LOG" is written (in \END), it's
+    % too late to patch dynamically-used \zutil_test_end: to log error count. Thus
     % we have to patch \END and other commands which are \let to \END.
     %
     % Cmd hooks (i.e. "cmd/END/before") used in preamble only take effect
     % _after_ begindocument, thus are not useable here. More precisely the
     % real patchings happen in \@kernel@after@begindocument, used right
     % after the begindocument hook).
-    \hook_use:n { test/END }
-    \test_check_group_level:n { \c_zero_int }
-    \test_check_if_level:n { \c_one_int }
+    \hook_use:n { zutil/test/END }
+    \zutil_test_check_group_level:n { \c_zero_int }
+    \zutil_test_check_if_level:n { \c_one_int }
     \TYPE { ^^JEND-TEST-LOG^^J }
-    \test_end:
+    \zutil_test_end:
   }
-\cs_new_protected:Npn \test_check_group_level:n #1
+\cs_new_protected:Npn \zutil_test_check_group_level:n #1
   {
     \int_compare:nNnF { \currentgrouplevel } = { #1 }
       {
-        \test_type:e
+        \zutil_test_type:e
           {
             Bad~group~level:~\the\currentgrouplevel!~
             Expected~ \int_eval:n {#1} .
           }
       }
   }
-\cs_new_protected:Npn \test_check_if_level:n #1
+\cs_new_protected:Npn \zutil_test_check_if_level:n #1
   {
     \int_compare:nNnF { \currentiflevel } = { #1 }
       {
-        \test_type:e
+        \zutil_test_type:e
           {
             Bad~if~level:~\the\currentiflevel!~
             Expected~ \int_eval:n {#1} .
           }
       }
   }
-\cs_set_eq:Nc \test_end: { @@end }
+\cs_set_eq:Nc \zutil_test_end: { @@end }
 \cs_set_eq:cN { @@end } \END
 
 \cs_new_protected:Npn \OMIT { \TYPE { OMIT } }
@@ -107,7 +111,7 @@
 \makeatother
 \ExplSyntaxOn
 
-\int_new:N \g_test_cnt_int
+\int_new:N \g_zutil_test_cnt_int
 
 \cs_new:Npn \SEPARATOR
   {
@@ -117,18 +121,18 @@
 
 \cs_new_protected:Npn \BEGINTEST #1
   {
-    \int_gincr:N \g_test_cnt_int
+    \int_gincr:N \g_zutil_test_cnt_int
     \SEPARATOR
     \TYPE { TEST:~ \tl_to_str:n {#1} }
     \SEPARATOR
-    \hook_use:n { test/TEST/before }
+    \hook_use:n { zutil/test/TEST/before }
     \group_begin:
-      \hook_use:n { test/TEST/begin }
+      \hook_use:n { zutil/test/TEST/begin }
       \cs_set_eq:NN \TYPE \LONGTYPEOUT
   }
 \cs_new_protected:Npn \ENDTEST
   {
-      \hook_use:n { test/TEST/end }
+      \hook_use:n { zutil/test/TEST/end }
     \group_end:
     \SEPARATOR
     \TYPE { }
@@ -269,29 +273,30 @@
 %% zutil-regression-test.tex add-ons
 %%
 
-\int_new:N \g_test_group_level_int
+\int_new:N \g_zutil_test_group_level_int
 % count number of errors
-\int_new:N \g_test_errors_cnt_int
-\int_new:N \g_test_errors_tmp_int
-\flag_new:N \l_test_exp_errors_cnt_flag
+\int_new:N \g_zutil_test_errors_cnt_int
+\int_new:N \g_zutil_test_errors_tmp_int
+\flag_new:N \l_zutil_test_exp_errors_cnt_flag
 % count number of checks (\PASSED)
-\int_new:N \g_test_check_cnt_int
-\flag_new:N \l_test_checks_cnt_flag
+\int_new:N \g_zutil_test_check_cnt_int
+\flag_new:N \l_zutil_test_checks_cnt_flag
 
 % end-of-file logging
-\hook_new:n { test/END }
-% before-test logging
-\hook_new:n { test/TEST/before }
-% end-of-test logging
-\hook_new_pair:nn { test/TEST/begin } { test/TEST/end }
+\hook_new:n { zutil/test/END }
+% per-test logging
+\hook_new:n { zutil/test/TEST/before }
+\hook_new_pair:nn { zutil/test/TEST/begin } { zutil/test/TEST/end }
 
-\socket_new:nn { test/count-errors } { 0 }
-\socket_new:nn { test/count-exp-errors } { 0 }
+\socket_new:nn { zutil/test/count-errors } { 0 }
+\socket_new:nn { zutil/test/count-exp-errors } { 0 }
 
-\msg_new:nnn { test } { PASSED }
+\msg_new:nnn { zutil/test } { PASSED }
   {
     PASSED
   }
+\prop_gput:Nnn \g_msg_module_name_prop { zutil/test } { }
+\prop_gput:Nnn \g_msg_module_type_prop { zutil/test } { Regression~Test }
 
 %%
 %% counting errors and passed checks
@@ -325,137 +330,140 @@
 %     [test] <n> error(s)
 %     [test] <n> check(s)
 
-\socket_new_plug:nnn { test/count-errors } { normal }
+\socket_new_plug:nnn { zutil/test/count-errors } { normal }
   {
-    \int_gincr:N \g_test_errors_cnt_int
+    \int_gincr:N \g_zutil_test_errors_cnt_int
   }
-\socket_assign_plug:nn { test/count-errors } { normal }
+\socket_assign_plug:nn { zutil/test/count-errors } { normal }
 % No group level checking is performed on expandable errors, as errors are
 % always logged and it's not controlled by tests in which group does an
 % expandable error occur.
-\socket_new_plug:nnn { test/count-exp-errors } { normal }
+\socket_new_plug:nnn { zutil/test/count-exp-errors } { normal }
   {
-    \flag_raise:N \l_test_exp_errors_cnt_flag
+    \flag_raise:N \l_zutil_test_exp_errors_cnt_flag
   }
-\socket_assign_plug:nn { test/count-exp-errors } { normal }
+\socket_assign_plug:nn { zutil/test/count-exp-errors } { normal }
 
-\cs_new_protected:Npn \test_count_errors:
+\cs_new_protected:Npn \zutil_test_count_errors:
   {
-    \socket_use:n { test/count-errors }
+    \socket_use:n { zutil/test/count-errors }
   }
-\cs_new:Npn \test_count_exp_errors:
+\cs_new:Npn \zutil_test_count_exp_errors:
   {
-    \socket_use_expandable:n { test/count-exp-errors }
+    \socket_use_expandable:n { zutil/test/count-exp-errors }
   }
 
 % end-of-file logging
-\hook_gput_code:nnn { test/END } { test }
+\hook_gput_code:nnn { zutil/test/END } { . }
   {
     % \OMIT ... \TIMO are not nestable, so unpaired \TIMO is valid use.
     \TIMO
     % emulate output of l3build "recordstatus = true"
     \iow_term:n { *************** }
     % log error counts, always
-    \test_add_expandable_errors_cnt:
-    \test_log_error_counts:n { \g_test_errors_cnt_int }
+    \zutil_test_add_expandable_errors_cnt:
+    \zutil_test_log_error_counts:n { \g_zutil_test_errors_cnt_int }
     % log check counts, always
-    \test_log_check_counts:n { \g_test_check_cnt_int }
+    \zutil_test_log_check_counts:n { \g_zutil_test_check_cnt_int }
   }
 
 % before-test logging
-\hook_gput_code:nnn { test/TEST/before } { . }
+\hook_gput_code:nnn { zutil/test/TEST/before } { . }
   {
     % reset error counts
-    \test_add_expandable_errors_cnt:
-    \int_gset_eq:NN \g_test_errors_tmp_int \g_test_errors_cnt_int
-    \flag_if_raised:NT \l_test_exp_errors_cnt_flag
+    \zutil_test_add_expandable_errors_cnt:
+    \int_gset_eq:NN \g_zutil_test_errors_tmp_int \g_zutil_test_errors_cnt_int
+    \flag_if_raised:NT \l_zutil_test_exp_errors_cnt_flag
       {
-        \test_type:e
+        \zutil_test_type:e
           {
-            \flag_height:N \l_test_exp_errors_cnt_flag \c_space_tl
+            \flag_height:N \l_zutil_test_exp_errors_cnt_flag \c_space_tl
             expandable~errors~raised~between~tests.
           }
-        \flag_clear:N \l_test_exp_errors_cnt_flag
+        \flag_clear:N \l_zutil_test_exp_errors_cnt_flag
       }
     % reset check counts
-    \flag_if_raised:NT \l_test_checks_cnt_flag
+    \flag_if_raised:NT \l_zutil_test_checks_cnt_flag
       {
-        \test_type:e
+        \zutil_test_type:e
           {
-            \flag_height:N \l_test_checks_cnt_flag \c_space_tl
+            \flag_height:N \l_zutil_test_checks_cnt_flag \c_space_tl
             checks~used~between~tests.
           }
-        \flag_clear:N \l_test_checks_cnt_flag
+        \flag_clear:N \l_zutil_test_checks_cnt_flag
       }
   }
 
-\hook_gput_code:nnn { test/TEST/begin } { . }
+\hook_gput_code:nnn { zutil/test/TEST/begin } { . }
   {
-    \int_gset_eq:NN \g_test_group_level_int \currentgrouplevel
+    \int_gset_eq:NN \g_zutil_test_group_level_int \currentgrouplevel
     % enable checking commands
-    \cs_set_eq:NN \PASSED \__test_PASSED:
+    \cs_set_eq:NN \PASSED \zutil_test_PASSED:
   }
-\cs_new:Npn \test_type:e #1
+\cs_new:Npn \zutil_test_type:e #1
   {
     \iow_term:e { [test]~ #1 }
   }
 
 % end-of-test logging
-\hook_gput_code:nnn { test/TEST/end } { . }
+\hook_gput_code:nnn { zutil/test/TEST/end } { . }
   {
     % check group and if levels
-    \test_check_group_level:n { \g_test_group_level_int }
+    \zutil_test_check_group_level:n { \g_zutil_test_group_level_int }
     % log error counts
-    \test_add_expandable_errors_cnt:
-    \int_compare:nNnF \g_test_errors_cnt_int = \g_test_errors_tmp_int
+    \zutil_test_add_expandable_errors_cnt:
+    \int_compare:nNnF
+      { \g_zutil_test_errors_cnt_int } = { \g_zutil_test_errors_tmp_int }
       {
-        \test_log_error_counts:n
-          { \g_test_errors_cnt_int - \g_test_errors_tmp_int }
+        \zutil_test_log_error_counts:n
+          { \g_zutil_test_errors_cnt_int - \g_zutil_test_errors_tmp_int }
       }
     % log check counts
-    \flag_if_raised:NT \l_test_checks_cnt_flag
+    \flag_if_raised:NT \l_zutil_test_checks_cnt_flag
       {
-        \int_gadd:Nn \g_test_check_cnt_int
-          { \flag_height:N \l_test_checks_cnt_flag }
-        \test_log_check_counts:n { \flag_height:N \l_test_checks_cnt_flag }
-        \flag_clear:N \l_test_checks_cnt_flag
+        \int_gadd:Nn \g_zutil_test_check_cnt_int
+          { \flag_height:N \l_zutil_test_checks_cnt_flag }
+        \zutil_test_log_check_counts:n
+          { \flag_height:N \l_zutil_test_checks_cnt_flag }
+        \flag_clear:N \l_zutil_test_checks_cnt_flag
       }
   }
 
-\cs_new_protected:Npn \test_add_expandable_errors_cnt:
+\cs_new_protected:Npn \zutil_test_add_expandable_errors_cnt:
   {
-    \int_gadd:Nn \g_test_errors_cnt_int
-      { \flag_height:N \l_test_exp_errors_cnt_flag }
+    \int_gadd:Nn \g_zutil_test_errors_cnt_int
+      { \flag_height:N \l_zutil_test_exp_errors_cnt_flag }
   }
 
-\cs_new_protected:Npn \test_log_error_counts:n #1
+\cs_new_protected:Npn \zutil_test_log_error_counts:n #1
   {
-    \test_type:e { \int_eval:n {#1} ~error(s) }
+    \zutil_test_type:e { \int_eval:n {#1} ~error(s) }
   }
-\cs_new_protected:Npn \test_log_check_counts:n #1
+\cs_new_protected:Npn \zutil_test_log_check_counts:n #1
   {
-    \test_type:e { \int_eval:n {#1} ~check(s) }
+    \zutil_test_type:e { \int_eval:n {#1} ~check(s) }
   }
 
 % suspend and resume error counting
 % similar to \debug_suspend: and \debug_resume:
-\cs_new_protected:Npn \test_suspend_error_count:
+\cs_new_protected:Npn \zutil_test_suspend_error_count:
   {
-    \socket_assign_plug:nn { test/count-errors } { noop }
-    \socket_assign_plug:nn { test/count-exp-errors } { noop }
+    \socket_assign_plug:nn { zutil/test/count-errors } { noop }
+    \socket_assign_plug:nn { zutil/test/count-exp-errors } { noop }
   }
-\cs_new_protected:Npn \test_resume_error_count:
+\cs_new_protected:Npn \zutil_test_resume_error_count:
   {
-    \socket_assign_plug:nn { test/count-errors } { normal }
-    \socket_assign_plug:nn { test/count-exp-errors } { normal }
+    \socket_assign_plug:nn { zutil/test/count-errors } { normal }
+    \socket_assign_plug:nn { zutil/test/count-exp-errors } { normal }
   }
 
 % will be let to \PASSED at the beginning of each test
-\cs_new:Npn \__test_PASSED:
+\cs_new:Npn \zutil_test_PASSED:
   {
-    \int_compare:nNnTF { \currentgrouplevel } > { \g_test_group_level_int }
-      { \msg_expandable_error:nn { test } { PASSED } }
-      { \flag_raise:N \l_test_checks_cnt_flag }
+    \int_compare:nNnTF
+      { \currentgrouplevel } > { \g_zutil_test_group_level_int }
+      { \msg_expandable_error:nn { zutil/test } { PASSED } }
+      { \flag_raise:N \l_zutil_test_checks_cnt_flag }
   }
 \cs_undefine:N \FAILED
 
@@ -468,30 +476,30 @@
 
 % % fatal errors "force a bail out" immediately, without calling \END,
 % % thus need to be patched too
-% \cs_new_eq:NN \__test__msg_fatal_exit: \__msg_fatal_exit:
+% \cs_new_eq:NN \__zutil_test_msg_fatal_exit: \__msg_fatal_exit:
 % \cs_gset_protected:Npn \__msg_fatal_exit:
 %   {
-%     \__test_log_error_count_at_end:
-%     \__msg_fatal_exit:
+%     \__zutil_test_log_error_count_at_end:
+%     \__zutil_test_msg_fatal_exit:
 %   }
 
 % wrap \errmessage
-\cs_new_eq:NN \__test_errmessage_orig:w \errmessage
+\cs_new_eq:NN \__zutil_test_errmessage_orig:w \errmessage
 % #1 curried
-\cs_new_protected:Npn \__test_errmessage_new:w
+\cs_new_protected:Npn \__zutil_test_errmessage_new:w
   {
-    \test_count_errors:
-    \__test_errmessage_orig:w
+    \zutil_test_count_errors:
+    \__zutil_test_errmessage_orig:w
   }
-\cs_gset_eq:NN \errmessage       \__test_errmessage_new:w
-\cs_gset_eq:NN \tex_errmessage:D \__test_errmessage_new:w  % noqa: w200
+\cs_gset_eq:NN \errmessage       \__zutil_test_errmessage_new:w
+\cs_gset_eq:NN \tex_errmessage:D \__zutil_test_errmessage_new:w  % noqa: w200
 
 % wrap \msg_expandable_error:nn and friends, in an expandable way
-\cs_new_eq:NN \__test_msg_expandable_error_orig:nn
+\cs_new_eq:NN \__zutil_test_msg_expandable_error_orig:nn
               \__msg_expandable_error:nn
 % #1 and #2 curried
 \cs_gset:Npn \__msg_expandable_error:nn
   {
-    \test_count_exp_errors:
-    \__test_msg_expandable_error_orig:nn
+    \zutil_test_count_exp_errors:
+    \__zutil_test_msg_expandable_error_orig:nn
   }
