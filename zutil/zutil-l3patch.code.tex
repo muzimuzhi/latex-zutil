@@ -8,13 +8,13 @@
 %%
 
 % space-safe message definitions
-\int_new:N \g__zutil_msg_ss_level_int % space-safe nesting level
+\int_new:N \l__zutil_msg_ss_level_int % space-safe nesting level
 
 % similar to \ExplSyntaxOn and \ExplSyntaxOff
 % To patch `\msg_new:nnnn` on-the-fly, an initially empty `off:` is used.
 \cs_new_protected:Npn \zutil_msg_space_safe_on:
   {
-    \int_if_zero:nT { \g__zutil_msg_ss_level_int }
+    \int_if_zero:nT { \l__zutil_msg_ss_level_int }
       {
         % level == 0, enable space-safe mode
         % NOTE: in current l3msg implementation, `nnn` functions directly call the
@@ -31,18 +31,18 @@
         \cs_set_eq:NN \msg_set:nnnn \__zutil_msg_set_space_trim:nnnn
         \char_set_catcode_space:N \ %
       }
-    \int_gincr:N \g__zutil_msg_ss_level_int
+    \int_incr:N \l__zutil_msg_ss_level_int
   }
 \cs_new_protected:Npn \zutil_msg_space_safe_off:
   {
-    \int_if_zero:nTF { \g__zutil_msg_ss_level_int }
+    \int_if_zero:nTF { \l__zutil_msg_ss_level_int }
       {
         \msg_error:nnn { zutil } { _shared }
           { \zutil_msg_space_safe_off: called~too~many~times. }
       }
       {
-        \int_gdecr:N \g__zutil_msg_ss_level_int
-        \int_if_zero:nT { \g__zutil_msg_ss_level_int }
+        \int_decr:N \l__zutil_msg_ss_level_int
+        \int_if_zero:nT { \l__zutil_msg_ss_level_int }
           {
             % level == 0, disable space-safe mode
             \cs_set_eq:NN \msg_new:nnnn \__zutil_msg_new_orig:nnnn
@@ -74,19 +74,38 @@
   }
 
 % suspend debugging in \msg_<type>:nn(nnnnn) functions
+% NOTE: \debug_suspend: and \debug_resume: uses number of dots stored in
+%       \l__debug_suspended_tl to track nesting levels.
 % FIXME: due to unstable benchmark results, only usage is tested, not
 %        functionality
+\int_new:N \l__zutil_msg_sd_level_int
+
 \cs_new_protected:Npn \zutil_msg_suspend_debug:
   {
-    \cs_set_eq:NN \__zutil_msg_use_orig:nnnnnnn \__msg_use:nnnnnnn
-    \cs_set_eq:NN \__msg_use:nnnnnnn \__zutil_msg_use:nnnnnnn
-    \cs_set_protected:Npn \zutil_msg_resume_debug:
+    \int_if_zero:nT { \l__zutil_msg_sd_level_int }
       {
-        \cs_set_eq:NN \__msg_use:nnnnnnn \__zutil_msg_use_orig:nnnnnnn
-        \cs_set_protected:Npn \zutil_msg_resume_debug: { }
+        % level == 0, suspend debugging in message usages
+        \cs_set_eq:NN \__zutil_msg_use_orig:nnnnnnn \__msg_use:nnnnnnn
+        \cs_set_eq:NN \__msg_use:nnnnnnn \__zutil_msg_use:nnnnnnn
+      }
+    \int_incr:N \l__zutil_msg_sd_level_int
+  }
+\cs_new_protected:Npn \zutil_msg_resume_debug:
+  {
+    \int_if_zero:nTF { \l__zutil_msg_sd_level_int }
+      {
+        \msg_error:nnn { zutil } { _shared }
+          { \zutil_msg_resume_debug: called~too~many~times. }
+      }
+      {
+        \int_decr:N \l__zutil_msg_sd_level_int
+        \int_if_zero:nT { \l__zutil_msg_sd_level_int }
+          {
+            % level == 0, resume debugging in message usages
+            \cs_set_eq:NN \__msg_use:nnnnnnn \__zutil_msg_use_orig:nnnnnnn
+          }
       }
   }
-\cs_new_protected:Npn \zutil_msg_resume_debug: { }
 
 \cs_new_eq:NN \__zutil_msg_use_orig:nnnnnnn \__msg_use:nnnnnnn
 \cs_new_protected:Npn \__zutil_msg_use:nnnnnnn #1#2#3#4#5#6#7

@@ -52,7 +52,7 @@
 - additions to the `l3kernel`, involving patches
 - `l3msg` extras
   - `\zutil_msg_space_safe_on: ... \zutil_msg_space_safe_off:`
-    - `\msg_new:nnn(n)` and `\msg_set:nnn(n)` used in between them will respect space characters and trim spaces from both sides of all the arguments. If used nested, only the outer-most pair takes effect.
+    - `\msg_new:nnn(n)` and `\msg_set:nnn(n)` used in between them will respect space characters and trim spaces from both sides of all the arguments. Nestable. (If used nested, only the outer-most pair takes effect.)
     - restriction: to ensure the catcode change works and only works locally, `\zutil_msg_space_safe_(on|off):` should be used on their own line(s).
     - example:
       ```tex
@@ -62,7 +62,7 @@
       \zutil_msg_space_safe_off:
       ```
   - `\zutil_msg_suspend_debug: ... \zutil_msg_resume_debug:`
-    - suspend and resume debugging (the same as `\debug_suspend:` and `\debug_resume:`) inside functions that issue messages (`\msg_<type>:nn...`), to make msg-based tests quicker
+    - suspend and resume debugging (the same as `\debug_suspend:` and `\debug_resume:`) inside functions that issue messages (`\msg_<type>:nn...`), to make msg-based tests quicker. Nestable.
 
 ## `debug` module
 - write debugging info to log; depends on the `l3extras` module

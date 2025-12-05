@@ -45,8 +45,25 @@ TEST: Nested \zutil_msg_space_safe_on: /off:
 ============================================================
 TEST: \zutil_msg_suspend_debug: /resume_debug:
 ============================================================
-Package test Warning: Text.
+Package test Info: Debugging is on, nesting level 0.
+Package test Info: Debugging is off, nesting level 1.
+============================================================
+============================================================
+TEST: Extra \zutil_msg_resume_debug: 
+============================================================
+! Package zutil Error: \zutil_msg_resume_debug: called too many times.
+Package test Info: Debugging is on, nesting level 0.
+[test] 1 error(s)
+============================================================
+============================================================
+TEST: Nested \zutil_msg_suspend_debug: /resume_debug:
+============================================================
+Package test Info: Debugging is on, nesting level 0.
+Package test Info: Debugging is off, nesting level 1.
+Package test Info: Debugging is off, nesting level 2.
+Package test Info: Debugging is off, nesting level 1.
+Package test Info: Debugging is on, nesting level 0.
 ============================================================
 ***************
-[test] 5 error(s)
+[test] 6 error(s)
 [test] 7 check(s)

@@ -6,6 +6,7 @@
 \ExplSyntaxOn
 
 \zutil_load_module:n { l3patch }
+\zutil_msg_resume_debug: % cancel the resuming inserted by zutil-regression-test.cfg
 
 \debug_on:n { check-declarations , deprecation }
 
@@ -81,9 +82,38 @@
   \test_space_catcode_is_ignore:
 \ENDTEST
 
+\msg_new:nnn { test } { debug-state }
+  {
+    Debugging~is~
+    \tl_if_empty:NTF \l__debug_suspended_tl
+      { on,~ }
+      { off,~ }
+    nesting~level~\int_use:N \l__zutil_msg_sd_level_int .
+  }
+
 % FIXME: due to unstable benchmark results, only usage is tested, not
 %        functionality
 \TEST{\zutil_msg_suspend_debug: / resume_debug:}{
-  \msg_warning:nn { test } { msg }
+  \msg_info:nn { test } { debug-state }
+  \zutil_msg_suspend_debug:
+  \msg_info:nn { test } { debug-state }
+  \zutil_msg_resume_debug:
+}
+
+\TEST{Extra~\zutil_msg_resume_debug:}{
+  \zutil_msg_resume_debug:
+  \msg_info:nn { test } { debug-state }
+}
+
+\TEST{Nested~\zutil_msg_suspend_debug: / resume_debug:}{
+  \msg_info:nn { test } { debug-state }
+  \zutil_msg_suspend_debug:
+  \msg_info:nn { test } { debug-state }
+    \zutil_msg_suspend_debug:
+    \msg_info:nn { test } { debug-state }
+    \zutil_msg_resume_debug:
+    \msg_info:nn { test } { debug-state }
+  \zutil_msg_resume_debug:
+  \msg_info:nn { test } { debug-state }
 }
 \END
