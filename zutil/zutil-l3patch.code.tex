@@ -78,7 +78,7 @@
 %       \l__debug_suspended_tl to track nesting levels.
 % FIXME: due to unstable benchmark results, only usage is tested, not
 %        functionality
-\int_new:N \l__zutil_msg_sd_level_int
+\int_new:N \l__zutil_msg_sd_level_int % suspend debug nesting level
 
 \cs_new_protected:Npn \zutil_msg_suspend_debug:
   {
