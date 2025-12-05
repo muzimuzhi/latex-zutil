@@ -11,9 +11,25 @@
 
 \START
 
+\cs_new_protected:Npn \test_space_catcode_is_ignore:
+  {
+    \int_compare:nNnTF
+      { \char_value_catcode:n { 32 } } = { 9 } % 9 is the catcode for ignore
+      { \PASSED }
+      { \FAILED }
+  }
+\cs_new_protected:Npn \test_space_catcode_is_space:
+  {
+    \int_compare:nNnTF
+      { \char_value_catcode:n { 32 } } = { 10 } % 10 is the catcode for space
+      { \PASSED }
+      { \FAILED }
+  }
+
 \BEGINTEST{\zutil_msg_space_safe_on:/off:}
   \debug_on:n { log-functions }
   \zutil_msg_space_safe_on:
+  \test_space_catcode_is_space:
   \msg_new:nnnn { test } { msg-long }
     { Text. } { More text. }
   \msg_new:nnnn { test } { msg-long-with-args }
@@ -22,10 +38,7 @@
   \msg_new:nnn { test } { msg-with-args }
     { Text [#1] [#2] [#3] [#4]. }
   \zutil_msg_space_safe_off:
-  \int_compare:nNnTF
-    { \char_value_catcode:n { 32 } } = { 9 } % 9 is the catcode for ignore
-    { \PASSED }
-    { \FAILED }
+  \test_space_catcode_is_ignore:
 
   \msg_error:nn { test } { msg-long }
   \msg_error:nnnnnn { test } { msg-long-with-args }
@@ -43,10 +56,6 @@
   \msg_set:nnn { test } { msg-with-args }
     { Changed [#1] [#2] [#3] [#4]. }
   \zutil_msg_space_safe_off:
-  \int_compare:nNnTF
-    { \char_value_catcode:n { 32 } } = { 9 } % 9 is the catcode for ignore
-    { \PASSED }
-    { \FAILED }
 
   \msg_error:nn { test } { msg-long }
   \msg_error:nnnnnn { test } { msg-long-with-args }
@@ -54,6 +63,20 @@
   \msg_warning:nn { test } { msg }
   \msg_warning:nnnnnn { test } { msg-with-args }
     { \ERROR } { B } { C } { D }
+\ENDTEST
+
+\BEGINTEST{\zutil_msg_space_safe_on:/off:,~ nested}
+  \zutil_msg_space_safe_off:
+  \test_space_catcode_is_ignore:
+
+  \zutil_msg_space_safe_on:
+  \test_space_catcode_is_space:
+    \zutil_msg_space_safe_on:
+    \test_space_catcode_is_space:
+    \zutil_msg_space_safe_off:
+    \test_space_catcode_is_space:
+  \zutil_msg_space_safe_off:
+  \test_space_catcode_is_ignore:
 \ENDTEST
 
 % FIXME: due to unstable benchmark results, only usage is tested, not

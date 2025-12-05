@@ -52,7 +52,7 @@
 - additions to the `l3kernel`, involving patches
 - `l3msg` extras
   - `\zutil_msg_space_safe_on: ... \zutil_msg_space_safe_off:`
-    - `\msg_new:nnn(n)` and `\msg_set:nnn(n)` used in between them will respect space characters and trim spaces from both sides of all the arguments.
+    - `\msg_new:nnn(n)` and `\msg_set:nnn(n)` used in between them will respect space characters and trim spaces from both sides of all the arguments. If used nested, only the outer-most pair takes effect.
     - restriction: to ensure the catcode change works and only works locally, `\zutil_msg_space_safe_(on|off):` should be used on their own line(s).
     - example:
       ```tex

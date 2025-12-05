@@ -31,10 +31,17 @@ Package test Warning: Changed [\ERROR ] [B] [C] [D].
 [test] 2 check(s)
 ============================================================
 ============================================================
+TEST: \zutil_msg_space_safe_on: /off:, nested
+============================================================
+! Package zutil Error: \zutil_msg_space_safe_off: called too many times
+[test] 1 error(s)
+[test] 5 check(s)
+============================================================
+============================================================
 TEST: \zutil_msg_suspend_debug: /resume_debug:
 ============================================================
 Package test Warning: Text.
 ============================================================
 ***************
-[test] 4 error(s)
-[test] 2 check(s)
+[test] 5 error(s)
+[test] 7 check(s)
