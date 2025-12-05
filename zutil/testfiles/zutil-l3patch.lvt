@@ -65,10 +65,12 @@
     { \ERROR } { B } { C } { D }
 \ENDTEST
 
-\BEGINTEST{\zutil_msg_space_safe_on:/off:,~ nested}
+\BEGINTEST{Extra~\zutil_msg_space_safe_off:}
   \zutil_msg_space_safe_off:
   \test_space_catcode_is_ignore:
+\ENDTEST
 
+\BEGINTEST{Nested~\zutil_msg_space_safe_on:/off:}
   \zutil_msg_space_safe_on:
   \test_space_catcode_is_space:
     \zutil_msg_space_safe_on:
