@@ -6,14 +6,31 @@
 \ExplSyntaxOn
 
 \zutil_load_module:n { l3patch }
+\zutil_msg_resume_debug: % cancel the resuming inserted by zutil-regression-test.cfg
 
 \debug_on:n { check-declarations , deprecation }
 
 \START
 
+\cs_new_protected:Npn \test_space_catcode_is_ignore:
+  {
+    \int_compare:nNnTF
+      { \char_value_catcode:n { 32 } } = { 9 } % 9 is the catcode for ignore
+      { \PASSED }
+      { \FAILED }
+  }
+\cs_new_protected:Npn \test_space_catcode_is_space:
+  {
+    \int_compare:nNnTF
+      { \char_value_catcode:n { 32 } } = { 10 } % 10 is the catcode for space
+      { \PASSED }
+      { \FAILED }
+  }
+
 \BEGINTEST{\zutil_msg_space_safe_on:/off:}
   \debug_on:n { log-functions }
   \zutil_msg_space_safe_on:
+  \test_space_catcode_is_space:
   \msg_new:nnnn { test } { msg-long }
     { Text. } { More text. }
   \msg_new:nnnn { test } { msg-long-with-args }
@@ -22,10 +39,7 @@
   \msg_new:nnn { test } { msg-with-args }
     { Text [#1] [#2] [#3] [#4]. }
   \zutil_msg_space_safe_off:
-  \int_compare:nNnTF
-    { \char_value_catcode:n { 32 } } = { 9 } % 9 is the catcode for ignore
-    { \PASSED }
-    { \FAILED }
+  \test_space_catcode_is_ignore:
 
   \msg_error:nn { test } { msg-long }
   \msg_error:nnnnnn { test } { msg-long-with-args }
@@ -43,10 +57,6 @@
   \msg_set:nnn { test } { msg-with-args }
     { Changed [#1] [#2] [#3] [#4]. }
   \zutil_msg_space_safe_off:
-  \int_compare:nNnTF
-    { \char_value_catcode:n { 32 } } = { 9 } % 9 is the catcode for ignore
-    { \PASSED }
-    { \FAILED }
 
   \msg_error:nn { test } { msg-long }
   \msg_error:nnnnnn { test } { msg-long-with-args }
@@ -56,9 +66,54 @@
     { \ERROR } { B } { C } { D }
 \ENDTEST
 
+\BEGINTEST{Extra~\zutil_msg_space_safe_off:}
+  \zutil_msg_space_safe_off:
+  \test_space_catcode_is_ignore:
+\ENDTEST
+
+\BEGINTEST{Nested~\zutil_msg_space_safe_on:/off:}
+  \zutil_msg_space_safe_on:
+  \test_space_catcode_is_space:
+    \zutil_msg_space_safe_on:
+    \test_space_catcode_is_space:
+    \zutil_msg_space_safe_off:
+    \test_space_catcode_is_space:
+  \zutil_msg_space_safe_off:
+  \test_space_catcode_is_ignore:
+\ENDTEST
+
+\msg_new:nnn { test } { debug-state }
+  {
+    Debugging~is~
+    \tl_if_empty:NTF \l__debug_suspended_tl
+      { on,~ }
+      { off,~ }
+    nesting~level~\int_use:N \l__zutil_msg_sd_level_int .
+  }
+
 % FIXME: due to unstable benchmark results, only usage is tested, not
 %        functionality
 \TEST{\zutil_msg_suspend_debug: / resume_debug:}{
-  \msg_warning:nn { test } { msg }
+  \msg_info:nn { test } { debug-state }
+  \zutil_msg_suspend_debug:
+  \msg_info:nn { test } { debug-state }
+  \zutil_msg_resume_debug:
+}
+
+\TEST{Extra~\zutil_msg_resume_debug:}{
+  \zutil_msg_resume_debug:
+  \msg_info:nn { test } { debug-state }
+}
+
+\TEST{Nested~\zutil_msg_suspend_debug: / resume_debug:}{
+  \msg_info:nn { test } { debug-state }
+  \zutil_msg_suspend_debug:
+  \msg_info:nn { test } { debug-state }
+    \zutil_msg_suspend_debug:
+    \msg_info:nn { test } { debug-state }
+    \zutil_msg_resume_debug:
+    \msg_info:nn { test } { debug-state }
+  \zutil_msg_resume_debug:
+  \msg_info:nn { test } { debug-state }
 }
 \END
