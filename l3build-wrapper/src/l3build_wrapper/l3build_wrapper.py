@@ -28,7 +28,8 @@ Names = NewType('Names', set[str])
 Options = NewType('Options', list[str])
 
 
-logger = logging.getLogger('wrapper')
+LOGGER_NAME: Final[str] = 'wrapper'
+logger = logging.getLogger(LOGGER_NAME)
 
 
 # suggested by https://stackoverflow.com/a/60465422
@@ -352,7 +353,9 @@ class TestSuiteRun:
             self._invoke_l3build(self.target, self.options, self.names, args.dry_run)
 
         if self.target == Target.SAVE and args.re_check:
-            logger.info('Re-check test suite "%s" after saving', self.ts.name)
+            # ordinary output
+            # https://docs.python.org/3/howto/logging.html#when-to-use-logging
+            print(f'\n[{LOGGER_NAME}] Re-checking tests')
             # always set `-S, --show-saves` when re-checking
             if '-S' not in self.options:
                 self.options.append('-S')
