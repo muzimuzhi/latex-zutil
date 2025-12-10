@@ -353,9 +353,7 @@ class TestSuiteRun:
             self._invoke_l3build(self.target, self.options, self.names, args.dry_run)
 
         if self.target == Target.SAVE and args.re_check:
-            # ordinary output
-            # https://docs.python.org/3/howto/logging.html#when-to-use-logging
-            print(f'\n[{LOGGER_NAME}] Re-checking tests')
+            l3build_print('Re-checking tests', newline=True)
             # always set `-S, --show-saves` when re-checking
             if '-S' not in self.options:
                 self.options.append('-S')
@@ -410,6 +408,14 @@ VERBOSITY_TO_LEVEL: Final[dict[int, int]] = {
     1: logging.INFO,
     2: logging.DEBUG,
 }
+
+
+def l3build_print(*args: str, newline: bool = False) -> None:
+    """Print ordinary output prefixed with logger name.
+
+    See https://docs.python.org/3/howto/logging.html#when-to-use-logging.
+    """
+    print(f'{'\n' if newline else ''}[{LOGGER_NAME}]', *args)
 
 
 def l3build_patched() -> bool:
