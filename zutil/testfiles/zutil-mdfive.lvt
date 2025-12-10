@@ -9,30 +9,31 @@
 
 \START
 
-\TEST{Check~regression-test.tex~md5sum}{
-  \sys_if_platform_unix:TF
-    {
-      \str_const:Nn \c_mdfive_expected_str
-        { C14BC93225A7243044921F591A20F594 }
-      \str_const:Ne \c_mdfive_actual_str
-        { \file_mdfive_hash:n { regression-test.tex } }
-      \str_if_eq:VVTF \c_mdfive_expected_str \c_mdfive_actual_str
-        {
-          \PASSED
-        }
-        {
-          \iow_log:e
-            {
-              File~'regression-test.tex'~has~changed.~
-              The~'zutil-regression-test.tex'~may~need~an~update~too.
-              \iow_newline:
-              Expected:~ \c_mdfive_expected_str \iow_newline:
-              Actual:~ \use:n {~} ~ \c_mdfive_actual_str \iow_newline:
-            }
-        }
-    }
+\str_const:Nn \c_test_mdfive_expected_str
+  { 70F2C13F7A03DEF4118CF5F646A7B768 }
+% moved out of \TEST to avoid a luatex-only log line created by \cctab_select:N
+%    \g__cctab_tmpii_cctab=\catcodetable...
+% where the "ii" in "tmpii" stands for the current group level
+\file_get:nnN { regression-test.tex }
+  { \cctab_select:N \c_document_cctab }
+  \l_tmpa_tl
+\str_const:Ne \c_test_mdfive_actual_str
+  { \str_mdfive_hash:e { \exp_not:V \l_tmpa_tl } }
+
+\TEST{Check~md5sum~of~regression-test.tex}{
+  \str_if_eq:VVTF \c_test_mdfive_expected_str \c_test_mdfive_actual_str
     {
       \PASSED
+    }
+    {
+      \iow_log:e
+        {
+          l3build~file~'regression-test.tex'~has~changed.~
+          The~'zutil-regression-test.tex'~may~be~outdated.
+          \iow_newline:
+          Expected:~ \c_test_mdfive_expected_str \iow_newline:
+          Actual:~ \use:n {~} ~ \c_test_mdfive_actual_str \iow_newline:
+        }
     }
 }
 
