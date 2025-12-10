@@ -28,10 +28,6 @@ Names = NewType('Names', set[str])
 Options = NewType('Options', list[str])
 
 
-LOGGER_NAME: Final[str] = 'wrapper'
-logger = logging.getLogger(LOGGER_NAME)
-
-
 # suggested by https://stackoverflow.com/a/60465422
 class L3buildWrapperError(Exception):
     """Base class for L3buildWrapper exceptions."""
@@ -364,6 +360,8 @@ class TestSuiteRun:
 LOGGING_DEFAULT_FORMAT = '[%(name)s] %(levelname)s: %(message)s'
 LOGGING_DEBUG_FORMAT = '[%(name)s] %(levelname)-5s - %(filename)s:%(lineno)d - %(funcName)-17s - %(message)s'  # noqa: E501
 
+LOGGER_NAME: Final[str] = 'wrapper'
+
 _OPTION_ALL_ENGINES: Final[str] = '_option_all_engines'
 
 TESTSUITE_DEFAULT: Final = _TestSuiteDefault(
@@ -409,6 +407,10 @@ VERBOSITY_TO_LEVEL: Final[dict[int, int]] = {
     2: logging.DEBUG,
 }
 
+# init logger
+logging.basicConfig(format=LOGGING_DEFAULT_FORMAT)
+logger = logging.getLogger(LOGGER_NAME)
+
 
 def l3build_print(*args: str, newline: bool = False) -> None:
     """Print ordinary output prefixed with logger name.
@@ -447,11 +449,6 @@ def debug_logging_enabled() -> bool:
         )
 
     return 'DEBUG' in os.environ or (on_ci() and github_debug_logging_enabled())
-
-
-def init_logging() -> None:
-    """Initialize logging."""
-    logging.basicConfig(format=LOGGING_DEFAULT_FORMAT)
 
 
 def set_logging(args: argparse.Namespace) -> None:
@@ -566,7 +563,6 @@ inherited.add_argument('-s', '--stdengine', action='store_true')
 def main(argv: list[str] | None = None) -> None:
     """Main function to run the l3build wrapper."""  # noqa: D401
     try:
-        init_logging()
         # `args` defaults to `None`, which is equivalent to passing `sys.argv[1:]`
         args = parser.parse_intermixed_args(args=argv)
 
