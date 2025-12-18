@@ -55,7 +55,9 @@ jobs:
       with:
         # supported tools
         # https://github.com/taiki-e/install-action/blob/main/TOOLS.md
-        tool: just,typos
+        tool: |
+          just
+          typos
         fallback: none
 
     - name: Run pre-commit checks

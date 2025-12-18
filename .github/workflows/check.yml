@@ -131,7 +131,8 @@ jobs:
       with:
         # supported tools
         # https://github.com/taiki-e/install-action/blob/main/TOOLS.md
-        tool: just
+        tool: |
+          just
         fallback: none
 
     - name: Install uv
