@@ -10,7 +10,9 @@
 \START
 
 \str_const:Nn \c_test_mdfive_expected_str
-  { 70F2C13F7A03DEF4118CF5F646A7B768 }
+  { F58865412441AFD94CA155008AC0EC5B } % l3build 2025-12-19 --
+  % { 70F2C13F7A03DEF4118CF5F646A7B768 } % l3build 2025-09-03
+
 % moved out of \TEST to avoid a luatex-only log line created by \cctab_select:N
 %    \g__cctab_tmpii_cctab=\catcodetable...
 % where the "ii" in "tmpii" stands for the current group level
