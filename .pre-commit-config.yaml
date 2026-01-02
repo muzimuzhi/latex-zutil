@@ -30,6 +30,14 @@ repos:
   - id: check-yaml
   - id: end-of-file-fixer
   - id: trailing-whitespace
+# https://github.com/rhysd/actionlint/blob/v1.7.7/docs/usage.md#pre-commit
+# If shellcheck is available, this also checks `run:` steps using `bash` shell.
+# https://github.com/rhysd/actionlint/blob/main/docs/checks.md#shellcheck-integration-for-run
+# The GitHub-hosted ubuntu-latest image has shellcheck pre-installed.
+- repo: https://github.com/rhysd/actionlint
+  rev: 0933c147c9d6587653d45fdcb4c497c57a65f9af  # frozen: v1.7.10
+  hooks:
+  - id: actionlint
 - repo: local
   hooks:
   # typos bumps version frequently, so use system installation instead of the
