@@ -45,20 +45,10 @@ jobs:
           expltools
         update-all-packages: true
 
-    - name: Setup pre-commit
-      uses: muzimuzhi/actions/setup-pre-commit-uv@main
+    - name: Setup mise and install dev tools
+      uses: jdx/mise-action@v3
       with:
-        run-pre-commit: false
-
-    - name: Install tools
-      uses: taiki-e/install-action@v2
-      with:
-        # supported tools
-        # https://github.com/taiki-e/install-action/blob/main/TOOLS.md
-        tool: |
-          just
-          typos
-        fallback: none
+        cache: false
 
     - name: Run pre-commit checks
       run: |

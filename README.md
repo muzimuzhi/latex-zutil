@@ -57,18 +57,17 @@ Note: As configured by `.justfile` in this repository, `just` invoked from any s
 
 ### Tools
 
-- `explcheck`: Development tools for expl3 programmers\
-  https://github.com/Witiko/expltools \
-  Installation: `tlmgr install expltools`
-- `just`: Just a command runner\
-  https://github.com/casey/just
-- `l3build`: A testing and building system for LaTeX\
-  https://github.com/latex3/l3build\
-  Installation: `tlmgr install l3build`
-- `pre-commit`: a Git hook framework\
-  https://github.com/pre-commit/pre-commit \
-  Installation: (recommended) `uv tool install pre-commit`
-- `typos`: Source code spell checker\
-  https://github.com/crate-ci/typos
-- `uv`: An extremely fast Python package and project manager\
-  https://github.com/astral-sh/uv
+- managed by LaTeX distribution
+  - `l3build`: a testing and building system for LaTeX\
+    https://github.com/latex3/l3build
+  - `explcheck`: an expl3 static analysis tool\
+    https://github.com/Witiko/expltools
+- managed by [`mise`](https://github.com/jdx/mise)
+  - `just`: just a command runner\
+    https://github.com/casey/just
+  - `pre-commit`: a Git hook framework\
+    https://github.com/pre-commit/pre-commit
+  - `typos`: source code spell checker\
+    https://github.com/crate-ci/typos
+  - `uv`: an extremely fast Python package and project manager\
+    https://github.com/astral-sh/uv

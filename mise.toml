@@ -1,0 +1,6 @@
+[tools]
+just = "latest"
+pre-commit = "latest"
+ruff = "latest"
+typos = "latest"
+uv = "latest"

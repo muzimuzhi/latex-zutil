@@ -126,19 +126,17 @@ jobs:
         package-file: .github/tl_packages
         update-all-packages: ${{ inputs.update-texlive-packages || true }}
 
-    - name: Install just
-      uses: taiki-e/install-action@v2
+    - name: Setup mise and install dev tools
+      uses: jdx/mise-action@v3
       with:
-        # supported tools
-        # https://github.com/taiki-e/install-action/blob/main/TOOLS.md
-        tool: |
-          just
-        fallback: none
+        # all tool versions are specified "latest", which invalidates cache key changes
+        cache: false
 
-    - name: Install uv
-      uses: astral-sh/setup-uv@v7
-      with:
-        enable-cache: false
+    # TODO: check if uv cache is needed when l3build-wrapper
+    #       has third-party deps without pre-built wheels
+    #       https://docs.astral.sh/uv/concepts/cache/#caching-in-continuous-integration
+    #       https://github.com/astral-sh/setup-uv/issues/465
+    #       my previous issue on caching of `astral-sh/setup-uv` action
 
     - name: Install l3build-wrapper
       # no need for `-e, --editable` installation

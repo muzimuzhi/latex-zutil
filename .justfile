@@ -81,8 +81,7 @@ pre-commit *options="":
 [group('lint')]
 ruff command="check" *options="":
     @echo '{{ info }}Linting python code...{{ end_info }}'
-    # `uvx` is an alias for `uv tool run`
-    cd l3build-wrapper && uvx --isolated ruff {{ command }} {{ options }}
+    cd l3build-wrapper && ruff {{ command }} {{ options }}
 
 ## testing recipes
 
