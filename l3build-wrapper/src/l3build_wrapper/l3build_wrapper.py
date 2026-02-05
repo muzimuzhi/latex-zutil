@@ -348,9 +348,9 @@ class TestSuiteRun:
             # simple case, run l3build on the test suite
             self._invoke_l3build(self.target, self.options, self.names, args.dry_run)
 
-        if self.target == Target.SAVE and args.re_check:
-            l3build_print('Re-checking tests', newline=True)
-            # always set `-S, --show-saves` when re-checking
+        if self.target == Target.SAVE and args.recheck:
+            l3build_print('Rechecking tests', newline=True)
+            # always set `-S, --show-saves` when rechecking
             if '-S' not in self.options:
                 self.options.append('-S')
             self._invoke_l3build(Target.CHECK, self.options, self.names, args.dry_run)
@@ -544,7 +544,7 @@ parser.add_argument('--all-engines',
                          'useful for auto-saving engine-specific tests')
 parser.add_argument('-n', '--dry-run', action='store_true',
                     help='print what l3build command(s) would be executed without execution')  # noqa: E501
-parser.add_argument('--re-check', '--recheck',
+parser.add_argument('--recheck',
                     action='store_true',
                     help='after saving, rerun checks using the same arguments')
 parser.add_argument('-v', '--verbose', action='count', default=0,
