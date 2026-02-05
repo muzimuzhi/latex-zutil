@@ -30,9 +30,12 @@
 - Misc check
   - `just explcheck-slow`: deeper thus slower expl3 code linting
 - Checks run on CI
-  - [`lint.yml`](./.github/workflows/lint.yml) full quick checks and `just explcheck-slow` (on Ubuntu)
+  - [`lint.yml`](./.github/workflows/lint.yml) full quick checks and `just explcheck-slow --verbose` (on Ubuntu)
   - [`check.yml`](./.github/workflows/check.yml) actively maintained slow checks (on Ubuntu by default)
-  - [`schedule.yml`](./.github/workflows/schedule.yml) once a week, `lint.yml` on Ubuntu + `check.yml` on 3 OSes
+  - [`schedule.yml`](./.github/workflows/schedule.yml)
+    - run once a week
+    - call `lint.yml`
+    - call `check.yml` on 3 OSes, with `just test-inactive` enabled
 
 ### General `just` usages
 
