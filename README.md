@@ -27,6 +27,8 @@
 - Slow checks (`l3build` tests)
   - `just test`: tests for actively maintained LaTeX packages
   - `just test-inactive`: tests for inactive LaTeX packages
+- Misc check
+  - `just explcheck-slow`: deeper thus slower expl3 code linting
 - Checks run on CI
   - [`lint.yml`](./.github/workflows/lint.yml) full quick checks and `just explcheck-slow` (on Ubuntu)
   - [`check.yml`](./.github/workflows/check.yml) actively maintained slow checks (on Ubuntu by default)

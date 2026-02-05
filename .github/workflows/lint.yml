@@ -77,3 +77,8 @@ jobs:
     - name: Lint python code
       run: |
         just ruff check
+
+    # the slowest, thus run at the end
+    - name: Lint expl3 code (slow)
+      run: |
+        just explcheck-slow

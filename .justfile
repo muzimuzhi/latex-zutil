@@ -51,26 +51,25 @@ typos *options="":
 # Lint expl3 files
 [group('lint')]
 explcheck *options="":
-    #!/usr/bin/env -S bash
-    echo '{{ info }}Linting expl3 code...{{ end_info }}'
-    if [[ "$CI" = "true" ]]; then
-        echo '{{ info }}CI detected, forcing slow flow analysis...{{ end_info }}'
-        # https://github.com/Witiko/expltools/blob/ 50d01661a6d0e2e2ea9c21a3f8e2db14c7aac9ce/CHANGES.md?plain=1#L19-L21
-        cp .explcheckrc .explcheckrc_ci
-        echo "# following configs are added by .justfile explcheck recipe" >> .explcheckrc_ci
-        echo "stop_after = \"flow analysis\"" >> .explcheckrc_ci
-        echo "stop_early_when_confused = false" >> .explcheckrc_ci
-        options_extra=("--config-file=.explcheckrc_ci" "--verbose")
-    fi
+    @echo '{{ info }}Linting expl3 code...{{ end_info }}'
     # this file list is composed in pre-commit config too
-    explcheck {{ options }} "${options_extra[@]}" support/*.cfg zutil/*.sty zutil/*.tex
-    # explcheck --ignored-issues=s103,s204,w302 {{ options }} "${options_extra[@]}" tabularray/tabularray.sty
-    if [[ "$CI" = "true" ]]; then
-        rm .explcheckrc_ci
-    fi
+    explcheck {{ options }} support/*.cfg zutil/*.sty zutil/*.tex
+    # explcheck --ignored-issues=s103,s204,w302 {{ options }} tabularray/tabularray.sty
+
+# Lint expl3 files, flow analysis enabled
+[group('lint')]
+explcheck-slow *options="":
+    @echo '{{ info }}Enabling explcheck flow analysis...{{ end_info }}'
+    texlua scripts/explcheck-toggle-configs.lua enable
+    @echo '{{ info }}Linting expl3 code (slow)...{{ end_info }}'
+    explcheck {{ options }} support/*.cfg zutil/*.sty zutil/*.tex
+    @echo '{{ info }}Disabling explcheck flow analysis...{{ end_info }}'
+    texlua scripts/explcheck-toggle-configs.lua disable
 
 alias expl := explcheck
 alias expl3 := explcheck
+alias expl-slow := explcheck-slow
+alias expl3-slow := explcheck-slow
 
 # Run pre-commit checks on all files
 [group('lint')]
