@@ -530,7 +530,10 @@ parser.add_argument('target',
                     choices=Target,
                     metavar='target',
                     help=f'the l3build target to run ({", ".join(Target)})')
-parser.add_argument('names', type=str, nargs='*', metavar='name',
+parser.add_argument('names',
+                    type=str,
+                    nargs='*',
+                    metavar='name',
                     help='a name of test suite or a glob for test name(s)')
 
 # new, wrapper-only options and flags
@@ -541,12 +544,15 @@ parser.add_argument('--all-engines',
                     const=_OPTION_ALL_ENGINES,
                     help='run on all existing test results; '
                          'useful for auto-saving engine-specific tests')
-parser.add_argument('-n', '--dry-run', action='store_true',
+parser.add_argument('-n', '--dry-run',
+                    action='store_true',
                     help='print what l3build command(s) would be executed without execution')  # noqa: E501
 parser.add_argument('--recheck',
                     action='store_true',
                     help='after saving, rerun checks using the same arguments')
-parser.add_argument('-v', '--verbose', action='count', default=0,
+parser.add_argument('-v', '--verbose',
+                    action='count',
+                    default=0,
                     help='print more information; given twice enables debug logging and would be passed to "l3build" if patched l3build is detected')  # noqa: E501
 
 # inherited l3build options and flags
