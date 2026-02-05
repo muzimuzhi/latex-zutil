@@ -10,7 +10,8 @@
 \START
 
 \str_const:Nn \c_test_mdfive_expected_str
-  { F58865412441AFD94CA155008AC0EC5B } % l3build 2025-12-19 --
+  { 9FC58E8647C6AACFAF98F0EA6C328734 } % l3build 2026-03-13 --
+  % { F58865412441AFD94CA155008AC0EC5B } % l3build 2025-12-19 -- 2025-12-24
   % { 70F2C13F7A03DEF4118CF5F646A7B768 } % l3build 2025-09-03
 
 % moved out of \TEST to avoid a luatex-only log line created by \cctab_select:N
