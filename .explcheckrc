@@ -1,5 +1,12 @@
+# full list of explcheck configs
+# https://github.com/Witiko/expltools/blob/main/explcheck/src/explcheck-config.toml
+
 [defaults]
 warnings_are_errors = true
 ignored_issues = [
   "e408", # E408 calling an undefined function
 ]
+
+## following configs would be temporary enabled in "explcheck-slow" just recipe
+# stop_after = "flow analysis"
+# stop_early_when_confused = false
