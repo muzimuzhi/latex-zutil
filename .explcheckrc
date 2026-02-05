@@ -1,4 +1,4 @@
-# full list of explcheck configs
+# full list of explcheck configs, and their default values
 # https://github.com/Witiko/expltools/blob/main/explcheck/src/explcheck-config.toml
 
 [defaults]
