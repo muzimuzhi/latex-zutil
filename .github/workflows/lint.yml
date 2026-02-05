@@ -81,4 +81,4 @@ jobs:
     # the slowest, thus run at the end
     - name: Lint expl3 code (slow)
       run: |
-        just explcheck-slow
+        just explcheck-slow --verbose
