@@ -417,7 +417,7 @@ def l3build_print(*args: str, newline: bool = False) -> None:
 
     See https://docs.python.org/3/howto/logging.html#when-to-use-logging.
     """
-    print(f'{'\n' if newline else ''}[{LOGGER_NAME}]', *args)
+    print(f'{"\n" if newline else ""}[{LOGGER_NAME}]', *args)
 
 
 def l3build_patched() -> bool:
