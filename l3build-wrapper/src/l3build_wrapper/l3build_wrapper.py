@@ -211,7 +211,7 @@ class TestSuiteRun:
             add_option('-s')
         if args.quiet:
             add_option('-q')
-        if logger.getEffectiveLevel() == logging.DEBUG and l3build_patched():
+        if logger.getEffectiveLevel() == logging.DEBUG and _l3build_patched:
             add_option('-v')
         if args.halt_on_error:
             add_option('-H')
@@ -407,6 +407,8 @@ VERBOSITY_TO_LEVEL: Final[dict[int, int]] = {
     2: logging.DEBUG,
 }
 
+_l3build_patched: bool | None = None
+
 # init logger
 logging.basicConfig(format=LOGGING_DEFAULT_FORMAT)
 logger = logging.getLogger(LOGGER_NAME)
@@ -421,14 +423,16 @@ def l3build_print(*args: str, newline: bool = False) -> None:
 
 
 def l3build_patched() -> bool:
-    """Check if the l3build is patched (aka, run locally)."""
+    """Check if the l3build is patched, which gains extra options."""
+    is_patched = False
     try:
         rst = subprocess.run(['l3build', '--version'], check=True, capture_output=True)  # noqa: S607
-        return '(with patch)' in rst.stdout.decode('utf-8')
+        is_patched = '(with patch)' in rst.stdout.decode('utf-8')
     except subprocess.CalledProcessError:
         logger.exception('"l3build --version" failed.')
 
-    return False
+    logger.info('l3build is %spatched.', '' if is_patched else 'not ')
+    return is_patched
 
 
 def debug_logging_enabled() -> bool:
@@ -473,6 +477,8 @@ def wrap_l3build(args: argparse.Namespace) -> None:
     """Run l3build on one test suite a time."""
     logger.debug('Parsed args: %s', args)
 
+    _l3build_patched = l3build_patched()
+
     target = args.target
     if target not in Target:
         raise UnknownTargetError(target)
@@ -489,7 +495,7 @@ def wrap_l3build(args: argparse.Namespace) -> None:
     if not args.names:
         if target == Target.SAVE:
             raise NameRequiredError(target)
-        logger.info('Checking all test suites')
+        logger.info('Check all test suites')
         for ts_run in testsuites_run.values():
             ts_run.run_as_whole = True
     else:
