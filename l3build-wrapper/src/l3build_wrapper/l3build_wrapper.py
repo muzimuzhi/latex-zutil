@@ -287,9 +287,15 @@ class TestSuiteRun:
         """Invoke l3build."""
         path = self.ts.path
         commands = ['l3build', target, *options, *sorted(names)]
-        logger.info('Run "%s" in directory "%s"', ' '.join(commands), path)
+        logger.info(
+            '%s "%s" in directory "%s"',
+            'Would run' if dry_run else 'Run',
+            ' '.join(commands),
+            path,
+        )
         if dry_run:
             return
+
         try:
             subprocess.run(commands, cwd=path, check=True)  # noqa: S603
         except subprocess.CalledProcessError:
