@@ -42,14 +42,6 @@ class InvalidTestSuiteError(L3buildWrapperError):
         self.msg = msg
 
 
-class UnknownTargetError(L3buildWrapperError):
-    """Unknown target was provided."""
-
-    def __init__(self, target: str) -> None:
-        super().__init__(f'Unknown target: "{target}".')
-        self.target = target
-
-
 # https://docs.astral.sh/ruff/rules/raise-vanilla-args/
 class NameRequiredError(L3buildWrapperError):
     """No names were provided."""
@@ -480,8 +472,6 @@ def wrap_l3build(args: argparse.Namespace) -> None:
     _l3build_patched = l3build_patched()
 
     target = args.target
-    if target not in Target:
-        raise UnknownTargetError(target)
 
     TestSuiteRun.set_shared_target(Target(target))
     logger.debug('Shared target: "%s"', target)
@@ -529,8 +519,11 @@ parser = argparse.ArgumentParser(
 )
 # fmt: off
 # positional arguments
-parser.add_argument('target', type=str,
-                    help=f'a l3build target to run {[t.value for t in Target]}')
+parser.add_argument('target',
+                    type=str,
+                    choices=Target,
+                    metavar='target',
+                    help=f'the l3build target to run ({", ".join(Target)})')
 parser.add_argument('names', type=str, nargs='*', metavar='name',
                     help='a name of test suite or a glob for test name(s)')
 
