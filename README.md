@@ -20,20 +20,17 @@
 
 - Quick checks (various linters)
   - incremental run (on `git` staged files only)
-    - auto triggered by `git commit` (`pre-commit` git hook in use)
+    - auto triggered by `git commit` (`pre-commit` git hook in use), or
     - run `pre-commit run` manually
   - full run
-    - run `just lint` or `pre-commit run -a`
-- Slow checks (`l3build` test suites)
-  - run test suites for actively maintained packages `just test`
-  - run all test suites `just test test-inactive`
-- Full checks
-  - run `just all`
-  - run `just all-all` (including inactive packages)
+    - `just lint` or `pre-commit run -a`
+- Slow checks (`l3build` tests)
+  - `just test`: tests for actively maintained LaTeX packages
+  - `just test-inactive`: tests for inactive LaTeX packages
 - Checks run on CI
-  - [`lint.yml`](./.github/workflows/lint.yml) full quick checks
-  - [`check.yml`](./.github/workflows/check.yml) actively maintained slow checks (on Ubuntu)
-  - [`schedule.yml`](./.github/workflows/schedule.yml) once a week, quick checks (on Ubuntu) + full slow checks on 3 OSes
+  - [`lint.yml`](./.github/workflows/lint.yml) full quick checks and `just explcheck-slow` (on Ubuntu)
+  - [`check.yml`](./.github/workflows/check.yml) actively maintained slow checks (on Ubuntu by default)
+  - [`schedule.yml`](./.github/workflows/schedule.yml) once a week, `lint.yml` on Ubuntu + `check.yml` on 3 OSes
 
 ### General `just` usages
 

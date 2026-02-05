@@ -29,9 +29,6 @@ default:
     just --justfile {{justfile()}} --list --unsorted
 
 [group('*meta')]
-all-all: all test-inactive
-
-[group('*meta')]
 all: lint test
 
 [group('*meta')]
