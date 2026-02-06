@@ -178,6 +178,8 @@ class TestSuiteRun:
 
     target: Target
     options_shared: Options
+    is_patched: bool
+    dry_run: bool
 
     def __init__(self, ts: TestSuite) -> None:
         self.name = ts.name
@@ -187,13 +189,8 @@ class TestSuiteRun:
         self.run_as_whole: bool = False
 
     @classmethod
-    def set_shared_target(cls, target: Target) -> None:
-        """Set the target for all test suite runs."""
-        cls.target = target
-
-    @classmethod
-    def set_shared_options(cls, args: argparse.Namespace) -> None:
-        """Compose options for all test suite runs."""
+    def _set_shared_l3build_options(cls, args: argparse.Namespace) -> None:
+        """Compose l3build options for all test suite runs."""
 
         def add_option(option: str) -> None:
             _options.append(option)
@@ -203,7 +200,7 @@ class TestSuiteRun:
             add_option('-s')
         if args.quiet:
             add_option('-q')
-        if logger.getEffectiveLevel() == logging.DEBUG and _l3build_patched:
+        if logger.getEffectiveLevel() == logging.DEBUG and cls.is_patched:
             add_option('-v')
         if args.halt_on_error:
             add_option('-H')
@@ -217,7 +214,20 @@ class TestSuiteRun:
             add_option('--show-log-on-error')
         cls.options_shared = _options
 
-    def finalize_names(self) -> None:
+    @classmethod
+    def set_shared_args(cls, args: argparse.Namespace, *, is_patched: bool) -> None:
+        """Set shared arguments for all test suite runs."""
+        cls.is_patched = is_patched # logged earlier in is_l3build_patched()
+        cls.dry_run = args.dry_run # logged later in invoke_l3build()
+
+        cls.target = args.target
+        logger.debug('target="%s"', cls.target)
+
+        cls._set_shared_l3build_options(args)
+        logger.debug('l3build options=%s', cls.options_shared)
+
+
+    def _finalize_names(self) -> None:
         """Adjust collected test names at final stage."""
         if self.run_as_whole:
             # `save` a testsuite means saving all names in it
@@ -231,7 +241,7 @@ class TestSuiteRun:
             elif self.target == Target.CHECK:
                 self.names = Names(set())
 
-    def set_options(self, args: argparse.Namespace) -> None:
+    def _set_options(self, args: argparse.Namespace) -> None:
         """Compose l3build options specific to this test suite."""
 
         def add_option(option: str) -> None:
@@ -267,7 +277,7 @@ class TestSuiteRun:
                 names_unknown.add(name)
         return names_unknown
 
-    def get_engine_specific_results(self, name: str) -> Engines:
+    def _get_engine_specific_results(self, name: str) -> Engines:
         """Get list of engines from engine-specific test results."""
         ts = self.ts
         # if "name.tlg" and "name.pdf" both exist, but different sets of
@@ -282,13 +292,12 @@ class TestSuiteRun:
         target: Target,
         options: Options,
         names: Names,
-        dry_run: bool,  # noqa: FBT001
     ) -> None:
         """Invoke l3build."""
         path = self.ts.path
         commands = ['l3build', target, *options, *sorted(names)]
         logger.info('Run "%s" in directory "%s"', ' '.join(commands), path)
-        if dry_run:
+        if self.dry_run:
             return
         try:
             subprocess.run(commands, cwd=path, check=True)  # noqa: S603
@@ -296,56 +305,59 @@ class TestSuiteRun:
             logger.error('Failed to run l3build')
             sys.exit(1)
 
+    def _save_for_all_engines(self) -> None:
+        """Save tests for all engines."""
+        name_groups: dict[Engines, Names] = {}
+        for name in self.names:
+            engines: Engines = self._get_engine_specific_results(name)
+            if engines in name_groups:
+                name_groups[engines].add(name)
+            else:
+                name_groups[engines] = Names({name})
+
+        for engines, names in name_groups.items():
+            if not engines:
+                # save for stdengine only
+                logger.info('Save test(s) "%s" in stdengine', ', '.join(names))
+                options = self.options
+            else:
+                # save for stdengine and extra engines
+                _engines = Engines((self.ts.stdengine, *engines))
+                logger.info(
+                    'Save test(s) "%s" in engines "%s"',
+                    ', '.join(names),
+                    ', '.join(_engines),
+                )
+                options = Options(
+                    [op for op in self.options if not op.startswith('-e')]
+                )
+                options.append(f'-e{",".join(_engines)}')
+            self._invoke_l3build(self.target, options, names)
+
     def invoke_l3build(self, args: argparse.Namespace) -> bool:
         """Run l3build on this test suite."""
-
-        def save_for_all_engines() -> None:
-            name_groups: dict[Engines, Names] = {}
-            for name in self.names:
-                engines: Engines = self.get_engine_specific_results(name)
-                if engines in name_groups:
-                    name_groups[engines].add(name)
-                else:
-                    name_groups[engines] = Names({name})
-
-            for engines, names in name_groups.items():
-                if not engines:
-                    # save for stdengine only
-                    logger.info('Save test(s) "%s" in stdengine', ', '.join(names))
-                    options = self.options
-                else:
-                    # save for stdengine and extra engines
-                    _engines = Engines((self.ts.stdengine, *engines))
-                    logger.info(
-                        'Save test(s) "%s" in engines "%s"',
-                        ', '.join(names),
-                        ', '.join(_engines),
-                    )
-                    options = Options(
-                        [op for op in self.options if not op.startswith('-e')]
-                    )
-                    options.append(f'-e{",".join(_engines)}')
-                self._invoke_l3build(self.target, options, names, args.dry_run)
-
         if not self.run_as_whole and not self.names:
             return False
 
-        self.finalize_names()
-        self.set_options(args)
+        self._finalize_names()
+        self._set_options(args)
         self.options.extend(TestSuiteRun.options_shared)
 
+        if args.dry_run:
+            logger.debug('Dry-run mode on')
+
         if self.target == Target.SAVE and args.engine == _OPTION_ALL_ENGINES:
-            save_for_all_engines()
+            self._save_for_all_engines()
         else:
             # simple case, run l3build on the test suite
-            self._invoke_l3build(self.target, self.options, self.names, args.dry_run)
+            self._invoke_l3build(self.target, self.options, self.names)
 
         if self.target == Target.SAVE and args.recheck:
-            l3build_print('Rechecking tests', newline=True)
+            _print('Rechecking tests', newline=True)
             # always set `-S, --show-saves` when rechecking
             if '-S' not in self.options:
                 self.options.append('-S')
-            self._invoke_l3build(Target.CHECK, self.options, self.names, args.dry_run)
+            self._invoke_l3build(Target.CHECK, self.options, self.names)
         return True
 
 
@@ -399,14 +411,13 @@ VERBOSITY_TO_LEVEL: Final[dict[int, int]] = {
     2: logging.DEBUG,
 }
 
-_l3build_patched: bool | None = None
 
 # init logger
 logging.basicConfig(format=LOGGING_DEFAULT_FORMAT)
 logger = logging.getLogger(LOGGER_NAME)
 
 
-def l3build_print(*args: str, newline: bool = False) -> None:
+def _print(*args: str, newline: bool = False) -> None:
     """Print ordinary output prefixed with logger name.
 
     See https://docs.python.org/3/howto/logging.html#when-to-use-logging.
@@ -414,7 +425,7 @@ def l3build_print(*args: str, newline: bool = False) -> None:
     print(f'{"\n" if newline else ""}[{LOGGER_NAME}]', *args)
 
 
-def l3build_patched() -> bool:
+def is_l3build_patched() -> bool:
     """Check if the l3build is patched, which gains extra options."""
     is_patched = False
     try:
@@ -423,7 +434,7 @@ def l3build_patched() -> bool:
     except subprocess.CalledProcessError:
         logger.exception('"l3build --version" failed.')
 
-    logger.info('l3build is %spatched.', '' if is_patched else 'not ')
+    logger.info('l3build patched? %s', is_patched)
     return is_patched
 
 
@@ -469,19 +480,13 @@ def wrap_l3build(args: argparse.Namespace) -> None:
     """Run l3build on one test suite a time."""
     logger.debug('Parsed args: %s', args)
 
-    _l3build_patched = l3build_patched()
-
-    target = args.target
-
-    TestSuiteRun.set_shared_target(Target(target))
-    logger.debug('Shared target: "%s"', target)
-    TestSuiteRun.set_shared_options(args)
-    logger.debug('Shared options: %s', TestSuiteRun.options_shared)
+    TestSuiteRun.set_shared_args(args, is_patched=is_l3build_patched())
 
     testsuites_run: dict[str, TestSuiteRun] = {
         ts.name: TestSuiteRun(ts) for ts in L3BUILD_TESTSUITES
     }
 
+    target = args.target
     if not args.names:
         if target == Target.SAVE:
             raise NameRequiredError(target)
@@ -503,7 +508,7 @@ def wrap_l3build(args: argparse.Namespace) -> None:
         invoked |= ts_run.invoke_l3build(args)
     if not invoked:
         # should not happen, but just in case
-        logger.warning('No l3build commands were invoked.')
+        logger.warning('No l3build commands to invoke.')
 
 
 # Unlike in vanilla l3build,
