@@ -76,6 +76,7 @@ class _TestSuiteDefault:
 
     config: str
     checkengines: list[str]
+    testfiledir: str
     lvtext: str
     tlgext: str
     pvtext: str
@@ -88,13 +89,12 @@ class TestSuite(_TestSuiteDefault):
 
     name: str
     path: str = ''
-    testfiledir: str = ''
     stdengine: str = ''
     alias: str | None = None
     test_names: Names | None = None
     test_results: Names | None = None
 
-    def __post_init__(self) -> None:  # noqa: C901
+    def __post_init__(self) -> None:
         """More initialization with checks."""
         if not self.name:
             raise InvalidTestSuiteError(self.name, 'Missing test suite name')
@@ -113,12 +113,6 @@ class TestSuite(_TestSuiteDefault):
                 'Configuration file not found',
             )
 
-        # autoset testfiledir
-        if not self.testfiledir:
-            if self.config == 'build':
-                self.testfiledir = 'testfiles'
-            elif self.config.startswith('config-'):
-                self.testfiledir = 'testfiles-' + self.config.removeprefix('config-')
         test_dir = base_dir / self.testfiledir
         if not test_dir.is_dir():
             raise InvalidTestSuiteError(str(test_dir), 'Directory not found')
@@ -366,6 +360,7 @@ _OPTION_ALL_ENGINES: Final[str] = '_option_all_engines'
 TESTSUITE_DEFAULT: Final = _TestSuiteDefault(
     config='build',
     checkengines=['pdftex', 'luatex', 'xetex'],
+    testfiledir='testfiles',
     lvtext='.lvt',
     tlgext='.tlg',
     pvtext='.pvt',
