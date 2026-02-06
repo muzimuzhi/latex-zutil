@@ -183,7 +183,7 @@ class TestSuiteRun:
         self.run_as_whole: bool = False
 
     @classmethod
-    def _set_shared_l3build_options(cls, args: argparse.Namespace) -> None:
+    def _set_shared_l3build_options(cls, args: argparse.Namespace) -> None:  # noqa: C901
         """Compose l3build options for all test suite runs."""
 
         def add_option(option: str) -> None:
@@ -204,6 +204,8 @@ class TestSuiteRun:
             add_option('--dev')
         if args.dirty:
             add_option('--dirty')
+        if args.rerun:
+            add_option('--rerun')
         if args.show_log_on_error:
             add_option('--show-log-on-error')
         cls.options_shared = _options
@@ -552,6 +554,7 @@ inherited.add_argument('-q', '--quiet',
                        action=argparse.BooleanOptionalAction,
                        default=True,
                        help='suppress TeX standard output (support for "save" target needs local l3build patch)')  # noqa: E501
+inherited.add_argument('--rerun', action='store_true')
 inherited.add_argument('--show-log-on-error', action='store_true')
 inherited.add_argument('-S', '--show-saves', action='store_true')
 inherited.add_argument('-s', '--stdengine', action='store_true')
