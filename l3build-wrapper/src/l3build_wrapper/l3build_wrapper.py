@@ -189,26 +189,29 @@ class TestSuiteRun:
         def add_option(option: str) -> None:
             _options.append(option)
 
-        _options = Options([])
-        if args.stdengine:
-            add_option('-s')
-        if args.quiet:
-            add_option('-q')
-        if logger.getEffectiveLevel() == logging.DEBUG and cls.is_patched:
-            add_option('-v')
-        if args.halt_on_error:
-            add_option('-H')
-        if cls.target == Target.CHECK and args.show_saves:
-            add_option('-S')
+        _options: list[str] = []
+        # inherited options
         if args.dev:
             add_option('--dev')
         if args.dirty:
             add_option('--dirty')
+        # -e/--engine is handled differently
+        if args.halt_on_error:
+            add_option('-H')
+        if args.quiet:
+            add_option('-q')
         if args.rerun:
             add_option('--rerun')
         if args.show_log_on_error:
             add_option('--show-log-on-error')
-        cls.options_shared = _options
+        if cls.target == Target.CHECK and args.show_saves:
+            add_option('-S')
+        if args.stdengine:
+            add_option('-s')
+        # new, wrapper-only options
+        if logger.getEffectiveLevel() == logging.DEBUG and cls.is_patched:
+            add_option('-v')
+        cls.options_shared = Options(_options)
 
     @classmethod
     def set_shared_args(cls, args: argparse.Namespace, *, is_patched: bool) -> None:
