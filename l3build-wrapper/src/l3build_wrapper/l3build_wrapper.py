@@ -358,11 +358,6 @@ class TestSuiteRun:
 
 LOGGING_DEFAULT_FORMAT = '[%(name)s %(levelname)-5s] %(message)s'
 # LOGGING_DEBUG_FORMAT = '[%(name)s %(levelname)-5s] %(filename)s:%(lineno)d - %(funcName)-17s - %(message)s'  # noqa: E501, ERA001
-LOGGING_VERBOSITY_TO_LEVEL: Final[dict[int, int]] = {
-    0: logging.WARNING,
-    1: logging.INFO,
-    2: logging.DEBUG,
-}
 
 LOGGER_NAME: Final[str] = 'wrapper'
 
@@ -462,10 +457,13 @@ def set_logging(args: argparse.Namespace) -> None:
     if debug_logging_enabled():
         set_level(logging.DEBUG)
     else:
-        level = LOGGING_VERBOSITY_TO_LEVEL.get(args.verbose, logging.DEBUG)
-        if args.dry_run:
-            level = min(level, logging.INFO)
-        set_level(level)
+        match args.verbose + args.dry_run:
+            case 0:
+                set_level(logging.WARNING)
+            case 1:
+                set_level(logging.INFO)
+            case _:
+                set_level(logging.DEBUG)
 
 
 def wrap_l3build(args: argparse.Namespace) -> None:
