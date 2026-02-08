@@ -67,6 +67,8 @@ Note: As configured by `.justfile` in this repository, `just` invoked from any s
     https://github.com/casey/just
   - `pre-commit`: a Git hook framework\
     https://github.com/pre-commit/pre-commit
+  - `ruff`: a fast Python linter and code formatter \
+    https://github.com/astral-sh/ruff
   - `typos`: source code spell checker\
     https://github.com/crate-ci/typos
   - `uv`: an extremely fast Python package and project manager\

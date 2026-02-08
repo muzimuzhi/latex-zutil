@@ -50,6 +50,7 @@ jobs:
       with:
         cache: false
 
+    # FIXME: pre-commit hooks are not cached
     - name: Run pre-commit checks
       run: |
         just pre-commit
