@@ -71,14 +71,16 @@ jobs:
         just typos
 
     - name: Lint expl3 code
+      if: toJSON(inputs) == '{}'
       run: |
-        just explcheck
+        just explcheck --verbose
+
+    - name: Lint expl3 code (slow)
+      # run only when triggered by `workflow_call` or `workflow_dispatch`
+      if: toJSON(inputs) != '{}'
+      run: |
+        just explcheck-slow --verbose
 
     - name: Lint python code
       run: |
         just ruff check
-
-    # the slowest, thus run at the end
-    - name: Lint expl3 code (slow)
-      run: |
-        just explcheck-slow --verbose
