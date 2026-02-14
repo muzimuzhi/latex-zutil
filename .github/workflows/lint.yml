@@ -71,14 +71,15 @@ jobs:
         just typos
 
     - name: Lint expl3 code
+      if: ! inputs
       run: |
-        just explcheck
+        just explcheck --verbose
+
+    - name: Lint expl3 code (slow)
+      if: inputs
+      run: |
+        just explcheck-slow --verbose
 
     - name: Lint python code
       run: |
         just ruff check
-
-    # the slowest, thus run at the end
-    - name: Lint expl3 code (slow)
-      run: |
-        just explcheck-slow --verbose
