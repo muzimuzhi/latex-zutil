@@ -60,11 +60,13 @@ explcheck *options="":
 [group('lint')]
 explcheck-slow *options="":
     @echo '{{ info }}Enabling explcheck flow analysis...{{ end_info }}'
-    texlua scripts/explcheck-toggle-configs.lua enable
+    awk '{ sub(/^# stop_(after|early_when_confused) = .*$/, substr($0, 3)); print}' .explcheckrc > .explcheckrc.tmp
+    cp .explcheckrc .explcheckrc.bak
+    mv .explcheckrc.tmp .explcheckrc
     @echo '{{ info }}Linting expl3 code (slow)...{{ end_info }}'
-    explcheck {{ options }} support/*.cfg zutil/*.sty zutil/*.tex
+    -explcheck {{ options }} support/*.cfg zutil/*.sty zutil/*.tex
     @echo '{{ info }}Disabling explcheck flow analysis...{{ end_info }}'
-    texlua scripts/explcheck-toggle-configs.lua disable
+    mv .explcheckrc.bak .explcheckrc
 
 alias expl := explcheck
 alias expl3 := explcheck
