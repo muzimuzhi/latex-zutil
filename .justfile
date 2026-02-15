@@ -19,7 +19,7 @@ export SKIP := env('SKIP', 'typos,explcheck,ruff')
 export diffext := env('diffext', '.diff')
 export diffexe := env('diffexe', 'git diff --no-index --text --')
 
-export EXPLCHECK_CONFIG := env('EXPLCHECK_CONFIG', 'configs/explcheck.toml')
+export EXPLCHECK_CONFIG := env('EXPLCHECK_CONFIG', 'config/explcheck.toml')
 
 L3BUILD_CHECK_OPTIONS := env('L3BUILD_CHECK_OPTIONS', '-q --show-saves')
 L3BUILD_SAVE_OPTIONS := env('L3BUILD_SAVE_OPTIONS', '-q')
