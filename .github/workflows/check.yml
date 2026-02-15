@@ -172,7 +172,7 @@ jobs:
         #   - zutil-diffs-dev
         name: "zutil-diffs-\
           ${{ matrix.options != '' && '-dev' || '' }}"
-        # configured in .justfile, l3build uses OS-independent diff file extension
+        # configured in justfile, l3build uses OS-independent diff file extension
         path: |
           build/**/*.diff
           build/**/*.diff.png
