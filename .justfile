@@ -48,7 +48,7 @@ test-inactive: tblr tblr-old tblr-ppm
 [group('lint')]
 typos *options="":
     @echo '{{ info }}Checking spelling...{{ end_info }}'
-    typos {{ options }}
+    typos --config=config/typos.toml {{ options }}
 
 ## per recipe attribute [env(NAME, VALUE)] needs just newer than 1.46.0
 ## https://github.com/casey/just/commit/c85bf9dd9a20a36e2e164b9f31740eb200d482c9
