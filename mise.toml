@@ -15,7 +15,16 @@ END_INFO = '{{ vars.NORMAL }}'
 # includes = ["scripts/mise-tasks"]
 
 [tasks."lint:expl3"]
-description = "Lint expl3 code"
-alias = "expl"
+description = 'Lint expl3 code'
+alias = 'expl'
 env.EXPLCHECK_CONFIG = '{{ get_env(name="EXPLCHECK_CONFIG", default="config/explcheck.toml") }}'
 file = 'scripts/lint-expl3.sh'
+
+[tasks."lint:python"]
+description = 'Lint python code'
+alias = 'ruff'
+dir = 'l3build-wrapper'
+usage = '''
+arg "[command]" default="check"
+'''
+run = 'uvx --isolated ruff {{ usage.command }}'

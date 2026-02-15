@@ -59,7 +59,7 @@ repos:
     alias: explcheck
     name: Lint expl3 files
     language: unsupported
-    entry: just explcheck
+    entry: mise run --quiet expl
     # this file list is composed in justfile too
     files: ^support/.*\.cfg|zutil/.*\.(sty|tex)$
     pass_filenames: false
@@ -71,7 +71,7 @@ repos:
     language: unsupported
     # `cd <dir> && <command>` never failed here, so use a command different
     # from that in just recipe `ruff`
-    entry: just ruff check
+    entry: mise run --quiet ruff
     files: ^l3build-wrapper/
     # types_or: [python, pyi, jupyter]
     pass_filenames: false
