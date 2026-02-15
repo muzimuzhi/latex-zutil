@@ -8,8 +8,12 @@ info() {
 
 if [[ "${usage_slow?}" == "true" ]]; then
     info "Patching config..."
-    awk '{ sub(/^# stop_(after|early_when_confused) = .*$/, substr($0, 3)); print}' \
-        "$EXPLCHECK_CONFIG" > "$EXPLCHECK_CONFIG".tmp
+    awk '
+      {
+        sub(/^# stop_(after|early_when_confused) = .*$/, substr($0, 3));
+        print
+      }
+    ' "$EXPLCHECK_CONFIG" > "$EXPLCHECK_CONFIG".tmp
     cp "$EXPLCHECK_CONFIG" "$EXPLCHECK_CONFIG".bak
     mv "$EXPLCHECK_CONFIG".tmp "$EXPLCHECK_CONFIG"
 
