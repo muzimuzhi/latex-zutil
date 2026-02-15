@@ -60,7 +60,7 @@ repos:
     name: Lint expl3 files
     language: unsupported
     entry: just explcheck
-    # this file list is composed in .justfile too
+    # this file list is composed in justfile too
     files: ^support/.*\.cfg|zutil/.*\.(sty|tex)$
     pass_filenames: false
   # there exists an official ruff pre-commit

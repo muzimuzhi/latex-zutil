@@ -53,7 +53,7 @@ $ just check zutil tblr
 $ just save --all-engines zutil-001 tblr-loading
 ```
 
-Note: As configured by `.justfile` in this repository, `just` invoked from any subdirectories acts the same as being invoked from the top-level directory.
+Note: As configured by `justfile` in this repository, `just` invoked from any subdirectories acts the same as being invoked from the top-level directory.
 
 ### Tools
 
