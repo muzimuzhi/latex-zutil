@@ -1,4 +1,4 @@
-# for `rg` to search for by default
+# for `rg` to search in Git-tracked hidden dirs and files by default
 
 # unignore a hidden directory, learned from
 # https://github.com/BurntSushi/ripgrep/commit/387df97d85291f75511dc77329395931af348b34
