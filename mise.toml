@@ -1,21 +1,18 @@
 [settings]
 env_shell_expand = true
 
+[tools]
+typos = 'latest'
+
 [vars]
 # https://github.com/casey/just?tab=readme-ov-file#constants
 NORMAL = '\e[0m'
 BOLD = '\e[1m'
 BLUE = '\e[34m'
 
-[tools]
-typos = 'latest'
-
 [env]
 INFO = '{{ vars.BOLD }}{{ vars.BLUE }}===> '
 END_INFO = '{{ vars.NORMAL }}'
-
-[task_config]
-# includes = ["scripts/mise-tasks"]
 
 [tasks.lint]
 depends = ['lint:pre-commit', 'lint:typos', 'lint:expl3', 'lint:python']
