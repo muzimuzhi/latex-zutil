@@ -50,8 +50,8 @@ typos *options="":
     @echo '{{ info }}Checking spelling...{{ end_info }}'
     typos {{ options }}
 
-## recipe attribute [env('EXPLCHECK_CONFIG', '{{ EXPLCHECK_CONFIG }}')] needs
-## just newer than 1.46.0
+## per recipe attribute [env(NAME, VALUE)] needs just newer than 1.46.0
+## https://github.com/casey/just/commit/c85bf9dd9a20a36e2e164b9f31740eb200d482c9
 
 # Lint expl3 files
 [group('lint')]
