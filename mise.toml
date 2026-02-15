@@ -14,6 +14,9 @@ END_INFO = '{{ vars.NORMAL }}'
 [task_config]
 # includes = ["scripts/mise-tasks"]
 
+[tasks.lint]
+depends = ['lint:pre-commit', 'lint:typos', 'lint:expl3', 'lint:python']
+
 [tasks."lint:expl3"]
 description = 'Lint expl3 code'
 alias = 'expl'
@@ -33,3 +36,9 @@ run = 'uvx --isolated ruff {{ usage.command }}'
 description = "Check spelling"
 alias = 'typos'
 run = 'typos --config=config/typos.toml'
+
+[tasks."lint:pre-commit"]
+description = "Run pre-commit checks on all files"
+alias = 'pre-commit'
+env.SKIP = '{{ get_env(name="SKIP", default="typos,explcheck,ruff") }}'
+run = 'echo "Skipped checks: $SKIP" && pre-commit run --all-files'

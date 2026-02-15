@@ -56,13 +56,12 @@ jobs:
         # supported tools
         # https://github.com/taiki-e/install-action/blob/main/TOOLS.md
         tool: |
-          just
           typos
         fallback: none
 
     - name: Run pre-commit checks
       run: |
-        just pre-commit
+        mise run pre-commit
       env:
         PRE_COMMIT_COLOR: always
 

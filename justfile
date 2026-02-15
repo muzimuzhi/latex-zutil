@@ -28,25 +28,10 @@ default:
     just --justfile {{justfile()}} --list --unsorted
 
 [group('*meta')]
-all: lint test
-
-[group('*meta')]
-lint: pre-commit
-
-[group('*meta')]
 test: zutil
 
 [group('*meta')]
 test-inactive: tblr tblr-old tblr-ppm
-
-## linting recipes
-
-# Run pre-commit checks on all files
-[group('lint')]
-pre-commit *options="":
-    @echo '{{ info }}Running pre-commit checks...{{ end_info }}'
-    @echo 'Skipped checks: {{ SKIP }}'
-    pre-commit run --all-files {{ options }}
 
 ## testing recipes
 
