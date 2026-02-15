@@ -19,6 +19,8 @@ export SKIP := env('SKIP', 'typos,explcheck,ruff')
 export diffext := env('diffext', '.diff')
 export diffexe := env('diffexe', 'git diff --no-index --text --')
 
+export EXPLCHECK_CONFIG := env('EXPLCHECK_CONFIG', 'configs/explcheck.toml')
+
 L3BUILD_CHECK_OPTIONS := env('L3BUILD_CHECK_OPTIONS', '-q --show-saves')
 L3BUILD_SAVE_OPTIONS := env('L3BUILD_SAVE_OPTIONS', '-q')
 
@@ -48,22 +50,24 @@ typos *options="":
     @echo '{{ info }}Checking spelling...{{ end_info }}'
     typos {{ options }}
 
+## recipe attribute [env('EXPLCHECK_CONFIG', '{{ EXPLCHECK_CONFIG }}')] needs
+## just newer than 1.46.0
+
 # Lint expl3 files
 [group('lint')]
 explcheck *options="":
     @echo '{{ info }}Linting expl3 code...{{ end_info }}'
     # this file list is composed in pre-commit config too
-    explcheck {{ options }} zutil/*.sty zutil/*.tex support/*.cfg
+    explcheck \
+        --config-file="$EXPLCHECK_CONFIG" \
+        {{ options }} \
+        zutil/*.sty zutil/*.tex support/*.cfg
     # explcheck --ignored-issues=s103,s204,w302 {{ options }} tabularray/tabularray.sty
-
-# XXX: alternatively, run a python script to update .explcheckrc
-#      https://tomlkit.readthedocs.io/en/latest/quickstart/#modifying
 
 # Lint expl3 files, flow analysis enabled
 [group('lint')]
 explcheck-slow *options="":
     #!/usr/bin/env -S bash
-    EXPLCHECK_CONFIG=".explcheckrc"
     echo '{{ info }}Patching config...{{ end_info }}'
     awk '{ sub(/^# stop_(after|early_when_confused) = .*$/, substr($0, 3)); print}' "$EXPLCHECK_CONFIG" > "$EXPLCHECK_CONFIG".tmp
     cp "$EXPLCHECK_CONFIG" "$EXPLCHECK_CONFIG".bak
@@ -76,7 +80,10 @@ explcheck-slow *options="":
     trap 'cleanup' EXIT
 
     echo '{{ info }}Linting expl3 code (slow)...{{ end_info }}'
-    explcheck {{ options }} zutil/*.sty zutil/*.tex support/*.cfg
+    explcheck \
+        --config-file="$EXPLCHECK_CONFIG" \
+        {{ options }} \
+        zutil/*.sty zutil/*.tex support/*.cfg
 
 alias expl := explcheck
 alias expl3 := explcheck
