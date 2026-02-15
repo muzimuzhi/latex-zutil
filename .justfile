@@ -53,7 +53,7 @@ typos *options="":
 explcheck *options="":
     @echo '{{ info }}Linting expl3 code...{{ end_info }}'
     # this file list is composed in pre-commit config too
-    explcheck {{ options }} support/*.cfg zutil/*.sty zutil/*.tex
+    explcheck {{ options }} zutil/*.sty zutil/*.tex support/*.cfg
     # explcheck --ignored-issues=s103,s204,w302 {{ options }} tabularray/tabularray.sty
 
 # Lint expl3 files, flow analysis enabled
@@ -62,7 +62,7 @@ explcheck-slow *options="":
     @echo '{{ info }}Enabling explcheck flow analysis...{{ end_info }}'
     texlua scripts/explcheck-toggle-configs.lua enable
     @echo '{{ info }}Linting expl3 code (slow)...{{ end_info }}'
-    explcheck {{ options }} support/*.cfg zutil/*.sty zutil/*.tex
+    explcheck {{ options }} zutil/*.sty zutil/*.tex support/*.cfg
     @echo '{{ info }}Disabling explcheck flow analysis...{{ end_info }}'
     texlua scripts/explcheck-toggle-configs.lua disable
 
