@@ -1,0 +1,21 @@
+[settings]
+env_shell_expand = true
+
+[vars]
+# https://github.com/casey/just?tab=readme-ov-file#constants
+NORMAL = '\e[0m'
+BOLD = '\e[1m'
+BLUE = '\e[34m'
+
+[env]
+INFO = '{{ vars.BOLD }}{{ vars.BLUE }}===> '
+END_INFO = '{{ vars.NORMAL }}'
+
+[task_config]
+# includes = ["scripts/mise-tasks"]
+
+[tasks."lint:expl3"]
+description = "Lint expl3 code"
+alias = "expl"
+env.EXPLCHECK_CONFIG = '{{ get_env(name="EXPLCHECK_CONFIG", default="config/explcheck.toml") }}'
+file = 'scripts/lint-expl3.sh'

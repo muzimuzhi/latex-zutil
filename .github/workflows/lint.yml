@@ -73,13 +73,13 @@ jobs:
     - name: Lint expl3 code
       if: toJSON(inputs) == '{}'
       run: |
-        just explcheck --verbose
+        mise run expl -- --verbose
 
     - name: Lint expl3 code (slow)
       # run only when triggered by `workflow_call` or `workflow_dispatch`
       if: toJSON(inputs) != '{}'
       run: |
-        just explcheck-slow --verbose
+        mise run expl --slow --verbose
 
     - name: Lint python code
       run: |
