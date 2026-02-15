@@ -28,3 +28,8 @@ usage = '''
 arg "[command]" default="check"
 '''
 run = 'uvx --isolated ruff {{ usage.command }}'
+
+[tasks."lint:typos"]
+description = "Check spelling"
+alias = 'typos'
+run = 'typos --config=config/typos.toml'

@@ -53,7 +53,7 @@ repos:
     language: unsupported
     # same as the official `typos` hook args
     # https://github.com/crate-ci/typos/blob/ebc6aac34e3692b3ce373e13f4145e8980875396/.pre-commit-hooks.yaml
-    entry: just typos
+    entry: mise run typos
     pass_filenames: false
   - id: lint-expl3
     alias: explcheck

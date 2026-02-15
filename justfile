@@ -15,7 +15,6 @@ set unstable
 info := BOLD + BLUE + "===> "
 end_info := NORMAL
 
-export SKIP := env('SKIP', 'typos,explcheck')
 export diffext := env('diffext', '.diff')
 export diffexe := env('diffexe', 'git diff --no-index --text --')
 
@@ -32,7 +31,7 @@ default:
 all: lint test
 
 [group('*meta')]
-lint: pre-commit typos
+lint: pre-commit
 
 [group('*meta')]
 test: zutil
@@ -41,12 +40,6 @@ test: zutil
 test-inactive: tblr tblr-old tblr-ppm
 
 ## linting recipes
-
-# Check spelling
-[group('lint')]
-typos *options="":
-    @echo '{{ info }}Checking spelling...{{ end_info }}'
-    typos --config=config/typos.toml {{ options }}
 
 # Run pre-commit checks on all files
 [group('lint')]

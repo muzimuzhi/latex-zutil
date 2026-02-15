@@ -68,7 +68,7 @@ jobs:
 
     - name: Check spelling
       run: |
-        just typos
+        mise run typos
 
     - name: Lint expl3 code
       if: toJSON(inputs) == '{}'
