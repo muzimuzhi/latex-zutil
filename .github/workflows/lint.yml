@@ -50,37 +50,30 @@ jobs:
       with:
         run-pre-commit: false
 
-    - name: Install tools
-      uses: taiki-e/install-action@v2
-      with:
-        # supported tools
-        # https://github.com/taiki-e/install-action/blob/main/TOOLS.md
-        tool: |
-          just
-          typos
-        fallback: none
+    - name: Setup mise
+      uses: jdx/mise-action@v3
 
     - name: Run pre-commit checks
       run: |
-        just pre-commit
+        mise run pre-commit
       env:
         PRE_COMMIT_COLOR: always
 
     - name: Check spelling
       run: |
-        just typos
+        mise run typos
 
     - name: Lint expl3 code
       if: toJSON(inputs) == '{}'
       run: |
-        just explcheck --verbose
+        mise run expl
 
     - name: Lint expl3 code (slow)
       # run only when triggered by `workflow_call` or `workflow_dispatch`
       if: toJSON(inputs) != '{}'
       run: |
-        just explcheck-slow --verbose
+        mise run expl --slow --verbose
 
     - name: Lint python code
       run: |
-        just ruff check
+        mise run ruff
