@@ -1,9 +1,6 @@
 [settings]
 env_shell_expand = true
 
-[tools]
-typos = 'latest'
-
 [vars]
 # https://github.com/casey/just?tab=readme-ov-file#constants
 NORMAL = '\e[0m'
@@ -30,7 +27,7 @@ dir = 'l3build-wrapper'
 usage = '''
 arg "[command]" default="check"
 '''
-run = 'uvx --isolated ruff {{ usage.command }}'
+run = 'ruff {{ usage.command }}'
 
 [tasks."lint:typos"]
 description = "Check spelling"
