@@ -7,6 +7,9 @@ NORMAL = '\e[0m'
 BOLD = '\e[1m'
 BLUE = '\e[34m'
 
+[tools]
+typos = 'latest'
+
 [env]
 INFO = '{{ vars.BOLD }}{{ vars.BLUE }}===> '
 END_INFO = '{{ vars.NORMAL }}'

@@ -50,14 +50,8 @@ jobs:
       with:
         run-pre-commit: false
 
-    - name: Install tools
-      uses: taiki-e/install-action@v2
-      with:
-        # supported tools
-        # https://github.com/taiki-e/install-action/blob/main/TOOLS.md
-        tool: |
-          typos
-        fallback: none
+    - name: Setup mise
+      uses: jdx/mise-action@v3
 
     - name: Run pre-commit checks
       run: |
