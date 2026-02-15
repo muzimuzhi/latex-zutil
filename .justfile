@@ -56,17 +56,27 @@ explcheck *options="":
     explcheck {{ options }} zutil/*.sty zutil/*.tex support/*.cfg
     # explcheck --ignored-issues=s103,s204,w302 {{ options }} tabularray/tabularray.sty
 
+# XXX: alternatively, run a python script to update .explcheckrc
+#      https://tomlkit.readthedocs.io/en/latest/quickstart/#modifying
+
 # Lint expl3 files, flow analysis enabled
 [group('lint')]
 explcheck-slow *options="":
-    @echo '{{ info }}Enabling explcheck flow analysis...{{ end_info }}'
-    awk '{ sub(/^# stop_(after|early_when_confused) = .*$/, substr($0, 3)); print}' .explcheckrc > .explcheckrc.tmp
-    cp .explcheckrc .explcheckrc.bak
-    mv .explcheckrc.tmp .explcheckrc
-    @echo '{{ info }}Linting expl3 code (slow)...{{ end_info }}'
-    -explcheck {{ options }} zutil/*.sty zutil/*.tex support/*.cfg
-    @echo '{{ info }}Disabling explcheck flow analysis...{{ end_info }}'
-    mv .explcheckrc.bak .explcheckrc
+    #!/usr/bin/env -S bash
+    EXPLCHECK_CONFIG=".explcheckrc"
+    echo '{{ info }}Patching config...{{ end_info }}'
+    awk '{ sub(/^# stop_(after|early_when_confused) = .*$/, substr($0, 3)); print}' "$EXPLCHECK_CONFIG" > "$EXPLCHECK_CONFIG".tmp
+    cp "$EXPLCHECK_CONFIG" "$EXPLCHECK_CONFIG".bak
+    mv "$EXPLCHECK_CONFIG".tmp "$EXPLCHECK_CONFIG"
+
+    cleanup() {
+        echo '{{ info }}Restoring config...{{ end_info }}'
+        mv "$EXPLCHECK_CONFIG".bak "$EXPLCHECK_CONFIG"
+    }
+    trap 'cleanup' EXIT
+
+    echo '{{ info }}Linting expl3 code (slow)...{{ end_info }}'
+    explcheck {{ options }} zutil/*.sty zutil/*.tex support/*.cfg
 
 alias expl := explcheck
 alias expl3 := explcheck
