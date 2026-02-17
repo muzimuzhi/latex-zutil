@@ -2,3 +2,5 @@
 [tools]
 ruff = 'latest'
 typos = 'latest'
+# optional, for shebang `#!/usr/bin/env -S usage bash`
+usage = 'latest'

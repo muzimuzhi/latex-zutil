@@ -1,12 +1,27 @@
-#!/usr/bin/env -S bash
-#MISE description="Check expl3 code"
+#!/usr/bin/env -S usage bash
+#MISE description="Lint expl3 code"
 #USAGE arg "[option]..." help="extra explcheck options and/or files"
 #USAGE flag "--slow" default=#false help="force slow flow analysis"
-info() {
-    echo -e "${INFO}$1${END_INFO}"
+
+# https://github.com/casey/just?tab=readme-ov-file#constants
+NORMAL='\e[0m'
+BOLD='\e[1m'
+RED='\e[31m'
+BLUE='\e[34m'
+
+warn() {
+    echo -e "${BOLD}${RED}===> $1${NORMAL}"
 }
 
-if [[ "${usage_slow?}" == "true" ]]; then
+info() {
+    echo -e "${BOLD}${BLUE}===> $1${NORMAL}"
+}
+
+enable_flow_analysis() {
+    if [[ ! -f "$EXPLCHECK_CONFIG" ]]; then
+        warn "Config \"$EXPLCHECK_CONFIG\" not found, \"--slow\" is ignored"
+        return 0
+    fi
     info "Patching config..."
     awk '
       {
@@ -22,9 +37,13 @@ if [[ "${usage_slow?}" == "true" ]]; then
         mv "$EXPLCHECK_CONFIG".bak "$EXPLCHECK_CONFIG"
     }
     trap 'cleanup' EXIT
-fi
+}
+
+
+EXPLCHECK_CONFIG="${EXPLCHECK_CONFIG:-".explcheckrc"}"
 
 if [[ "${usage_slow?}" == "true" ]]; then
+    enable_flow_analysis
     info "Linting expl3 code (slow)..."
 else
     info "Linting expl3 code..."

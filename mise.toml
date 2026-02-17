@@ -2,16 +2,6 @@
 env_shell_expand = true
 task_output = "keep-order"
 
-[vars]
-# https://github.com/casey/just?tab=readme-ov-file#constants
-NORMAL = '\e[0m'
-BOLD = '\e[1m'
-BLUE = '\e[34m'
-
-[env]
-INFO = '{{ vars.BOLD }}{{ vars.BLUE }}===> '
-END_INFO = '{{ vars.NORMAL }}'
-
 [tasks.lint]
 depends = ['lint:*']
 
