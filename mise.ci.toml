@@ -2,3 +2,4 @@
 [tools]
 ruff = 'latest'
 typos = 'latest'
+usage = 'latest'
