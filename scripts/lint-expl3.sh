@@ -18,7 +18,11 @@ info() {
 }
 
 enable_flow_analysis() {
-    info "Patching explcheck config..."
+    if [[ ! -f "$EXPLCHECK_CONFIG" ]]; then
+        warn "Config \"$EXPLCHECK_CONFIG\" not found, \"--slow\" is ignored"
+        return 0
+    fi
+    info "Patching config..."
     awk '
       {
         sub(/^# stop_(after|early_when_confused) = .*$/, substr($0, 3));
@@ -29,25 +33,16 @@ enable_flow_analysis() {
     mv "$EXPLCHECK_CONFIG".tmp "$EXPLCHECK_CONFIG"
 
     cleanup() {
-        info "Restoring explcheck config..."
+        info "Restoring config..."
         mv "$EXPLCHECK_CONFIG".bak "$EXPLCHECK_CONFIG"
     }
     trap 'cleanup' EXIT
 }
 
+
 EXPLCHECK_CONFIG="${EXPLCHECK_CONFIG:-".explcheckrc"}"
-info "Using explcheck config: \"$EXPLCHECK_CONFIG\""
 
-slow_run=false
 if [[ "${usage_slow?}" == "true" ]]; then
-    if [[ ! -f "$EXPLCHECK_CONFIG" ]]; then
-        warn "\"--slow\" ignored since no config found"
-    else
-        slow_run=true
-    fi
-fi
-
-if [[ "$slow_run" == "true" ]]; then
     enable_flow_analysis
     info "Linting expl3 code (slow)..."
 else
