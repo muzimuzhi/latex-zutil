@@ -1,13 +1,19 @@
-#!/usr/bin/env -S bash
-#MISE description="Check expl3 code"
+#!/usr/bin/env -S usage bash
+#MISE description="Lint expl3 code"
 #USAGE arg "[option]..." help="extra explcheck options and/or files"
 #USAGE flag "--slow" default=#false help="force slow flow analysis"
+
+# https://github.com/casey/just?tab=readme-ov-file#constants
+NORMAL='\e[0m'
+BOLD='\e[1m'
+BLUE='\e[34m'
+
 info() {
-    echo -e "${INFO}$1${END_INFO}"
+    echo -e "${BOLD}${BLUE}===> $1${NORMAL}"
 }
 
 if [[ "${usage_slow?}" == "true" ]]; then
-    info "Patching config..."
+    info "Patching explcheck config..."
     awk '
       {
         sub(/^# stop_(after|early_when_confused) = .*$/, substr($0, 3));
@@ -18,7 +24,7 @@ if [[ "${usage_slow?}" == "true" ]]; then
     mv "$EXPLCHECK_CONFIG".tmp "$EXPLCHECK_CONFIG"
 
     cleanup() {
-        info "Restoring config..."
+        info "Restoring explcheck config..."
         mv "$EXPLCHECK_CONFIG".bak "$EXPLCHECK_CONFIG"
     }
     trap 'cleanup' EXIT
