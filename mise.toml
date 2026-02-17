@@ -1,5 +1,6 @@
 [settings]
 env_shell_expand = true
+task_output = "keep-order"
 
 [vars]
 # https://github.com/casey/just?tab=readme-ov-file#constants
@@ -12,7 +13,7 @@ INFO = '{{ vars.BOLD }}{{ vars.BLUE }}===> '
 END_INFO = '{{ vars.NORMAL }}'
 
 [tasks.lint]
-depends = ['lint:pre-commit', 'lint:typos', 'lint:expl3', 'lint:python']
+depends = ['lint:*']
 
 [tasks."lint:expl3"]
 description = 'Lint expl3 code'
@@ -38,4 +39,7 @@ run = 'typos --config=config/typos.toml'
 description = "Run pre-commit checks on all files"
 alias = 'pre-commit'
 env.SKIP = '{{ get_env(name="SKIP", default="typos,explcheck,ruff") }}'
-run = 'echo "Skipped checks: $SKIP" && pre-commit run --all-files'
+run = [
+  'echo "Skipped checks: {{ env.SKIP }}"',
+  'pre-commit run --all-files --color=always'
+]
