@@ -6,13 +6,18 @@
 # https://github.com/casey/just?tab=readme-ov-file#constants
 NORMAL='\e[0m'
 BOLD='\e[1m'
+RED='\e[31m'
 BLUE='\e[34m'
+
+warn() {
+    echo -e "${BOLD}${RED}===> $1${NORMAL}"
+}
 
 info() {
     echo -e "${BOLD}${BLUE}===> $1${NORMAL}"
 }
 
-if [[ "${usage_slow?}" == "true" ]]; then
+enable_flow_analysis() {
     info "Patching explcheck config..."
     awk '
       {
@@ -28,9 +33,22 @@ if [[ "${usage_slow?}" == "true" ]]; then
         mv "$EXPLCHECK_CONFIG".bak "$EXPLCHECK_CONFIG"
     }
     trap 'cleanup' EXIT
+}
+
+EXPLCHECK_CONFIG="${EXPLCHECK_CONFIG:-".explcheckrc"}"
+info "Using explcheck config: \"$EXPLCHECK_CONFIG\""
+
+slow_run=false
+if [[ "${usage_slow?}" == "true" ]]; then
+    if [[ ! -f "$EXPLCHECK_CONFIG" ]]; then
+        warn "\"--slow\" ignored since no config found"
+    else
+        slow_run=true
+    fi
 fi
 
-if [[ "${usage_slow?}" == "true" ]]; then
+if [[ "$slow_run" == "true" ]]; then
+    enable_flow_analysis
     info "Linting expl3 code (slow)..."
 else
     info "Linting expl3 code..."
