@@ -7,6 +7,6 @@ ignored_issues = [
   "e408", # E408 calling an undefined function
 ]
 
-## following configs would be temporary enabled in `mise run lint:expl3`
+## following configs would be temporary enabled in `mise run expl --slow`
 # stop_after = "flow analysis"
 # stop_early_when_confused = false
