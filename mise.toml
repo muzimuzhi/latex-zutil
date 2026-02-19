@@ -1,6 +1,8 @@
 [settings]
 env_shell_expand = true
-task_output = "keep-order"
+
+[settings.task]
+output = "keep-order"
 
 [tasks.lint]
 depends = ['lint:*']
