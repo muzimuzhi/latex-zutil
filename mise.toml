@@ -12,6 +12,7 @@ description = 'Lint expl3 code'
 alias = 'expl'
 env.EXPLCHECK_CONFIG = '{{ get_env(name="EXPLCHECK_CONFIG", default="config/explcheck.toml") }}'
 file = 'scripts/lint-expl3.sh'
+raw = true
 
 [tasks."lint:python"]
 description = 'Lint python code'
@@ -35,3 +36,4 @@ run = [
   'echo "Skipped checks: {{ env.SKIP }}"',
   'pre-commit run --all-files --color=always'
 ]
+raw = true
