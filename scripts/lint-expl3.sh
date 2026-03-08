@@ -52,7 +52,7 @@ fi
 eval "options=($usage_option)"
 # the glob file list is composed in pre-commit config too
 explcheck \
-    --config-file="$EXPLCHECK_CONFIG" \
+    --config-file "$EXPLCHECK_CONFIG" \
     "${options[@]}" \
     zutil/*.sty zutil/*.tex support/*.cfg
-# explcheck --ignored-issues=s103,s204,w302 "${options[@]}" tabularray/tabularray.sty
+# explcheck --ignored-issues s103,s204,w302 "${options[@]}" tabularray/tabularray.sty
