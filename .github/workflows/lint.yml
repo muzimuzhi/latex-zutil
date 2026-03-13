@@ -38,7 +38,7 @@ jobs:
     - uses: actions/checkout@v6
 
     - name: Setup TeX Live
-      uses: muzimuzhi/setup-texlive-action@texlive-2026
+      uses: TeX-Live/setup-texlive-action@v4
       with:
         packages: |
           luatex
