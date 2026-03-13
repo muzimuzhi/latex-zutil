@@ -30,5 +30,5 @@ TEST: unravel
 [===== End =====]
 ============================================================
 ***************
-[test] 0 error(s)
-[test] 0 check(s)
+[test] 0 error(s) raised
+[test] 0 check(s) passed

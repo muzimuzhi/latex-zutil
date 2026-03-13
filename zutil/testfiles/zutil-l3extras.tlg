@@ -3,7 +3,7 @@ Don't change this file in any respect.
 ============================================================
 TEST: \zutil_cs_if_function:NTF 
 ============================================================
-[test] 6 check(s)
+[test] 6 check(s) passed
 ============================================================
 ============================================================
 TEST: \zutil_cs_function_name:N 
@@ -52,22 +52,22 @@ l. ...}
 [\zutil_undefined:nnnnn ]
 [\exp_after:wN ]
 [\tex_undefined:D ]
-[test] 2 error(s)
+[test] 2 error(s) raised
 ============================================================
 ============================================================
 TEST: \zutil_cs_if_defined:NTF 
 ============================================================
-[test] 3 check(s)
+[test] 3 check(s) passed
 ============================================================
 ============================================================
 TEST: \zutil_cs_if_defined:cTF 
 ============================================================
-[test] 3 check(s)
+[test] 3 check(s) passed
 ============================================================
 ============================================================
 TEST: \zutil_exp_args_safe:Nc 
 ============================================================
-[test] 1 check(s)
+[test] 1 check(s) passed
 ============================================================
 ============================================================
 TEST: \zutil_cs_generate_variant:N 
@@ -94,7 +94,7 @@ Defining \exp_after:wc on line ...
 <argument> \???  
                  ! Package zutil Error: Invalid argument specifier 'X'. Accepted specifiers are 'NcnofexVvpTF'.
 l. ...}
-[test] 3 error(s)
+[test] 3 error(s) raised
 ============================================================
 ============================================================
 TEST: \zutil_cs_generate_variant:N retains leading spaces
@@ -118,7 +118,7 @@ Defining \test_if_str_colon_in_aux:w on line ...
 Defining \test_if_str_colon_in:nT on line ...
 Defining \test_if_str_colon_in:nF on line ...
 Defining \test_if_str_colon_in:eT on line ...
-[test] 4 check(s)
+[test] 4 check(s) passed
 ============================================================
 ============================================================
 TEST: \zutil_seq_set_split_keep_braces:Nnn 
@@ -174,8 +174,8 @@ The sequence \l_tmpa_seq is empty
 (zutil)                The existing definition of '\g_tmpa_seq ' will not be altered.
 The sequence \g_tmpa_seq is empty
 > .
-[test] 2 error(s)
+[test] 2 error(s) raised
 ============================================================
 ***************
-[test] 7 error(s)
-[test] 17 check(s)
+[test] 7 error(s) raised
+[test] 17 check(s) passed

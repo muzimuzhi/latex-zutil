@@ -5,8 +5,8 @@ TEST: Unknown options
 ============================================================
 ! Package tabularray Error: Unknown option "vlines{1}".
 ! Package tabularray Error: Unknown option "unknown-xxx".
-[test] 2 error(s)
+[test] 2 error(s) raised
 ============================================================
 ***************
-[test] 2 error(s)
-[test] 0 check(s)
+[test] 2 error(s) raised
+[test] 0 check(s) passed

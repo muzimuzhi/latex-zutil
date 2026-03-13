@@ -53,5 +53,5 @@ TEST: Fragile hline/vline text
 >  {[2]/@vline-width}  =>  {0.4pt}.
 ============================================================
 ***************
-[test] 0 error(s)
-[test] 0 check(s)
+[test] 0 error(s) raised
+[test] 0 check(s) passed

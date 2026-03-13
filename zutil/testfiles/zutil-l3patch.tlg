@@ -27,20 +27,20 @@ l. ...    { \ERROR } { B } { C } { D }
 Even more text [\ERROR ] [B] [C] [D].
 Package test Warning: Changed.
 Package test Warning: Changed [\ERROR ] [B] [C] [D].
-[test] 4 error(s)
-[test] 2 check(s)
+[test] 4 error(s) raised
+[test] 2 check(s) passed
 ============================================================
 ============================================================
 TEST: Extra \zutil_msg_space_safe_off: 
 ============================================================
 ! Package zutil Error: \zutil_msg_space_safe_off: called too many times.
-[test] 1 error(s)
-[test] 1 check(s)
+[test] 1 error(s) raised
+[test] 1 check(s) passed
 ============================================================
 ============================================================
 TEST: Nested \zutil_msg_space_safe_on: /off:
 ============================================================
-[test] 4 check(s)
+[test] 4 check(s) passed
 ============================================================
 ============================================================
 TEST: \zutil_msg_suspend_debug: /resume_debug:
@@ -53,7 +53,7 @@ TEST: Extra \zutil_msg_resume_debug:
 ============================================================
 ! Package zutil Error: \zutil_msg_resume_debug: called too many times.
 Package test Info: Debugging is on, nesting level 0.
-[test] 1 error(s)
+[test] 1 error(s) raised
 ============================================================
 ============================================================
 TEST: Nested \zutil_msg_suspend_debug: /resume_debug:
@@ -65,5 +65,5 @@ Package test Info: Debugging is off, nesting level 1.
 Package test Info: Debugging is on, nesting level 0.
 ============================================================
 ***************
-[test] 6 error(s)
-[test] 7 check(s)
+[test] 6 error(s) raised
+[test] 7 check(s) passed

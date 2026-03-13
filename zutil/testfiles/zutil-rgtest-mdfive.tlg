@@ -4,8 +4,8 @@ Don't change this file in any respect.
 ============================================================
 TEST: Check md5sum of regression-test.tex
 ============================================================
-[test] 1 check(s)
+[test] 1 check(s) passed
 ============================================================
 ***************
-[test] 0 error(s)
-[test] 1 check(s)
+[test] 0 error(s) raised
+[test] 1 check(s) passed

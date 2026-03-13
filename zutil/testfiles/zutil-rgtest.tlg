@@ -10,7 +10,7 @@ TEST: Count expl3 errors
 ! Package test Error: This is a test message.
  ...
 l. ...}
-[test] 1 error(s)
+[test] 1 error(s) raised
 ============================================================
 ============================================================
 TEST: Count expl3 expandable errors
@@ -19,7 +19,7 @@ TEST: Count expl3 expandable errors
 <argument> \???  
                  ! Package test Error: This is a test message.
 l. ...}
-[test] 1 error(s)
+[test] 1 error(s) raised
 ============================================================
 ============================================================
 TEST: Count latex2e errors
@@ -27,7 +27,7 @@ TEST: Count latex2e errors
 ! Package test Error: error text.
  ...
 l. ...}
-[test] 1 error(s)
+[test] 1 error(s) raised
 ============================================================
 ============================================================
 TEST: Count errors raised in deeper groups
@@ -38,7 +38,7 @@ l. ...}
 ! Package test Error: error text.
  ...
 l. ...}
-[test] 2 error(s)
+[test] 2 error(s) raised
 ============================================================
 ============================================================
 TEST: Not counted: expandable errors raised in deeper groups
@@ -57,7 +57,7 @@ BODY
 ============================================================
 TEST: Count checks
 ============================================================
-[test] 1 check(s)
+[test] 1 check(s) passed
 ============================================================
 PASSED
 ============================================================
@@ -81,8 +81,8 @@ l. ...  }
 ! Package test Error: error text.
  ...
 l. ...  }
-[test] 3 error(s)
-[test] 1 check(s)
+[test] 3 error(s) raised
+[test] 1 check(s) passed
 ============================================================
 ============================================================
 TEST: Check group level at end of test
@@ -92,5 +92,5 @@ TEST: Check group level at end of test
 [test] Bad group level: 2! Expected 1.
 ============================================================
 ***************
-[test] 9 error(s)
-[test] 2 check(s)
+[test] 9 error(s) raised
+[test] 2 check(s) passed

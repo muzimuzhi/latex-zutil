@@ -446,11 +446,11 @@
 
 \cs_new_protected:Npn \zutil_test_log_error_counts:n #1
   {
-    \zutil_test_type:e { \int_eval:n {#1} ~error(s) }
+    \zutil_test_type:e { \int_eval:n {#1} ~error(s)~raised }
   }
 \cs_new_protected:Npn \zutil_test_log_check_counts:n #1
   {
-    \zutil_test_type:e { \int_eval:n {#1} ~check(s) }
+    \zutil_test_type:e { \int_eval:n {#1} ~check(s)~passed }
   }
 
 % suspend and resume error counting
