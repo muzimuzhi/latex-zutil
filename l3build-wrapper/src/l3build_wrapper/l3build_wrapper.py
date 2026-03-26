@@ -454,7 +454,7 @@ def set_logging(args: argparse.Namespace) -> None:
 
     def set_level(level: int) -> None:
         # if level == logging.DEBUG:
-        #     logging.basicConfig(force=True, format=LOGGING_DEBUG_FORMAT)  # noqa: E501, ERA001
+        #     logging.basicConfig(force=True, format=LOGGING_DEBUG_FORMAT)  # noqa: ERA001
         logger.setLevel(level)
 
     if debug_logging_enabled():
