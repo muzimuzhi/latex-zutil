@@ -22,6 +22,7 @@ usage = '''
 arg "[command]" default="check"
 '''
 run = 'ruff {{ usage.command }}'
+interactive = true
 
 [tasks."lint:typos"]
 description = "Check spelling"

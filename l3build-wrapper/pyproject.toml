@@ -18,17 +18,21 @@ build-backend = "uv_build"
 
 [tool.ruff.lint]
 # https://docs.astral.sh/ruff/settings/#lint
+preview = true  # https://docs.astral.sh/ruff/preview/
 select = ['ALL']
 ignore = [
-  'D107',   # undocumented public `__init__()` method
-  'D203',   # class docstring not preceded by a blank line,
+  'CPY001', # Missing copyright notice at top of file
+  'D107',   # Undocumented public `__init__()` method
+  'D203',   # Class docstring not preceded by a blank line,
             #   incompatible with D211
-  'D213',   # the (first) summary line of multi-line docstrings not on the
+  'D213',   # The (first) summary line of multi-line docstrings not on the
             #   second physical line, incompatible with D212
-  'T201',   # uses of `print()`
+  'D413',   # Missing blank line after last section of multi-line docstring
+  'DOC201', # `return` is not documented in docstring
+  'T201',   # Uses of `print()`
   'TD002',  # Missing author in TODO
   'TD003',  # Missing issue link for this TODO
-  'TRY400', # use `logging.error` instead of `logging.exception` when logging
+  'TRY400', # Use `logging.error` instead of `logging.exception` when logging
             #   an exception
   ## relatively temp ignorances
   'COM812', # Trailing comma missing
@@ -39,4 +43,5 @@ flake8-quotes.inline-quotes = 'single'
 
 [tool.ruff.format]
 # https://docs.astral.sh/ruff/settings/#format
+preview = true  # https://docs.astral.sh/ruff/preview/
 quote-style = 'single'
