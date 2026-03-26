@@ -328,9 +328,9 @@ class TestSuiteRun:
                     ', '.join(names),
                     ', '.join(engines_combined),
                 )
-                options = Options(
-                    [op for op in self.options if not op.startswith('-e')]
-                )
+                options = Options([
+                    op for op in self.options if not op.startswith('-e')
+                ])
                 options.append(f'-e{",".join(engines_combined)}')
             self._invoke_l3build(self.target, options, names)
 
