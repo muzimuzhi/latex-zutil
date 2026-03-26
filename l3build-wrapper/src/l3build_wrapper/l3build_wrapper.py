@@ -16,7 +16,7 @@ import argparse
 import fnmatch
 import logging
 import os
-import subprocess
+import subprocess  # noqa: S404
 import sys
 from dataclasses import asdict, dataclass, replace
 from enum import UNIQUE, StrEnum, verify
@@ -95,7 +95,11 @@ class TestSuite(_TestSuiteDefault):
     test_results: Names | None = None
 
     def __post_init__(self) -> None:
-        """More initialization with checks."""
+        """More initialization with checks.
+
+        Raises:
+            InvalidTestSuiteError: If invalid data is provided.
+        """
         if not self.name:
             raise InvalidTestSuiteError(self.name, 'Missing test suite name')
 
@@ -139,13 +143,13 @@ class TestSuite(_TestSuiteDefault):
 
         names = Names(set())
         for ext in (self.lvtext, self.pvtext):
-            _names = self._glob_to_names('*' + ext)
-            if names & _names:
+            names_new = self._glob_to_names('*' + ext)
+            if names & names_new:
                 logger.warning(
                     'same name(s) exist in multiple test types: %s',
-                    ', '.join(names & _names),
+                    ', '.join(names & names_new),
                 )
-            names |= _names
+            names |= names_new
 
         if not names:
             logger.warning('no tests found for test suite "%s"', self.name)
@@ -187,9 +191,9 @@ class TestSuiteRun:
         """Compose l3build options for all test suite runs."""
 
         def add_option(option: str) -> None:
-            _options.append(option)
+            options.append(option)
 
-        _options: list[str] = []
+        options: list[str] = []
         # inherited options
         if args.dev:
             add_option('--dev')
@@ -211,18 +215,17 @@ class TestSuiteRun:
         # new, wrapper-only options
         if logger.getEffectiveLevel() == logging.DEBUG and cls.is_patched:
             add_option('-v')
-        cls.options_shared = Options(_options)
+        cls.options_shared = Options(options)
 
     @classmethod
     def set_shared_args(cls, args: argparse.Namespace, *, is_patched: bool) -> None:
         """Set shared arguments for all test suite runs."""
-        cls.is_patched = is_patched # logged earlier in is_l3build_patched()
+        cls.is_patched = is_patched  # logged earlier in is_l3build_patched()
         cls.dry_run = args.dry_run
 
         cls.target = args.target
         cls._set_shared_l3build_options(args)
         logger.debug('l3build options: %s', cls.options_shared)
-
 
     def _finalize_names(self) -> None:
         """Adjust collected test names at final stage."""
@@ -246,7 +249,7 @@ class TestSuiteRun:
 
         if self.ts.config:
             add_option(f'-c{self.ts.config}')
-        if args.engine and args.engine not in (self.ts.stdengine, _OPTION_ALL_ENGINES):
+        if args.engine and args.engine not in (self.ts.stdengine, _OPTION_ALL_ENGINES):  # noqa: PLR6201
             add_option(f'-e{args.engine}')
 
     def parse_known_names(
@@ -258,17 +261,17 @@ class TestSuiteRun:
         names_unknown = Names(set())
         for name in names:
             # a name is either a test suite or a test glob, but not both
-            if name in (ts.name, ts.alias):
+            if name in (ts.name, ts.alias):  # noqa: PLR6201
                 self.run_as_whole = True
                 logger.debug(
                     'name "%s" matches test suite "%s"',
                     name, ts.name,
                 )  # fmt: skip
-            elif _glob_names := fnmatch.filter(ts.get_names(), name):
-                self.names.update(_glob_names)
+            elif glob_names := fnmatch.filter(ts.get_names(), name):
+                self.names.update(glob_names)
                 logger.debug(
                     'name "%s" matches test(s) in test suite "%s": %s',
-                    name, ts.name, _glob_names,
+                    name, ts.name, glob_names,
                 )  # fmt: skip
             else:
                 names_unknown.add(name)
@@ -319,16 +322,16 @@ class TestSuiteRun:
                 options = self.options
             else:
                 # save for stdengine and extra engines
-                _engines = Engines((self.ts.stdengine, *engines))
+                engines_combined = Engines((self.ts.stdengine, *engines))
                 logger.info(
                     'save test(s) "%s" in engines "%s"',
                     ', '.join(names),
-                    ', '.join(_engines),
+                    ', '.join(engines_combined),
                 )
-                options = Options(
-                    [op for op in self.options if not op.startswith('-e')]
-                )
-                options.append(f'-e{",".join(_engines)}')
+                options = Options([
+                    op for op in self.options if not op.startswith('-e')
+                ])
+                options.append(f'-e{",".join(engines_combined)}')
             self._invoke_l3build(self.target, options, names)
 
     def invoke_l3build(self, args: argparse.Namespace) -> bool:
@@ -451,7 +454,7 @@ def set_logging(args: argparse.Namespace) -> None:
 
     def set_level(level: int) -> None:
         # if level == logging.DEBUG:
-        #     logging.basicConfig(force=True, format=LOGGING_DEBUG_FORMAT)  # noqa: E501, ERA001
+        #     logging.basicConfig(force=True, format=LOGGING_DEBUG_FORMAT)  # noqa: ERA001
         logger.setLevel(level)
 
     if debug_logging_enabled():
@@ -467,7 +470,12 @@ def set_logging(args: argparse.Namespace) -> None:
 
 
 def wrap_l3build(args: argparse.Namespace) -> None:
-    """Run l3build on one test suite a time."""
+    """Run l3build on one test suite a time.
+
+    Raises:
+        NameRequiredError: If no names were provided for `save` target.
+        UnknownNameError: If unknown names were provided.
+    """
     is_patched = is_l3build_patched()
     logger.info('l3build patched: %s', is_patched)
     logger.debug('parsed args: %s', args)
@@ -589,6 +597,7 @@ def main(argv: list[str] | None = None) -> None:
         sys.exit(1)
     except Exception:
         logger.exception('unexpected error')
+
 
 if __name__ == '__main__':
     main()
