@@ -44,21 +44,10 @@
       }
   }
 
-\IfExplAtLeastTF{2024-12-07}  % noqa: S204
+% #1 and #2 are curried
+\cs_new_protected:Npn \__zutil_debug_gput_collector:Nn
   {
-    % #1 and #2 are curried
-    \cs_new_protected:Npn \__zutil_debug_gput_collector:Nn
-      {
-        \prop_gput:Nnn \g__zutil_debug_collectors_prop
-      }
-  }
-  {
-    % work around a l3kernel bug latex3/latex3#1630
-    \cs_new_protected:Npn \__zutil_debug_gput_collector:Nn #1#2
-      {
-        \prop_gput:Nnn \g__zutil_debug_collectors_prop
-          {#1} { \exp_not:n {#2} }
-      }
+    \prop_gput:Nnn \g__zutil_debug_collectors_prop
   }
 \cs_generate_variant:Nn \__zutil_debug_gput_collector:Nn { ce }
 
