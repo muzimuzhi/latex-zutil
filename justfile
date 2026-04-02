@@ -57,15 +57,13 @@ tblr-ppm:
 
 # Check l3build test(s)
 [group('dev')]
-check *options="": (_l3build_wrapper "check" L3BUILD_CHECK_OPTIONS options)
+check +varargs:
+    l3build-wrapper check {{ L3BUILD_CHECK_OPTIONS }} {{ varargs }}
 
 # Save l3build test(s)
 [group('dev')]
-save *options="": (_l3build_wrapper "save" L3BUILD_SAVE_OPTIONS options)
-
-_l3build_wrapper command *options="":
-    @echo '{{ info }}Running l3build-wrapper...{{ end_info }}'
-    l3build-wrapper {{ command }} {{ options }}
+save +varargs:
+    l3build-wrapper save {{ L3BUILD_SAVE_OPTIONS }} {{ varargs }}
 
 # Create a new l3build test from template
 [group('dev')]
