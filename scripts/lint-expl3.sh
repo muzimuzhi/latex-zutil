@@ -25,7 +25,7 @@ enable_flow_analysis() {
     info "Patching config..."
     awk '
       {
-        sub(/^# stop_(after|early_when_confused) = .*$/, substr($0, 3));
+        sub(/^# stop_early_when_confused = .*$/, substr($0, 3));
         print
       }
     ' "$EXPLCHECK_CONFIG" > "$EXPLCHECK_CONFIG".tmp
