@@ -59,7 +59,7 @@
 %%
 
 % Treat \relax as defined, thus different from \cs_if_exist:NTF.
-\prg_set_conditional:Npnn \zutil_cs_if_defined:N #1 { p, T, F, TF }
+\prg_new_conditional:Npnn \zutil_cs_if_defined:N #1 { p, T, F, TF }
   {
     \if_cs_exist:N #1
       \prg_return_true:
@@ -67,7 +67,7 @@
       \prg_return_false:
     \fi:
   }
-\prg_set_conditional:Npnn \zutil_cs_if_defined:c #1 { p, T, F, TF }
+\prg_new_conditional:Npnn \zutil_cs_if_defined:c #1 { p, T, F, TF }
   {
     \if_cs_exist:w #1 \cs_end:
       \prg_return_true:
