@@ -1,15 +1,3 @@
-#!/usr/bin/env -S uv run --script
-#
-# /// script
-# requires-python = ">=3.12"
-# dependencies = []
-# ///
-
-# Python 3.12 is needed by `if type not in Target`: check if a `EnumStr`
-# class contains some value.
-# https://docs.python.org/3/library/enum.html#enum.EnumType.__contains__
-# Required python version is also recorded in `pyproject.toml`.
-
 """Check and save selective l3build tests made easier."""
 
 import argparse

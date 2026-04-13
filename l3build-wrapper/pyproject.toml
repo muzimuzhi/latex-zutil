@@ -6,6 +6,14 @@ description = "Check and save selective l3build tests made easier"
 authors = [
     { name = "Yukai Chou", email = "muzimuzhi@gmail.com" }
 ]
+# Python 3.12 is needed because we use
+# - `StrEnum` subclass as a choice in declaring CLI argument `target`
+#     parser.add_argument('target', ..., choice=Target, ...)`
+#   which results in checking if a str belongs to a member of `StrEnum`
+#   subclass, e.g. `if 'check' in Target`
+#   https://docs.python.org/3/library/enum.html#enum.EnumType.__contains__
+# - Escape sequence (backslash) in f-strings, in `_print()` function
+#   https://docs.python.org/3/whatsnew/3.12.html#pep-701-syntactic-formalization-of-f-strings
 requires-python = ">=3.12"
 dependencies = []
 
