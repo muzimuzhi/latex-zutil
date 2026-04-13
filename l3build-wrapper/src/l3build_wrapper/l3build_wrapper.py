@@ -504,67 +504,99 @@ def wrap_l3build(args: argparse.Namespace) -> None:
 # - options can be intermixed with names,
 # - quite some options are made flags, i.e., they don't take arguments,
 # - short flags are mergeable (`-qs` is the same as `-q -s`).
+_ArgumentParser_shared_args = {
+    'epilog': 'Note: not all l3build options are supported.',
+    'exit_on_error': False,
+    'formatter_class': argparse.ArgumentDefaultsHelpFormatter,
+}
+
 parser = argparse.ArgumentParser(
     description='Check and save selective l3build tests made easier',
-    usage='%(prog)s target [options] name...',
-    epilog='Not all l3build options are supported.',
-    exit_on_error=False,
-    formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    usage='%(prog)s command [options] name...',
+    **_ArgumentParser_shared_args,
 )
-# fmt: off
-# positional arguments
-parser.add_argument('target',
-                    type=str,
-                    choices=Target,
-                    metavar='target',
-                    help=f'the l3build target to run ({", ".join(Target)})')
-parser.add_argument('names',
-                    type=str,
-                    nargs='*',
-                    metavar='name',
-                    help='a name of test suite or a glob for test name(s)')
+subparsers = parser.add_subparsers(
+    title='subcommands',
+    dest='target',
+    required=True,
+    help='l3build target to run',
+)
 
-# new, wrapper-only options and flags
-# `--all-engines` and `-e/--engine` overwrite each other so the last one wins
-parser.add_argument('--all-engines',
-                    dest='engine',
-                    action='store_const',
-                    const=_OPTION_ALL_ENGINES,
-                    help='run on all existing test results; '
-                         'useful for auto-saving engine-specific tests')
-parser.add_argument('-n', '--dry-run',
-                    action='store_true',
-                    help='print what l3build command(s) would be executed without execution')  # noqa: E501
-parser.add_argument('--recheck',
-                    action='store_true',
-                    help='after saving, rerun checks using the same arguments')
-parser.add_argument('-v', '--verbose',
-                    action='count',
-                    default=0,
-                    help='print more information; given twice enables debug logging and would be passed to "l3build" if patched l3build is detected')  # noqa: E501
+parser_base = argparse.ArgumentParser(add_help=False)
+parser_base.add_argument(
+    'name...',
+    type=str,
+    nargs='*',
+    metavar='name',
+    help='test suite or test name glob',
+)
+parser_base.add_argument(
+    '-n',
+    '--dry-run',
+    action='store_true',
+    help='print what l3build command(s) would be executed without execution'
+)
+parser_base.add_argument(
+    '-v',
+    '--verbose',
+    action='count',
+    default=0,
+    help='print more information; -vv enables debug logging and '
+      'would be passed to "l3build" if patched l3build is detected'
+)
+inherited_base = parser_base.add_argument_group('inherited l3build options')
+inherited_base.add_argument('--dev', action='store_true')
+inherited_base.add_argument('--dirty', action='store_true')
+inherited_base.add_argument('-e', '--engine', type=str)
+inherited_base.add_argument(
+    '-q',
+    '--quiet',
+    action=argparse.BooleanOptionalAction,
+    default=True,
+    help='suppress outputs of TeX and friends '
+      '(support for "save" target needs patched l3build)'
+)
+inherited_base.add_argument('--rerun', action='store_true')
+inherited_base.add_argument('-s', '--stdengine', action='store_true')
 
-# inherited l3build options and flags
-inherited = parser.add_argument_group('inherited l3build options')
-inherited.add_argument('--dev', action='store_true')
-inherited.add_argument('--dirty', action='store_true')
-inherited.add_argument('-e', '--engine', type=str)
-inherited.add_argument('-H', '--halt-on-error', action='store_true')
-inherited.add_argument('-q', '--quiet',
-                       action=argparse.BooleanOptionalAction,
-                       default=True,
-                       help='suppress TeX standard output (support for "save" target needs local l3build patch)')  # noqa: E501
-inherited.add_argument('--rerun', action='store_true')
-inherited.add_argument('--show-log-on-error', action='store_true')
-inherited.add_argument('-S', '--show-saves', action='store_true')
-inherited.add_argument('-s', '--stdengine', action='store_true')
-# fmt: on
+# `check` subcommand
+parser_check = subparsers.add_parser(
+    'check',
+    usage='%(prog)s [options] [name...]',
+    parents=[parser_base],
+    **_ArgumentParser_shared_args,
+)
+inherited_check = parser_check._action_groups[2]  # noqa: SLF001
+inherited_check.add_argument('-H', '--halt-on-error', action='store_true')
+inherited_check.add_argument('--show-log-on-error', action='store_true')
+inherited_check.add_argument('-S', '--show-saves', action='store_true')
+
+# `save` subcommand
+parser_save = subparsers.add_parser(
+    'save',
+    usage='%(prog)s [options] [name...]',
+    parents=[parser_base],
+    **_ArgumentParser_shared_args,
+)
+parser_save.add_argument(
+    '--all-engines',
+    dest='engine',
+    action='store_const',
+    const=_OPTION_ALL_ENGINES,
+    help='update all existing test outputs (overwrites -e/--engine)'
+)
+parser_save.add_argument(
+    '--recheck',
+    action='store_true',
+    help='after saving, rerun checks using the same arguments'
+)
 
 
 def main(argv: list[str] | None = None) -> None:
     """Main function to run the l3build wrapper."""  # noqa: D401
     try:
         # `args` defaults to `None`, which is equivalent to passing `sys.argv[1:]`
-        args = parser.parse_intermixed_args(args=argv)
+        args = parser.parse_args(args=argv)
 
         set_logging(args)
         wrap_l3build(args)
