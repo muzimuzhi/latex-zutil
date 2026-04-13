@@ -534,7 +534,7 @@ parser_base.add_argument(
     '-n',
     '--dry-run',
     action='store_true',
-    help='print what l3build command(s) would be executed without execution'
+    help='print what l3build command(s) would be executed without execution',
 )
 parser_base.add_argument(
     '-v',
@@ -542,7 +542,7 @@ parser_base.add_argument(
     action='count',
     default=0,
     help='print more information; -vv enables debug logging and '
-      'would be passed to "l3build" if patched l3build is detected'
+    'would be passed to "l3build" if patched l3build is detected',
 )
 inherited_base = parser_base.add_argument_group('inherited l3build options')
 inherited_base.add_argument('--dev', action='store_true')
@@ -554,7 +554,7 @@ inherited_base.add_argument(
     action=argparse.BooleanOptionalAction,
     default=True,
     help='suppress outputs of TeX and friends '
-      '(support for "save" target needs patched l3build)'
+    '(support for "save" target needs patched l3build)',
 )
 inherited_base.add_argument('--rerun', action='store_true')
 inherited_base.add_argument('-s', '--stdengine', action='store_true')
@@ -583,12 +583,12 @@ parser_save.add_argument(
     dest='engine',
     action='store_const',
     const=_OPTION_ALL_ENGINES,
-    help='update all existing test outputs (overwrites -e/--engine)'
+    help='update all existing test outputs (overwrites -e/--engine)',
 )
 parser_save.add_argument(
     '--recheck',
     action='store_true',
-    help='after saving, rerun checks using the same arguments'
+    help='after saving, rerun checks using the same arguments',
 )
 
 
