@@ -6,6 +6,7 @@ import logging
 import os
 import subprocess  # noqa: S404
 import sys
+from collections.abc import Iterable
 from dataclasses import asdict, dataclass, replace
 from enum import UNIQUE, StrEnum, verify
 from pathlib import Path
@@ -346,6 +347,16 @@ class TestSuiteRun:
         return True
 
 
+class ArgumentSortedHelpFormatter(argparse.ArgumentDefaultsHelpFormatter):
+    """Custom help formatter to sort arguments in the same group."""
+
+    def add_arguments(self, actions: Iterable[argparse.Action]) -> None:
+        """Sort arguments in the same group by their option strings."""
+        actions = list(actions)
+        actions.sort(key=lambda a: a.dest)
+        super().add_arguments(actions)
+
+
 LOGGING_DEFAULT_FORMAT = '[%(name)s %(levelname)-5s] %(message)s'
 # LOGGING_DEBUG_FORMAT = '[%(name)s %(levelname)-5s] %(filename)s:%(lineno)d - %(funcName)-17s - %(message)s'  # noqa: E501, ERA001
 
@@ -507,7 +518,7 @@ def wrap_l3build(args: argparse.Namespace) -> None:
 _ArgumentParser_shared_args = {
     'epilog': 'Note: not all l3build options are supported.',
     'exit_on_error': False,
-    'formatter_class': argparse.ArgumentDefaultsHelpFormatter,
+    'formatter_class': ArgumentSortedHelpFormatter,
 }
 
 parser = argparse.ArgumentParser(
