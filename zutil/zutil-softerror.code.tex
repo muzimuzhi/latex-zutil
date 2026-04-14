@@ -1,27 +1,36 @@
-\ProvidesExplFile {zutil-softerror.code.tex} {2025-10-03} {0.1}
+\ProvidesExplFile {zutil-softerror.code.tex} {2026-04-15} {0.1}
   {Z's utilities, the softerror module}
 
-% This module provides a new l3msg message level "softerror".
-% Softerror is a combination of "warning" and "error":
-% - Its message is formed like warning, using an error header;
-% - Like error, it uses both the <text> and <more text> of a message, but
-%    it does not interrupt the processing, nor prompt for user input.
-% By producing engine-neutral compact message, softerror is most suitable
-% for log-based testing.
+% This module provides a new l3msg message class "softerror".
 
-% new message level "softerror"
+% Softerror is error without interruption:
+% - Its message is formed like error, using both the <text> and <more text>
+%   of a message.
+% - Unlike error, it does not interrupt the processing, nor prompt for user
+%   input, thus produces no interruption context.
+%
+% Due to its clean and compat engine-neutral output, Softerror is most suitable
+% for log-based testing.
+%
+% Restricted by mechanism, there cannot be expandable softerrors.
+
+% see \@@_class_new:nn definition and its usage \@@_class_new:nn { warning }
+% (@@=msg) in l3msg.dtx for more info
+
+% used by \msg_redirect_class:nn and \msg_redirect_module:nnn
+\prop_new:N \l__msg_redirect_softerror_prop  % noqa: w415
+
 \cs_new_protected:Npn \__msg_softerror_code:nnnnnn #1#2#3#4#5#6
   {
     \__msg_softerror_aux:NNnnnnnn \iow_term:n \msg_softerror_text:n
       {#1} {#2} {#3} {#4} {#5} {#6}
   }
 
-\prop_new_linked:N \l__msg_redirect_softerror_prop
-
 \cs_new:Npn \msg_softerror_text:n { !~\msg_error_text:n }
 
-% based on \__msg_info_aux:NNnnnnnn, but also uses <more text> (content
-% of the 4th arg of \msg_new:nnnn), like how \__msg_interrupt:NnnnN does
+% based on \@@_info_aux:NNnnnnnn, but also uses <more text>, like how
+% \@@_interrupt:NnnnN does (@@=msg). <more text> is the #4 argument passed to
+% \msg_new:nnnn.
 \cs_new_protected:Npn \__msg_softerror_aux:NNnnnnnn #1#2#3#4#5#6#7#8
   {
     \str_set:Ne \l__msg_text_str { #2 {#3} }
@@ -74,7 +83,7 @@
 \cs_new_protected:Npn \zutil_msg_softerror:nn #1#2
   { \zutil_msg_softerror:nnnnnn {#1} {#2} { } { } { } { } }
 
-% e-type variants correspond to those provided by expl3
+% variants correspond to those provided by expl3, except for "deprecated" x-type ones
 \cs_generate_variant:Nn \zutil_msg_softerror:nnn
   { nnV , nne }
 \cs_generate_variant:Nn \zutil_msg_softerror:nnnn

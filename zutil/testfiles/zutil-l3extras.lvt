@@ -98,9 +98,13 @@
   \exp_args:Nc \zutil_cs_generate_variant:N { ~ \c_space_tl myfun_name:ne }
 }
 
+\OMIT
+\cs_new:Npn \test_tmp:Nn #1#2 { }
+\TIMO
+
 \TEST{\zutil_cs_generate_variant:n}{
   \debug_on:n { log-functions }
-  \zutil_cs_generate_variant:n { \zutil_set:v, \zutil_set:e }
+  \zutil_cs_generate_variant:n { \zutil_set:v, \zutil_set:e, \test_tmp:cf }
 }
 
 \TEST{\zutil_prg_new_conditional_tl_if_in:Nnn}{

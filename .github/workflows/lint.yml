@@ -55,6 +55,11 @@ jobs:
       env:
         MISE_ENV: ci
 
+    # setup-texlive-action only shows texlive revision
+    - name: Version(s)
+      run: |
+        explcheck --version
+
     - name: Run pre-commit checks
       run: |
         mise run pre-commit
@@ -63,19 +68,19 @@ jobs:
 
     - name: Check spelling
       run: |
-        mise run typos
+        mise run lint:typos
 
     - name: Lint expl3 code
       if: toJSON(inputs) == '{}'
       run: |
-        mise run expl
+        mise run lint:expl3
 
     - name: Lint expl3 code (slow)
       # run only when triggered by `workflow_call` or `workflow_dispatch`
       if: toJSON(inputs) != '{}'
       run: |
-        mise run expl --slow --verbose
+        mise run lint:expl3 --slow --verbose
 
     - name: Lint python code
       run: |
-        mise run ruff
+        mise run lint:python
