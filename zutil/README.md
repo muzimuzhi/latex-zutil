@@ -108,7 +108,7 @@
   - `\zutil_debug_generate_variant:Nn`
 
 ## `softerror` module
-- new `l3msg` message level `softerror`
+- new `l3msg` message class `softerror`
   - like `error`, it uses both `⟨text⟩` and `⟨more text⟩` of a message
   - like `warning`, it doesn't interrupt processing nor prompting for user input, thus produces portable and compact messages
   - it's most suitable for log-based tests
