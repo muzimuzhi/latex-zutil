@@ -55,6 +55,11 @@ jobs:
       env:
         MISE_ENV: ci
 
+    # setup-texlive-action only shows texlive revision
+    - name: Version(s)
+      run: |
+        explcheck --version
+
     - name: Run pre-commit checks
       run: |
         mise run pre-commit
