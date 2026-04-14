@@ -122,13 +122,13 @@
     % skip if it's not a function (no colon in csname)
     \bool_if:NT #3
       {
-        \tl_set:Ne \l__zutil_tmp_tl
+        \tl_set:Ne \l__zutil_tmpa_tl
           { \__zutil_cs_sig_base_form:w #2 \q_stop }
         % skip if it's already the base form
-        \str_if_eq:onF { \l__zutil_tmp_tl } { #2 }
+        \str_if_eq:onF { \l__zutil_tmpa_tl } { #2 }
           {
             \zutil_exp_args_safe:Nc \cs_generate_variant:Nn
-              { #1: \l__zutil_tmp_tl } { #2 }
+              { #1: \l__zutil_tmpa_tl } { #2 }
           }
       }
   }

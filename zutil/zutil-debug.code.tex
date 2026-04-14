@@ -74,17 +74,17 @@
       {
         % if seq is empty, tl is set to (both contain and equal to)
         % \q_no_value
-        \seq_pop_left:NN \l__zutil_debug_labels_seq \l__zutil_tmp_tl
+        \seq_pop_left:NN \l__zutil_debug_labels_seq \l__zutil_tmpa_tl
         \zutil_debug_do:e
           {
             % pretend it's an error, so can be filtered out by TeXstudio
             !~debug~
-            \tl_if_eq:NNF \l__zutil_tmp_tl \q_no_value
+            \tl_if_eq:NNF \l__zutil_tmpa_tl \q_no_value
               {
                 % output forms
                 % [label1]
                 % [label1]label2/label3/.../labeln
-                [ \l__zutil_tmp_tl ]
+                [ \l__zutil_tmpa_tl ]
                 \seq_use:Nn \l__zutil_debug_labels_seq { / } ~
               }
             % TBD: which way is better/quicker, \exp_not:n or
