@@ -60,8 +60,8 @@ repos:
     name: Lint expl3 files
     language: unsupported
     entry: mise run lint:expl3
-    # this file list is composed in justfile too
-    files: ^support/.*\.cfg|zutil/.*\.(sty|tex)$
+    # this file list is composed in scripts/lint-expl3.sh too
+    files: ^zutil/.*\.(sty|tex)|support/.*\.cfg$
     pass_filenames: false
   # there exists an official ruff pre-commit
   # https://github.com/astral-sh/ruff-pre-commit
@@ -69,8 +69,6 @@ repos:
     alias: ruff
     name: Lint python files
     language: unsupported
-    # `cd <dir> && <command>` never failed here, so use a command different
-    # from that in just recipe `ruff`
     entry: mise run lint:python
     files: ^l3build-wrapper/
     # types_or: [python, pyi, jupyter]
