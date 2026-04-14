@@ -33,10 +33,10 @@
     - expands to `\group_begin: \group_end: ⟨cs⟩ \⟨csname⟩`
 - `l3expan` extras
   - `\zutil_cs_generate_variant:N ⟨cs variant⟩`
-    - similar to `\cs_generate_variant:Nn` but accepts the variant function name as argument
-    - example: `\zutil_cs_generate_variant:N \zutil_set:V`
+    - similar to `\cs_generate_variant:Nn` but accepts the whole variant function, rather than its arg-spec only, as argument
+    - example: `\zutil_cs_generate_variant:N \zutil_func:V`
   - `\zutil_cs_generate_variant:n {⟨cs variants list⟩}`
-    - example: `\zutil_cs_generate_variant:n { \zutil_set:v, \zutil_set:e }`
+    - example: `\zutil_cs_generate_variant:n { \zutil_func_a:v, \zutil_func_b:e }`
 - `l3tl` extras
   - `\zutil_prg_new_conditional_tl_if_in:Nnn \⟨name⟩:⟨arg spec⟩ {⟨test token list⟩} {⟨conditions⟩}`
     - variants `Non`, `NVn`, `Nen`
