@@ -53,15 +53,15 @@ repos:
     language: unsupported
     # same as the official `typos` hook args
     # https://github.com/crate-ci/typos/blob/ebc6aac34e3692b3ce373e13f4145e8980875396/.pre-commit-hooks.yaml
-    entry: mise run typos
+    entry: mise run lint:typos
     pass_filenames: false
   - id: lint-expl3
     alias: explcheck
     name: Lint expl3 files
     language: unsupported
-    entry: mise run expl
-    # this file list is composed in justfile too
-    files: ^support/.*\.cfg|zutil/.*\.(sty|tex)$
+    entry: mise run lint:expl3
+    # this file list is composed in scripts/lint-expl3.sh too
+    files: ^zutil/.*\.(sty|tex)|support/.*\.cfg$
     pass_filenames: false
   # there exists an official ruff pre-commit
   # https://github.com/astral-sh/ruff-pre-commit
@@ -69,9 +69,7 @@ repos:
     alias: ruff
     name: Lint python files
     language: unsupported
-    # `cd <dir> && <command>` never failed here, so use a command different
-    # from that in just recipe `ruff`
-    entry: mise run ruff
+    entry: mise run lint:python
     files: ^l3build-wrapper/
     # types_or: [python, pyi, jupyter]
     pass_filenames: false

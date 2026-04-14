@@ -9,7 +9,7 @@ depends = ['lint:*']
 
 [tasks."lint:expl3"]
 description = 'Lint expl3 code'
-alias = 'expl'
+alias = 'explcheck'
 env.EXPLCHECK_CONFIG = '{{ get_env(name="EXPLCHECK_CONFIG", default="config/explcheck.toml") }}'
 file = 'scripts/lint-expl3.sh'
 interactive = true
