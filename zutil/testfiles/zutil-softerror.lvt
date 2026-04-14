@@ -28,14 +28,15 @@
   \zutil_msg_softerror:nnnnnn { __test } { 4-arg } { arg1 } { arg2 } { arg3 } { arg4 }
 }
 
-\OMIT
-\msg_redirect_module:nnn { __test } { error } { softerror }
-\TIMO
-
 \TEST{softerror,~redirected}{
-  \msg_error:nn { __test } { short }
-  \msg_error:nn { __test } { long }
+  \msg_redirect_module:nnn { __test } { error } { softerror }
   \msg_error:nnnnnn { __test } { 4-arg } { arg1 } { arg2 } { arg3 } { arg4 }
+
+  \msg_redirect_module:nnn { __test } { softerror } { info }
+  % now both error and softerror messages are redirected to info
+  \msg_error:nnnnnn { __test } { 4-arg } { arg1 } { arg2 } { arg3 } { arg4 }
+  \zutil_msg_softerror:nnnnnn { __test } { 4-arg } { arg1 } { arg2 } { arg3 } { arg4 }
+  \prop_show:N \l__msg_redirect_softerror_prop
 }
 
 \END

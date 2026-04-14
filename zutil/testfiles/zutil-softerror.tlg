@@ -29,13 +29,16 @@ TEST: softerror
 ============================================================
 TEST: softerror, redirected
 ============================================================
-! Package __test Error: text
-! Package __test Error: text
-(__test)                more text
 ! Package __test Error: text [arg1][arg2][arg3][arg4]
 (__test)                more text [arg1][arg2][arg3][arg4]
-[test] 3 error(s) raised
+Package __test Info: text [arg1][arg2][arg3][arg4]
+Package __test Info: text [arg1][arg2][arg3][arg4]
+The property list \l__msg_redirect_softerror_prop contains the pairs (without outer braces):
+>  {/__test}  =>  {info}.
+<recently read> }
+l. ...}
+[test] 1 error(s) raised
 ============================================================
 ***************
-[test] 9 error(s) raised
+[test] 7 error(s) raised
 [test] 0 check(s) passed
