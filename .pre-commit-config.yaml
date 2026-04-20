@@ -10,7 +10,7 @@ ci:
 
       for more information, see https://pre-commit.ci
   autoupdate_commit_msg: 'chore(pre-commit): autoupdate'
-  skip: [check-spelling, lint-expl3, lint-python]
+  skip: [check-spelling, check-format-justfile, lint-expl3, lint-python]
 
 # path separator is normalized to "/", so no need to use "[\\/]" in python
 # regex, see
@@ -43,6 +43,13 @@ repos:
   - id: actionlint
 - repo: local
   hooks:
+  - id: check-format-justfile
+    alias: justfile
+    name: Check format for justfiles
+    language: unsupported
+    entry: mise run fmt:justfile --check
+    files: ^justfile$
+    pass_filenames: false
   # typos bumps version frequently, so use system installation instead of the
   # official pre-commit hook
   # https://github.com/crate-ci/typos/blob/master/docs/pre-commit.md
