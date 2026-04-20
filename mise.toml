@@ -5,13 +5,19 @@ env_shell_expand = true
 output = "keep-order"
 
 [tasks.lint]
-depends = ['lint:*']
+depends = ['lint:*', 'fmt:justfile --check']
 
 [tasks."lint:expl3"]
 description = 'Lint expl3 code'
 alias = 'explcheck'
 env.EXPLCHECK_CONFIG = '{{ get_env(name="EXPLCHECK_CONFIG", default="config/explcheck.toml") }}'
 file = 'scripts/lint-expl3.sh'
+interactive = true
+
+[tasks."fmt:justfile"]
+description = 'Format justfiles'
+alias = 'justfile'
+run = 'just --fmt'
 interactive = true
 
 [tasks."lint:python"]
@@ -32,7 +38,7 @@ run = 'typos --config=config/typos.toml'
 [tasks."lint:pre-commit"]
 description = "Run pre-commit checks on all files"
 alias = 'pre-commit'
-env.SKIP = '{{ get_env(name="SKIP", default="typos,explcheck,ruff") }}'
+env.SKIP = '{{ get_env(name="SKIP", default="typos,justfile,explcheck,ruff") }}'
 run = [
   'echo "Skipped checks: {{ env.SKIP }}"',
   'pre-commit run --all-files --color=always'

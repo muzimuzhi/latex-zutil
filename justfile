@@ -7,7 +7,7 @@
 # settings
 # https://github.com/casey/just?tab=readme-ov-file#settings
 
-set ignore-comments := true
+set ignore-comments
 set unstable
 
 ## variables
@@ -25,7 +25,7 @@ L3BUILD_SAVE_OPTIONS := env('L3BUILD_SAVE_OPTIONS', '-q')
 
 # List all recipes
 default:
-    just --justfile {{justfile()}} --list --unsorted
+    just --justfile {{ justfile() }} --list --unsorted
 
 [group('*meta')]
 test: zutil
