@@ -10,18 +10,14 @@
 % shared message for raising short and one-time messages
 \msg_new:nnn { zutil } { _shared } { #1 }
 
-% version guard
-\cs_set_protected:Npn \__zutil_tmp:w #1
+% minimum required l3kernel version
+\IfExplAtLeastF { 2025-10-09 }
   {
-    \IfExplAtLeastF{#1}
+    \msg_critical:nne { zutil } { _shared }
       {
-        \msg_critical:nne { zutil } { _shared }
-          {
-            Need~l3kernel~#1~or~later.~ Got~\ExplLoaderFileDate.
-          }
+        Need~l3kernel~#1~or~later.~ Got~\ExplLoaderFileDate.
       }
   }
-\__zutil_tmp:w { 2025-10-09 } % required by \l_keys_choice_str
 
 % package options
 \DeclareKeys [ zutil ]
