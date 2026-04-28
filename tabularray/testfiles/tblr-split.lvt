@@ -4,7 +4,8 @@
 \usepackage{tabularray}
 
 \ExplSyntaxOn
-\debug_on:n { check-declarations , check-expressions , deprecation }
+\debug_on:n { all }
+\debug_off:n { log-functions }
 % skip table typesetting
 \cs_gset_eq:NN \__tblr_build_whole: \prg_do_nothing:
 \ExplSyntaxOff

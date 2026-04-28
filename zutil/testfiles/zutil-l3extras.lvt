@@ -7,7 +7,8 @@
 
 \zutil_load_module:n { l3extras }
 
-\debug_on:n { check-declarations , deprecation , log-functions }
+% we need "log-functions" for some of the tests in this file
+\debug_on:n { all }
 
 \START
 

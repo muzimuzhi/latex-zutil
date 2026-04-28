@@ -8,7 +8,8 @@
 \zutil_load_module:n { l3patch }
 \zutil_msg_resume_debug: % cancel the resuming inserted by zutil-regression-test.cfg
 
-\debug_on:n { check-declarations , deprecation }
+\debug_on:n { all }
+\debug_off:n { log-functions }
 
 \START
 

@@ -7,7 +7,8 @@
 
 \zutil_load_module:n { softerror }
 
-\debug_on:n { check-declarations , deprecation }
+\debug_on:n { all }
+\debug_off:n { log-functions }
 
 \msg_new:nnn { __test } { short } { text }
 \msg_new:nnnn { __test } { long } { text } { more~text }
