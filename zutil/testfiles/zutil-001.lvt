@@ -4,7 +4,8 @@
 \documentclass{article}
 
 \ExplSyntaxOn
-\debug_on:n { check-declarations , check-expressions , deprecation }
+\debug_on:n { all }
+\debug_off:n { log-functions }
 \ExplSyntaxOff
 
 \START

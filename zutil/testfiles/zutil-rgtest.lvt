@@ -5,7 +5,8 @@
 
 \ExplSyntaxOn
 
-\debug_on:n { check-declarations , deprecation }
+\debug_on:n { all }
+\debug_off:n { log-functions }
 
 % \msg_redirect_module:nnn { test } { error } { softerror }
 \msg_new:nnn { test } { msg1 } { This~is~a~test~message. }

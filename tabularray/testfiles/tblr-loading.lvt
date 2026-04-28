@@ -2,7 +2,8 @@
 \documentclass{article}
 
 \ExplSyntaxOn
-\debug_on:n { check-declarations , check-expressions , deprecation }
+\debug_on:n { all }
+\debug_off:n { log-functions }
 \ExplSyntaxOff
 
 \START
@@ -47,7 +48,7 @@
 \hook_gput_code:nnn { package/functional/before } { . }
   { \debug_off:n { all } }
 \hook_gput_code:nnn { package/functional/after } { . }
-  { \debug_on:n { check-declarations , check-expressions , deprecation } }
+  { \debug_on:n { all } \debug_off:n { log-functions } }
 
 \clist_map_inline:nn
   {

@@ -5,7 +5,8 @@
 
 \ExplSyntaxOn
 
-\debug_on:n { check-declarations , deprecation }
+\debug_on:n { all }
+\debug_off:n { log-functions }
 
 \START
 
