@@ -23,14 +23,14 @@ def dry_run_print(*args: Any, **kwargs: Any) -> None:
     print(f'{Fore.LIGHTBLACK_EX}[wrapper DRY-RUN]{Fore.RESET}', *args, **kwargs)
 
 parser = argparse.ArgumentParser(
-    description="explcheck wrapper",
+    description='explcheck wrapper',
     usage='$(prog)s [options] files...',
     formatter_class=argparse.RawTextHelpFormatter
 )
 
 parser.add_argument(
     '--config-file',
-    default=os.getenv("EXPLCHECK_CONFIG", ".explcheck"),
+    default=os.getenv('EXPLCHECK_CONFIG', '.explcheck'),
     help='path to explcheck config file (default: .explcheck or env EXPLCHECK_CONFIG)'
 )
 parser.add_argument(
@@ -78,7 +78,7 @@ def main() -> None:
         args.config_line.append('stop_early_when_confused=false')
 
     if args.config_line:
-        with open(config_old, "r") as config_file:
+        with open(config_old, 'r') as config_file:
             toml_config = parse(config_file.read())
 
         for line in args.config_line:
@@ -88,16 +88,16 @@ def main() -> None:
             else:
                 toml_config['defaults'].update(toml_line)
         print(logger.getEffectiveLevel())
-        logger.debug("patched config:")
+        logger.debug('patched config:')
         for line in dumps(toml_config).splitlines():
             logger.debug(line)
 
-        config_new = config_new + ".tmp"
-        with open(config_new, "w") as f:
+        config_new = config_new + '.tmp'
+        with open(config_new, 'w') as f:
             f.write(dumps(toml_config))
 
     # compose explcheck arguments to run
-    cmd = ["explcheck", "--config-file", config_new]
+    cmd = ['\\explcheck', '--config-file', config_new]
     cmd.extend(args_unknown)
     cmd.extend(args_remaining)
 
