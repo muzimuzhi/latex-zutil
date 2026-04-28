@@ -4,13 +4,16 @@ env_shell_expand = true
 [settings.task]
 output = "keep-order"
 
+[env]
+EXPLCHECK_CONFIG = "config/explcheck.toml"
+
 [tasks.lint]
 depends = ['lint:*', 'fmt:justfile --check']
 
 [tasks."lint:expl3"]
 description = 'Lint expl3 code'
 alias = 'explcheck'
-env.EXPLCHECK_CONFIG = '{{ get_env(name="EXPLCHECK_CONFIG", default="config/explcheck.toml") }}'
+# env.EXPLCHECK_CONFIG = '{{ get_env(name="EXPLCHECK_CONFIG", default="config/explcheck.toml") }}'
 file = 'scripts/lint-expl3.sh'
 interactive = true
 
