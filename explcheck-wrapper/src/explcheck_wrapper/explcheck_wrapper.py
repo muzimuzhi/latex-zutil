@@ -9,6 +9,7 @@ import subprocess
 import sys
 
 from colorama import Fore
+from difflib import unified_diff
 from tomlkit import dumps, parse
 
 
@@ -69,14 +70,15 @@ def main() -> None:
     if args.debug:
         logger.setLevel(logging.DEBUG)
 
-    config_old = args.config_file
-    config_new = config_old
+    config_file = args.config_file
+    config_file_new = config_file
     if args.flow_analysis:
         args.config_line.append('stop_early_when_confused=false')
 
     if args.config_line:
-        with open(config_old, 'r') as config_old:
-            toml_config = parse(config_old.read())
+        with open(config_file, 'r') as config_old:
+            config_old_content = config_old.read()
+            toml_config = parse(config_old_content)
 
         for line in args.config_line:
             toml_line = parse(line)
@@ -84,30 +86,45 @@ def main() -> None:
                 toml_config['defaults'].update(toml_line['defaults'])
             else:
                 toml_config['defaults'].update(toml_line)
-        print(logger.getEffectiveLevel())
-        logger.debug('patched config:')
-        for line in dumps(toml_config).splitlines():
-            logger.debug(line)
 
         with tempfile.NamedTemporaryFile(mode='w', encoding='utf-8', prefix='explcheck_', suffix='.toml', delete=False) as f:
-            f.write(dumps(toml_config))
-            config_new = f.name
+            config_new_content = dumps(toml_config)
+            f.write(config_new_content)
+            config_file_new = f.name
+
+            if logger.getEffectiveLevel() <= logging.DEBUG:
+                logger.debug('patched config:')
+                diff = unified_diff(
+                    config_old_content.splitlines(),
+                    config_new_content.splitlines(),
+                    fromfile=config_file,
+                    tofile=config_file_new,
+                    lineterm='',
+                )
+                for line in diff:
+                    if line.startswith('+'):
+                        logger.debug(f'{Fore.GREEN}{line}{Fore.RESET}')
+                    elif line.startswith('-'):
+                        logger.debug(f'{Fore.RED}{line}{Fore.RESET}')
+                    else:
+                        logger.debug(line)
 
     # compose explcheck arguments to run
-    cmd = ['\\explcheck', '--config-file', config_new]
+    cmd = ['\\explcheck', '--config-file', config_file_new]
     cmd.extend(args_unknown)
     cmd.extend(args_remaining)
 
     try:
         if args.dry_run:
-            dry_run_print('run command', *cmd)
+            dry_run_print(f'"{" ".join(cmd)}"')
         else:
             print()
             subprocess.run(cmd, bufsize=0, check=True, shell=True)
     except subprocess.CalledProcessError:
         pass
     finally:
-        Path(config_new).unlink()
+        if args.config_line:
+            Path(config_file_new).unlink()
 
 if __name__ == '__main__':
     main()
