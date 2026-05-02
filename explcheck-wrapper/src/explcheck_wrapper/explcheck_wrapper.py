@@ -1,7 +1,13 @@
 from pathlib import Path
 from typing import Any
 
-import argparse, logging, os, subprocess, sys  # noqa: E401
+import argparse
+import logging
+import os
+import tempfile
+import subprocess
+import sys
+
 from colorama import Fore
 from tomlkit import dumps, parse
 
@@ -69,8 +75,8 @@ def main() -> None:
         args.config_line.append('stop_early_when_confused=false')
 
     if args.config_line:
-        with open(config_old, 'r') as config_file:
-            toml_config = parse(config_file.read())
+        with open(config_old, 'r') as config_old:
+            toml_config = parse(config_old.read())
 
         for line in args.config_line:
             toml_line = parse(line)
@@ -83,9 +89,9 @@ def main() -> None:
         for line in dumps(toml_config).splitlines():
             logger.debug(line)
 
-        config_new = config_new + '.tmp'
-        with open(config_new, 'w') as f:
+        with tempfile.NamedTemporaryFile(mode='w', encoding='utf-8', prefix='explcheck_', suffix='.toml', delete=False) as f:
             f.write(dumps(toml_config))
+            config_new = f.name
 
     # compose explcheck arguments to run
     cmd = ['\\explcheck', '--config-file', config_new]
@@ -97,11 +103,11 @@ def main() -> None:
             dry_run_print('run command', *cmd)
         else:
             print()
-            subprocess.run(cmd, bufsize=0, check=True)
+            subprocess.run(cmd, bufsize=0, check=True, shell=True)
     except subprocess.CalledProcessError:
         pass
     finally:
-        Path(config_new).unlink(missing_ok=True)
+        Path(config_new).unlink()
 
 if __name__ == '__main__':
     main()
