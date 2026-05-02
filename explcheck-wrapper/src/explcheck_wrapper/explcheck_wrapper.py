@@ -13,12 +13,18 @@ from difflib import unified_diff
 from tomlkit import dumps, parse
 
 
+def run(dry_run: bool, cmd) -> None:
+    if dry_run:
+        print(f'{Fore.LIGHTBLACK_EX}[wrapper DRY-RUN]{Fore.RESET}', cmd)
+    else:
+        try:
+            subprocess.run(cmd, bufsize=0, check=True, shell=True)
+        except subprocess.CalledProcessError:
+            pass
+
+
 logging.basicConfig(format=f'{Fore.LIGHTBLACK_EX}[%(name)s %(levelname)-5s]{Fore.RESET} %(message)s')
 logger = logging.getLogger('wrapper')
-
-
-def dry_run_print(*args: Any, **kwargs: Any) -> None:
-    print(f'{Fore.LIGHTBLACK_EX}[wrapper DRY-RUN]{Fore.RESET}', *args, **kwargs)
 
 parser = argparse.ArgumentParser(
     description='explcheck wrapper',
@@ -114,17 +120,9 @@ def main() -> None:
     cmd.extend(args_unknown)
     cmd.extend(args_remaining)
 
-    try:
-        if args.dry_run:
-            dry_run_print(f'"{" ".join(cmd)}"')
-        else:
-            print()
-            subprocess.run(cmd, bufsize=0, check=True, shell=True)
-    except subprocess.CalledProcessError:
-        pass
-    finally:
-        if args.config_line:
-            Path(config_file_new).unlink()
+    run(args.dry_run, cmd)
+    if args.config_line:
+        Path(config_file_new).unlink()
 
 if __name__ == '__main__':
     main()
