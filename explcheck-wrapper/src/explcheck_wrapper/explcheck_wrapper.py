@@ -1,12 +1,3 @@
-#!/usr/bin/env -S uv run --script
-
-# /// script
-# dependencies = [
-#   "colorama",
-#   "tomlkit",
-# ]
-# ///
-
 from pathlib import Path
 from typing import Any
 
