@@ -8,7 +8,7 @@ import tempfile
 import subprocess
 import sys
 
-from colorama import Fore
+from colorama import Fore, just_fix_windows_console
 from difflib import unified_diff
 from tomlkit import dumps, parse
 
@@ -22,6 +22,8 @@ def run(dry_run: bool, cmd) -> None:
         except subprocess.CalledProcessError:
             pass
 
+
+just_fix_windows_console()  # enable ANSI colors on Windows terminals
 
 logging.basicConfig(format=f'{Fore.LIGHTBLACK_EX}[%(name)s %(levelname)-5s]{Fore.RESET} %(message)s')
 logger = logging.getLogger('wrapper')
