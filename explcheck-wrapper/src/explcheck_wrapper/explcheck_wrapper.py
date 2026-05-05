@@ -49,7 +49,7 @@ def run(cmd: list[str], *, dry_run: bool) -> None:
         print(f'{Fore.LIGHTBLACK_EX}[wrapper DRY-RUN]{Fore.RESET}', *cmd)
     else:
         logger.debug('running "%s"', ' '.join(cmd))
-        print()
+        print(flush=True)  # leave a blank line before explcheck's output
         # NOTE: let it fail
         subprocess.run(cmd, check=False)  # noqa: S603
 
