@@ -77,13 +77,10 @@ jobs:
         mise run lint:typos
 
     - name: Lint expl3 code
-      if: toJSON(inputs) == '{}'
       run: |
         mise run lint:expl3 -- --debug
 
     - name: Lint expl3 code (with flow analysis)
-      # run only when triggered by `workflow_call` or `workflow_dispatch`
-      if: toJSON(inputs) != '{}'
       run: |
         mise run lint:expl3 -- --debug --flow-analysis
 
