@@ -18,7 +18,7 @@ from tomlkit.items import Table
 
 def run(dry_run: bool, cmd) -> None:
     if dry_run:
-        print(f'{Fore.LIGHTBLACK_EX}[wrapper DRY-RUN]{Fore.RESET}', cmd)
+        print(f'{Fore.LIGHTBLACK_EX}[wrapper DRY-RUN]{Fore.RESET}', *cmd)
     else:
         try:
             subprocess.run(cmd, bufsize=0, check=True, shell=True)
