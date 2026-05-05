@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import cast
+from typing import Literal, cast
 
 import argparse
 import logging
@@ -14,6 +14,29 @@ from difflib import unified_diff
 #     But it only supports TOML 1.0, not 1.1 yet.
 from tomlkit import TOMLDocument, dumps, table, parse
 from tomlkit.items import Table
+
+
+class LoggingFormatter(logging.Formatter):
+    """Custom formatter to set different formats for different log levels."""
+
+    FORMATS = {
+        logging.DEBUG:    f'{Fore.LIGHTBLACK_EX}[%(name)s DEBUG]{Fore.RESET} %(message)s',
+        logging.INFO:     f'{Fore.LIGHTBLACK_EX}[%(name)s  INFO]{Fore.RESET} %(message)s',
+        logging.WARNING:  f'{Fore.LIGHTBLACK_EX}[%(name)s  WARN]{Fore.RESET} %(message)s',
+        logging.ERROR:    f'{Fore.RED}[%(name)s ERROR]{Fore.RESET} %(message)s',
+        logging.CRITICAL: f'{Fore.RED}[%(name)s  CRIT]{Fore.RESET} %(message)s'
+    }
+
+    def format(self, record):
+        # Get the format for the current level or use a default
+        if record.levelno <= logging.WARNING:
+            default_format = self.FORMATS[logging.WARNING]
+        else:
+            default_format = self.FORMATS[logging.ERROR]
+        log_fmt = self.FORMATS.get(record.levelno, default_format)
+        # Create a temporary formatter with the chosen style
+        formatter = logging.Formatter(log_fmt)
+        return formatter.format(record)
 
 
 def run(dry_run: bool, cmd) -> None:
@@ -48,11 +71,17 @@ def merge_configs(
 
 
 # based on https://github.com/tartley/colorama/issues/268#issuecomment-973315094
-if os.getenv('NO_COLOR') != '' or os.getenv('CI'):
-        init(strip=True, convert=False)
+# https://no-color.org/
+if (os.getenv('NO_COLOR') and os.getenv('NO_COLOR') != '') or \
+    (os.getenv('CI') and os.getenv('CI') != ''):
+    init(strip=True, convert=False)
 
-logging.basicConfig(format=f'{Fore.LIGHTBLACK_EX}[%(name)s %(levelname)-5s]{Fore.RESET} %(message)s')
+# init logger
 logger = logging.getLogger('wrapper')
+ch = logging.StreamHandler()  # `ch` stands for `console handler`
+ch.setFormatter(LoggingFormatter())
+logger.addHandler(ch)
+
 
 parser = argparse.ArgumentParser(
     description='explcheck wrapper',
