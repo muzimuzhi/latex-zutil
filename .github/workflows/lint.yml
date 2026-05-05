@@ -55,6 +55,12 @@ jobs:
       env:
         MISE_ENV: ci
 
+    - name: Install explcheck-wrapper
+      # no need for `-e, --editable` installation on CI
+      run: |
+        cd explcheck-wrapper
+        uv tool install .
+
     # setup-texlive-action only shows texlive revision
     - name: Version(s)
       run: |
@@ -73,13 +79,13 @@ jobs:
     - name: Lint expl3 code
       if: toJSON(inputs) == '{}'
       run: |
-        mise run lint:expl3
+        mise run lint:expl3 -- --debug
 
-    - name: Lint expl3 code (slow)
+    - name: Lint expl3 code (with flow analysis)
       # run only when triggered by `workflow_call` or `workflow_dispatch`
       if: toJSON(inputs) != '{}'
       run: |
-        mise run lint:expl3 --slow --verbose
+        mise run lint:expl3 -- --debug --flow-analysis
 
     - name: Lint python code
       run: |

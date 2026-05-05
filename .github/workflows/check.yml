@@ -141,7 +141,7 @@ jobs:
         enable-cache: false
 
     - name: Install l3build-wrapper
-      # no need for `-e, --editable` installation
+      # no need for `-e, --editable` installation on CI
       run: |
         cd l3build-wrapper
         uv tool install .

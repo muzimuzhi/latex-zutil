@@ -91,7 +91,7 @@ parser = argparse.ArgumentParser(
 parser.add_argument(
     '--config-file',
     default=os.getenv('EXPLCHECK_CONFIG', '.explcheckrc'),
-    help='path to explcheck config file (default: .explcheckrc or env EXPLCHECK_CONFIG)'
+    help='path to explcheck config file (default: .explcheckrc, env: EXPLCHECK_CONFIG)'
 )
 parser.add_argument(
     '--config-line',

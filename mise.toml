@@ -4,17 +4,17 @@ env_shell_expand = true
 [settings.task]
 output = "keep-order"
 
-[env]
-EXPLCHECK_CONFIG = "config/explcheck.toml"
-
 [tasks.lint]
 depends = ['lint:*', 'fmt:justfile --check']
 
 [tasks."lint:expl3"]
 description = 'Lint expl3 code'
 alias = 'explcheck'
-# env.EXPLCHECK_CONFIG = '{{ get_env(name="EXPLCHECK_CONFIG", default="config/explcheck.toml") }}'
-file = 'scripts/lint-expl3.sh'
+# tabularry is not checked
+vars.filelist = 'zutil/*.sty zutil/*.tex support/*.cfg'
+# Thanks to explcheck's CLI parsing which supports intermixed args. Otherwise
+# a second task is needed.
+run = 'explcheck-wrapper --config-file config/explcheck.toml {{ vars.filelist }}'
 interactive = true
 
 [tasks."fmt:justfile"]
