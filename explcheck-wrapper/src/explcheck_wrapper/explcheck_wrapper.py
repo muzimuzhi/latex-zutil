@@ -8,7 +8,7 @@ import tempfile
 import subprocess
 import sys
 
-from colorama import Fore, just_fix_windows_console
+from colorama import Fore, init
 from difflib import unified_diff
 # XXX choose tomlkit for its style-preserving feature.
 #     But it only supports TOML 1.0, not 1.1 yet.
@@ -47,7 +47,9 @@ def merge_configs(
     return config
 
 
-just_fix_windows_console()  # enable ANSI colors on Windows terminals
+# based on https://github.com/tartley/colorama/issues/268#issuecomment-973315094
+if os.getenv('NO_COLOR') != '' or os.getenv('CI'):
+        init(strip=True, convert=False)
 
 logging.basicConfig(format=f'{Fore.LIGHTBLACK_EX}[%(name)s %(levelname)-5s]{Fore.RESET} %(message)s')
 logger = logging.getLogger('wrapper')
