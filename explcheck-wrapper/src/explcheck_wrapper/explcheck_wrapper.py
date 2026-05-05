@@ -46,7 +46,7 @@ class LoggingFormatter(logging.Formatter):
 def run(cmd: list[str], *, dry_run: bool) -> None:
     """Run the command, or print it if dry_run is True."""
     if dry_run:
-        print(f'{Fore.LIGHTBLACK_EX}[wrapper DRY-RUN]{Fore.RESET}', *cmd)
+        print(f'{Fore.LIGHTBLACK_EX}[wrapper DRY-RUN]{Fore.RESET}', *cmd, flush=True)
     else:
         logger.debug('running "%s"', ' '.join(cmd))
         print(flush=True)  # leave a blank line before explcheck's output
