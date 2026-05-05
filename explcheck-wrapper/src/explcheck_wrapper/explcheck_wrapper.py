@@ -60,8 +60,8 @@ parser = argparse.ArgumentParser(
 
 parser.add_argument(
     '--config-file',
-    default=os.getenv('EXPLCHECK_CONFIG', '.explcheck'),
-    help='path to explcheck config file (default: .explcheck or env EXPLCHECK_CONFIG)'
+    default=os.getenv('EXPLCHECK_CONFIG', '.explcheckrc'),
+    help='path to explcheck config file (default: .explcheckrc or env EXPLCHECK_CONFIG)'
 )
 parser.add_argument(
     '--config-line',
