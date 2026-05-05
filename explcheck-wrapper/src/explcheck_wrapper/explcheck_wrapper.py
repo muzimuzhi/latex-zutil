@@ -21,17 +21,14 @@ from tomlkit.items import Table
 class LoggingFormatter(logging.Formatter):
     """Custom formatter to set different formats for different log levels."""
 
+    WARN_COLOR: Final[str] = Fore.LIGHTBLACK_EX
+    ERROR_COLOR: Final[str] = Fore.RED
     FORMATS: Final[dict[int, str]] = {
-        logging.DEBUG:
-            f'{Fore.LIGHTBLACK_EX}[%(name)s DEBUG]{Fore.RESET} %(message)s',
-        logging.INFO:
-            f'{Fore.LIGHTBLACK_EX}[%(name)s  INFO]{Fore.RESET} %(message)s',
-        logging.WARNING:
-            f'{Fore.LIGHTBLACK_EX}[%(name)s  WARN]{Fore.RESET} %(message)s',
-        logging.ERROR:
-            f'{Fore.RED}[%(name)s ERROR]{Fore.RESET} %(message)s',
-        logging.CRITICAL:
-            f'{Fore.RED}[%(name)s  CRIT]{Fore.RESET} %(message)s'
+        logging.DEBUG: f'{WARN_COLOR}[%(name)s DEBUG]{Fore.RESET} %(message)s',
+        logging.INFO: f'{WARN_COLOR}[%(name)s  INFO]{Fore.RESET} %(message)s',
+        logging.WARNING: f'{WARN_COLOR}[%(name)s  WARN]{Fore.RESET} %(message)s',
+        logging.ERROR: f'{ERROR_COLOR}[%(name)s ERROR]{Fore.RESET} %(message)s',
+        logging.CRITICAL: f'{ERROR_COLOR}[%(name)s  CRIT]{Fore.RESET} %(message)s',
     }
 
     def format(self, record: logging.LogRecord) -> str:  # noqa: D102
@@ -58,10 +55,10 @@ def run(cmd: list[str], *, dry_run: bool) -> None:
 
 
 def merge_configs(
-        config: TOMLDocument,
-        config_patch: TOMLDocument,
-        # 1st section is used as default section for unrecognized keys
-        recognized_sections: tuple[str, ...] = ('defaults', 'filename', 'package'),
+    config: TOMLDocument,
+    config_patch: TOMLDocument,
+    # 1st section is used as default section for unrecognized keys
+    recognized_sections: tuple[str, ...] = ('defaults', 'filename', 'package'),
 ) -> TOMLDocument:
     """Merge two explcheck configs by keys under sections."""
     for key, value in config_patch.items():
@@ -94,38 +91,31 @@ logger.addHandler(ch)
 parser = argparse.ArgumentParser(
     description='explcheck wrapper',
     usage='$(prog)s [options] files...',
-    formatter_class=argparse.RawTextHelpFormatter
+    formatter_class=argparse.RawTextHelpFormatter,
 )
 
 parser.add_argument(
     '--config-file',
     default=os.getenv('EXPLCHECK_CONFIG', '.explcheckrc'),
-    help='path to explcheck config file (default: .explcheckrc, env: EXPLCHECK_CONFIG)'
+    help='path to explcheck config file (default: .explcheckrc, env: EXPLCHECK_CONFIG)',
 )
 parser.add_argument(
     '--config-line',
     action='append',
     default=[],
-    help='set a config line (format: key=value, can be used multiple times)'
+    help='set a config line (format: key=value, can be used multiple times)',
 )
 parser.add_argument(
     '--flow-analysis',
     dest='config_line',
     action='append_const',
     const='stop_early_when_confused=false',
-    help='force flow analysis'
+    help='force flow analysis',
 )
 parser.add_argument(
-    '-n',
-    '--dry-run',
-    action='store_true',
-    help='show what would run without executing'
+    '-n', '--dry-run', action='store_true', help='show what would run without executing'
 )
-parser.add_argument(
-    '--debug',
-    action='store_true',
-    help='enable debug logging'
-)
+parser.add_argument('--debug', action='store_true', help='enable debug logging')
 
 
 def main() -> None:
@@ -135,7 +125,7 @@ def main() -> None:
         # split args at '--'
         idx = argv.index('--')
         args_list = argv[:idx]
-        args_remaining = argv[idx+1:]  # noqa: E226
+        args_remaining = argv[idx + 1 :]
     else:
         args_list = argv
         args_remaining = []
