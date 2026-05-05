@@ -90,7 +90,8 @@ logger.addHandler(ch)
 
 parser = argparse.ArgumentParser(
     description='explcheck wrapper',
-    usage='$(prog)s [options] files...',
+    usage='%(prog)s [options] files...',
+    epilog='Unknown options and options after -- are all passed to explcheck.',
     formatter_class=argparse.RawTextHelpFormatter,
 )
 
