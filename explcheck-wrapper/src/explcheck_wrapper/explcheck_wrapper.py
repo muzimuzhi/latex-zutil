@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Any
+from typing import cast
 
 import argparse
 import logging
@@ -10,7 +10,10 @@ import sys
 
 from colorama import Fore, just_fix_windows_console
 from difflib import unified_diff
-from tomlkit import dumps, parse
+# XXX choose tomlkit for its style-preserving feature.
+#     But it only supports TOML 1.0, not 1.1 yet.
+from tomlkit import TOMLDocument, dumps, table, parse
+from tomlkit.items import Table
 
 
 def run(dry_run: bool, cmd) -> None:
@@ -21,6 +24,27 @@ def run(dry_run: bool, cmd) -> None:
             subprocess.run(cmd, bufsize=0, check=True, shell=True)
         except subprocess.CalledProcessError:
             pass
+
+
+def merge_configs(
+        config: TOMLDocument,
+        config_patch: TOMLDocument,
+        # 1st section is used as default section for unrecognized keys
+        recognized_sections = ('defaults', 'filename', 'package'),
+) -> TOMLDocument:
+    for key, value in config_patch.items():
+        if key in recognized_sections and isinstance(value, Table):
+            section = key
+            # XXX when 'value' is a table, this will replace the whole table
+            _dict = value
+        else:
+            section = recognized_sections[0]
+            _dict = table()
+            _dict.append(key, value)
+        if section not in config:
+            config[section] = table()
+        cast(Table, config[section]).update(_dict)
+    return config
 
 
 just_fix_windows_console()  # enable ANSI colors on Windows terminals
@@ -89,10 +113,7 @@ def main() -> None:
 
         for line in args.config_line:
             toml_line = parse(line)
-            if 'defaults' in toml_line:
-                toml_config['defaults'].update(toml_line['defaults'])
-            else:
-                toml_config['defaults'].update(toml_line)
+            merge_configs(toml_config, toml_line)
 
         with tempfile.NamedTemporaryFile(mode='w', encoding='utf-8', prefix='explcheck_', suffix='.toml', delete=False) as f:
             config_new_content = dumps(toml_config)
