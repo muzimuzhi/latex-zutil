@@ -1,0 +1,49 @@
+[project]
+name = "latexutils"
+version = "0.1.0"
+authors = [
+    { name = "Yukai Chou", email = "muzimuzhi@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "colorama>=0.4.6,<0.5.0",
+    "tomlkit>=0.14.0,<0.15.0",
+]
+
+[tool.uv.workspace]
+members = ["l3build-wrapper", "explcheck-wrapper"]
+
+[build-system]
+requires = ["uv_build>=0.11.1,<0.12.0"]
+build-backend = "uv_build"
+
+[tool.ruff.lint]
+# https://docs.astral.sh/ruff/settings/#lint
+preview = true  # https://docs.astral.sh/ruff/preview/
+select = ['ALL']
+ignore = [
+  'CPY001', # Missing copyright notice at top of file
+  'D107',   # Undocumented public `__init__()` method
+  'D203',   # Class docstring not preceded by a blank line,
+            #   incompatible with D211
+  'D213',   # The (first) summary line of multi-line docstrings not on the
+            #   second physical line, incompatible with D212
+  'D413',   # Missing blank line after last section of multi-line docstring
+  'DOC201', # `return` is not documented in docstring
+  'T201',   # Uses of `print()`
+  'TD002',  # Missing author in TODO
+  'TD003',  # Missing issue link for this TODO
+  'TRY400', # Use `logging.error` instead of `logging.exception` when logging
+            #   an exception
+  'S404',   # suspicious-subprocess-import
+  ## relatively temp ignorances
+  'COM812', # Trailing comma missing
+            #   tracking issue https://github.com/astral-sh/ruff/issues/9216
+  'FIX002', # Line contains TODO, consider resolving the issue
+]
+flake8-quotes.inline-quotes = 'single'
+
+[tool.ruff.format]
+# https://docs.astral.sh/ruff/settings/#format
+preview = true  # https://docs.astral.sh/ruff/preview/
+quote-style = 'single'

@@ -4,7 +4,7 @@ import argparse
 import fnmatch
 import logging
 import os
-import subprocess  # noqa: S404
+import subprocess
 import sys
 from dataclasses import asdict, dataclass, replace
 from enum import UNIQUE, StrEnum, verify

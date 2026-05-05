@@ -1,33 +1,40 @@
-from pathlib import Path
-from typing import Literal, cast
+"""explcheck wrapper with extra useful CLI options."""
 
 import argparse
 import logging
 import os
-import tempfile
 import subprocess
 import sys
+import tempfile
+from difflib import unified_diff
+from pathlib import Path
+from typing import Final, cast
 
 from colorama import Fore, init
-from difflib import unified_diff
-# XXX choose tomlkit for its style-preserving feature.
-#     But it only supports TOML 1.0, not 1.1 yet.
-from tomlkit import TOMLDocument, dumps, table, parse
+
+# tomlkit is chosen for its style-preserving feature. But it only supports
+# TOML 1.0, not 1.1 yet.
+from tomlkit import TOMLDocument, dumps, parse, table
 from tomlkit.items import Table
 
 
 class LoggingFormatter(logging.Formatter):
     """Custom formatter to set different formats for different log levels."""
 
-    FORMATS = {
-        logging.DEBUG:    f'{Fore.LIGHTBLACK_EX}[%(name)s DEBUG]{Fore.RESET} %(message)s',
-        logging.INFO:     f'{Fore.LIGHTBLACK_EX}[%(name)s  INFO]{Fore.RESET} %(message)s',
-        logging.WARNING:  f'{Fore.LIGHTBLACK_EX}[%(name)s  WARN]{Fore.RESET} %(message)s',
-        logging.ERROR:    f'{Fore.RED}[%(name)s ERROR]{Fore.RESET} %(message)s',
-        logging.CRITICAL: f'{Fore.RED}[%(name)s  CRIT]{Fore.RESET} %(message)s'
+    FORMATS: Final[dict[int, str]] = {
+        logging.DEBUG:
+            f'{Fore.LIGHTBLACK_EX}[%(name)s DEBUG]{Fore.RESET} %(message)s',
+        logging.INFO:
+            f'{Fore.LIGHTBLACK_EX}[%(name)s  INFO]{Fore.RESET} %(message)s',
+        logging.WARNING:
+            f'{Fore.LIGHTBLACK_EX}[%(name)s  WARN]{Fore.RESET} %(message)s',
+        logging.ERROR:
+            f'{Fore.RED}[%(name)s ERROR]{Fore.RESET} %(message)s',
+        logging.CRITICAL:
+            f'{Fore.RED}[%(name)s  CRIT]{Fore.RESET} %(message)s'
     }
 
-    def format(self, record):
+    def format(self, record: logging.LogRecord) -> str:  # noqa: D102
         # Get the format for the current level or use a default
         if record.levelno <= logging.WARNING:
             default_format = self.FORMATS[logging.WARNING]
@@ -39,39 +46,42 @@ class LoggingFormatter(logging.Formatter):
         return formatter.format(record)
 
 
-def run(dry_run: bool, cmd) -> None:
+def run(cmd: list[str], *, dry_run: bool) -> None:
+    """Run the command, or print it if dry_run is True."""
     if dry_run:
         print(f'{Fore.LIGHTBLACK_EX}[wrapper DRY-RUN]{Fore.RESET}', *cmd)
     else:
-        logger.debug(f'running "{' '.join(cmd)}"')
+        logger.debug('running "%s"', ' '.join(cmd))
         print()
-        subprocess.run(cmd)
+        # NOTE: let it fail
+        subprocess.run(cmd, check=False)  # noqa: S603
 
 
 def merge_configs(
         config: TOMLDocument,
         config_patch: TOMLDocument,
         # 1st section is used as default section for unrecognized keys
-        recognized_sections = ('defaults', 'filename', 'package'),
+        recognized_sections: tuple[str, ...] = ('defaults', 'filename', 'package'),
 ) -> TOMLDocument:
+    """Merge two explcheck configs by keys under sections."""
     for key, value in config_patch.items():
         if key in recognized_sections and isinstance(value, Table):
             section = key
-            # XXX when 'value' is a table, this will replace the whole table
-            _dict = value
+            # NOTE: when 'value' is a table, this will replace the whole table
+            value_ = value
         else:
             section = recognized_sections[0]
-            _dict = table()
-            _dict.append(key, value)
+            value_ = table()
+            value_.append(key, value)
         if section not in config:
             config[section] = table()
-        cast(Table, config[section]).update(_dict)
+        cast('Table', config[section]).update(value_)
     return config
 
 
 # based on https://github.com/tartley/colorama/issues/268#issuecomment-973315094
 # https://no-color.org/
-if (os.getenv('NO_COLOR') and os.getenv('NO_COLOR') != ''):
+if os.getenv('NO_COLOR'):
     init(strip=True, convert=False)
 
 # init logger
@@ -119,12 +129,13 @@ parser.add_argument(
 
 
 def main() -> None:
+    """Main function to parse known arguments, modify config, and run explcheck."""  # noqa: D401
     argv = sys.argv[1:]
     if '--' in argv:
         # split args at '--'
         idx = argv.index('--')
         args_list = argv[:idx]
-        args_remaining = argv[idx+1:]
+        args_remaining = argv[idx+1:]  # noqa: E226
     else:
         args_list = argv
         args_remaining = []
@@ -136,15 +147,20 @@ def main() -> None:
     config_file = args.config_file
     config_file_new = config_file
     if args.config_line:
-        with open(config_file, 'r') as config_old:
-            config_old_content = config_old.read()
-            toml_config = parse(config_old_content)
+        config_old_content = Path(config_file).read_text(encoding='utf-8')
+        toml_config = parse(config_old_content)
 
         for line in args.config_line:
             toml_line = parse(line)
             merge_configs(toml_config, toml_line)
 
-        with tempfile.NamedTemporaryFile(mode='w', encoding='utf-8', prefix='explcheck_', suffix='.toml', delete=False) as f:
+        with tempfile.NamedTemporaryFile(
+            mode='w',
+            encoding='utf-8',
+            prefix='explcheck_',
+            suffix='.toml',
+            delete=False,
+        ) as f:
             config_new_content = dumps(toml_config)
             f.write(config_new_content)
             config_file_new = f.name
@@ -160,9 +176,9 @@ def main() -> None:
                 )
                 for line in diff:
                     if line.startswith('+'):
-                        logger.debug(f'{Fore.GREEN}{line}{Fore.RESET}')
+                        logger.debug('%s%s%s', Fore.GREEN, line, Fore.RESET)
                     elif line.startswith('-'):
-                        logger.debug(f'{Fore.RED}{line}{Fore.RESET}')
+                        logger.debug('%s%s%s', Fore.RED, line, Fore.RESET)
                     else:
                         logger.debug(line)
 
@@ -172,9 +188,10 @@ def main() -> None:
     cmd.extend(args_unknown)
     cmd.extend(args_remaining)
 
-    run(args.dry_run, cmd)
+    run(cmd, dry_run=args.dry_run)
     if args.config_line:
         Path(config_file_new).unlink()
+
 
 if __name__ == '__main__':
     main()
