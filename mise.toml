@@ -27,7 +27,6 @@ interactive = true
 [tasks."lint:python"]
 description = 'Lint python code'
 alias = 'ruff'
-dir = 'l3build-wrapper'
 usage = '''
 arg "[command]" default="check"
 '''
