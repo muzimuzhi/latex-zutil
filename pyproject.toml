@@ -5,10 +5,6 @@ authors = [
     { name = "Yukai Chou", email = "muzimuzhi@gmail.com" }
 ]
 requires-python = ">=3.12"
-dependencies = [
-    "colorama>=0.4.6,<0.5.0",
-    "tomlkit>=0.14.0,<0.15.0",
-]
 
 [tool.uv.workspace]
 members = ["l3build-wrapper", "explcheck-wrapper"]

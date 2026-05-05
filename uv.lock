@@ -42,16 +42,6 @@ source = { editable = "l3build-wrapper" }
 name = "latexutils"
 version = "0.1.0"
 source = { virtual = "." }
-dependencies = [
-    { name = "colorama" },
-    { name = "tomlkit" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "colorama", specifier = ">=0.4.6,<0.5.0" },
-    { name = "tomlkit", specifier = ">=0.14.0,<0.15.0" },
-]
 
 [[package]]
 name = "tomlkit"
