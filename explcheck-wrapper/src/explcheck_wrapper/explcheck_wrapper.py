@@ -47,7 +47,9 @@ parser.add_argument(
 )
 parser.add_argument(
     '--flow-analysis',
-    action='store_true',
+    dest='config_line',
+    action='append_const',
+    const='stop_early_when_confused=false',
     help='force flow analysis'
 )
 parser.add_argument(
@@ -80,9 +82,6 @@ def main() -> None:
 
     config_file = args.config_file
     config_file_new = config_file
-    if args.flow_analysis:
-        args.config_line.append('stop_early_when_confused=false')
-
     if args.config_line:
         with open(config_file, 'r') as config_old:
             config_old_content = config_old.read()
