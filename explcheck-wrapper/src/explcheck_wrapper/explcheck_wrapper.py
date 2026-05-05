@@ -43,10 +43,9 @@ def run(dry_run: bool, cmd) -> None:
     if dry_run:
         print(f'{Fore.LIGHTBLACK_EX}[wrapper DRY-RUN]{Fore.RESET}', *cmd)
     else:
-        try:
-            subprocess.run(cmd, bufsize=0, check=True, shell=True)
-        except subprocess.CalledProcessError:
-            pass
+        logger.debug(f'running "{' '.join(cmd)}"')
+        print()
+        subprocess.run(cmd)
 
 
 def merge_configs(
