@@ -138,7 +138,8 @@ def main() -> None:
                         logger.debug(line)
 
     # compose explcheck arguments to run
-    cmd = ['\\explcheck', '--config-file', config_file_new]
+    prog = os.getenv('EXPLCHECK_BIN', 'explcheck')
+    cmd = [prog, '--config-file', config_file_new]
     cmd.extend(args_unknown)
     cmd.extend(args_remaining)
 
