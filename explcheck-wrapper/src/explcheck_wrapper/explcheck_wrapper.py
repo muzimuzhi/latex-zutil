@@ -71,8 +71,7 @@ def merge_configs(
 
 # based on https://github.com/tartley/colorama/issues/268#issuecomment-973315094
 # https://no-color.org/
-if (os.getenv('NO_COLOR') and os.getenv('NO_COLOR') != '') or \
-    (os.getenv('CI') and os.getenv('CI') != ''):
+if (os.getenv('NO_COLOR') and os.getenv('NO_COLOR') != ''):
     init(strip=True, convert=False)
 
 # init logger
