@@ -82,7 +82,7 @@ jobs:
 
     - name: Lint expl3 code (with flow analysis)
       run: |
-        mise run lint:expl3 -- --debug --flow-analysis
+        mise run lint:expl3 -- --debug --flow-analysis --verbose
 
     - name: Lint python code
       run: |
