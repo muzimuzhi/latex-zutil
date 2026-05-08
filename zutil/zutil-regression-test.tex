@@ -123,7 +123,10 @@
 
 \int_new:N \g_zutil_test_cnt_int
 
-\cs_new:Npn \SEPARATOR
+% All thin wrappers of `\TYPE` are defined as expandable, so them work in
+% expandable contexts (e.g. in \TESTEXP), in which `\TYPE` is redefined from
+% protected to expandable.
+\cs_new:Npn \SEPARATOR  % noqa: w429
   {
     \TYPE
       { ============================================================ }
@@ -165,13 +168,13 @@
     \ENDTEST
   }
 
-\cs_new:Npn \TRUE    { \TYPE { TRUE }   }
-\cs_new:Npn \FALSE   { \TYPE { FALSE }  }
-\cs_new:Npn \YES     { \TYPE { YES }    }
-\cs_new:Npn \NO      { \TYPE { NO }     }
-\cs_new:Npn \NEWLINE { \TYPE { ^^J }    }
+\cs_new:Npn \TRUE    { \TYPE { TRUE }   }  % noqa: w429
+\cs_new:Npn \FALSE   { \TYPE { FALSE }  }  % noqa: w429
+\cs_new:Npn \YES     { \TYPE { YES }    }  % noqa: w429
+\cs_new:Npn \NO      { \TYPE { NO }     }  % noqa: w429
+\cs_new:Npn \NEWLINE { \TYPE { ^^J }    }  % noqa: w429
 
-\cs_new:Npn \ASSERT #1#2
+\cs_new:Npn \ASSERT #1#2  % noqa: w429
   {
     \tl_if_eq:eeTF {#1} {#2}
       { \TYPE { PASSED } }
@@ -410,7 +413,7 @@
     % enable checking commands
     \cs_set_eq:NN \PASSED \zutil_test_PASSED:
   }
-\cs_new:Npn \zutil_test_type:e #1
+\cs_new_protected:Npn \zutil_test_type:e #1
   {
     \iow_term:e { [test]~ #1 }
   }

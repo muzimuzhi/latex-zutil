@@ -76,9 +76,11 @@
     \fi:
   }
 
-% safe c-type expansion which doesn't define the csname to \relax
+% safe c-type expansion which never defines the #2 csname to \relax,
+% but needs TeX's execution processor, thus is unexpandable.
+%
 % a trick learned from https://github.com/latex3/latex2e/commit/ef35caf4324ae6522204917b2da0742ef6a6281f
-\cs_new:Npn \zutil_exp_args_safe:Nc #1#2
+\cs_new_protected:Npn \zutil_exp_args_safe:Nc #1#2
   {
     \group_begin:
       \exp_after:wN
