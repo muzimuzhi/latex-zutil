@@ -53,13 +53,13 @@
   [ \zutil_cs_base_function:N \tex_undefined:D ] \NEWLINE
 }
 
-\TEST{\zutil_cs_if_defined:NTF}{
+\TESTEXP{\zutil_cs_if_defined:NTF}{
   \zutil_cs_if_defined:NTF \zutil_set:n     \PASSED \FAILED
   \zutil_cs_if_defined:NTF \scan_stop:      \PASSED \FAILED
   \zutil_cs_if_defined:NTF \tex_undefined:D \FAILED \PASSED
 }
 
-\TEST{\zutil_cs_if_defined:cTF}{
+\TESTEXP{\zutil_cs_if_defined:cTF}{
   \zutil_cs_if_defined:cTF { zutil_set:n }      \PASSED \FAILED
   \zutil_cs_if_defined:cTF { scan_stop: }       \PASSED \FAILED
   \zutil_cs_if_defined:cTF { tex_undefined:D }  \FAILED \PASSED
@@ -116,9 +116,11 @@
 
   \zutil_prg_new_conditional_tl_if_in:Non \test_if_str_colon_in:n
     { \c_colon_str } { T, F }
-  \test_if_str_colon_in:nF { ab } { \PASSED }
+  \use:e
+    { \test_if_str_colon_in:nF { ab } { \PASSED } }
   \zutil_cs_generate_variant:N \test_if_str_colon_in:eT
-  \test_if_str_colon_in:eT { a \c_colon_str b } { \PASSED }
+  \use:e
+    { \test_if_str_colon_in:eT { a \c_colon_str b } { \PASSED } }
 }
 
 % based on l3kernel test for \seq_set_split_keep_spaces:Nnn,
