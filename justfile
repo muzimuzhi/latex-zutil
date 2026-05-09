@@ -12,14 +12,16 @@ set unstable
 
 ## variables
 
-info := BOLD + BLUE + "===> "
-end_info := NORMAL
-
 export diffext := env('diffext', '.diff')
 export diffexe := env('diffexe', 'git diff --no-index --text --')
 
 L3BUILD_CHECK_OPTIONS := env('L3BUILD_CHECK_OPTIONS', '-q --show-saves')
 L3BUILD_SAVE_OPTIONS := env('L3BUILD_SAVE_OPTIONS', '-q')
+
+## functions
+## https://github.com/casey/just#user-defined-functions, added in v1.49.0
+
+info(msg) := BOLD + BLUE + "===> " + msg + NORMAL
 
 ## top-level recipes
 
@@ -50,7 +52,7 @@ tblr-old: (check "tblr-old")
 # Run tabularray PPM tests
 [group('test')]
 tblr-ppm:
-    @echo '{{ info }}Running tabularray PPM tests, "config-old" config...{{ end_info }}'
+    @echo '{{ info("Running tabularray PPM tests, \"config-old\" config...") }}'
     cd tabularray && texlua buildend.lua
 
 ## development recipes
@@ -69,7 +71,7 @@ save +varargs:
 [group('dev')]
 new-test module name:
     #!/usr/bin/env -S bash
-    echo '{{ info }}Creating new l3build test "{{ module }}-{{ name }}" for module "{{ module }}"...{{ end_info }}'
+    echo '{{ info(f"Creating new l3build test \"{{module}}-{{name}}\" for module \"{{module}}\"...") }}'
     template="support/TEMPLATE-{{ module }}-test.lvt"
     new_test="{{ module }}/testfiles/{{ module }}-{{ name }}.lvt"
     if [[ ! -f "$template" ]]; then
@@ -86,5 +88,5 @@ new-test module name:
 # Reinstall l3build-wrapper in editable mode
 [group('dev')]
 install-wrapper:
-    @echo '{{ info }}Reinstalling l3build-wrapper in editable mode...{{ end_info }}'
+    @echo '{{ info("Reinstalling l3build-wrapper in editable mode...") }}'
     cd l3build-wrapper && uv tool install --reinstall -e .
