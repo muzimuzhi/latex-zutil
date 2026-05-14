@@ -75,11 +75,12 @@ jobs:
       run: |
         mise run lint:expl3
 
-    - name: Lint expl3 code (slow)
+    - name: Lint expl3 code (force flow analysis)
       # run only when triggered by `workflow_call` or `workflow_dispatch`
       if: toJSON(inputs) != '{}'
       run: |
-        mise run lint:expl3 --slow --verbose
+        mise run lint:expl3 --verbose \
+          --inline-config 'stop_early_when_confused = false'
 
     - name: Lint python code
       run: |

@@ -11,7 +11,15 @@ depends = ['lint:*', 'fmt:justfile --check']
 description = 'Lint expl3 code'
 alias = 'explcheck'
 env.EXPLCHECK_CONFIG = '{{ get_env(name="EXPLCHECK_CONFIG", default="config/explcheck.toml") }}'
-file = 'scripts/lint-expl3.sh'
+# a) the glob file list is composed in the file inclusion pattern, in
+#    pre-commit config too,
+# b) explcheck allows intermixing optional arguments with positional
+#    arguments, so extra arguments can be passed when invoking the task
+run = '''
+explcheck \
+  --config-file "$EXPLCHECK_CONFIG" \
+  zutil/*.sty zutil/*.tex support/*.cfg
+'''
 interactive = true
 
 [tasks."fmt:justfile"]
