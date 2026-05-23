@@ -79,8 +79,7 @@ jobs:
       # run only when triggered by `workflow_call` or `workflow_dispatch`
       if: toJSON(inputs) != '{}'
       run: |
-        mise run lint:expl3 --verbose \
-          --inline-config 'stop_early_when_confused = false'
+        mise run lint:expl3-slow -- --verbose
 
     - name: Lint python code
       run: |
