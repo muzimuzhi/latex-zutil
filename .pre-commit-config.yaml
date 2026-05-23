@@ -10,7 +10,7 @@ ci:
 
       for more information, see https://pre-commit.ci
   autoupdate_commit_msg: 'chore(pre-commit): autoupdate'
-  skip: [check-spelling, check-format-justfile, lint-expl3, lint-python]
+  skip: [justfile,typos,explcheck,ruff,tombi]
 
 # path separator is normalized to "/", so no need to use "[\\/]" in python
 # regex, see
@@ -29,7 +29,6 @@ repos:
   - id: check-case-conflict
   - id: check-illegal-windows-names
   - id: check-merge-conflict
-  - id: check-toml
   - id: check-yaml
   - id: end-of-file-fixer
   - id: trailing-whitespace
@@ -80,6 +79,12 @@ repos:
     files: ^l3build-wrapper/
     # types_or: [python, pyi, jupyter]
     pass_filenames: false
+  - id: lint-toml
+    alias: tombi
+    name: Lint TOML files
+    language: unsupported
+    entry: mise run lint:toml
+    types_or: [toml]
 # https://pre-commit.com/#meta-hooks
 # "pre-commit run --hook-stage manual"
 - repo: meta
