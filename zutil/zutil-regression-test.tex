@@ -508,11 +508,11 @@
 \cs_gset_eq:NN \tex_errmessage:D \__zutil_test_errmessage_new:w  % noqa: w200
 
 % wrap \msg_expandable_error:nn and friends, in an expandable way
-\cs_new_eq:NN \__zutil_test_msg_expandable_error_orig:nn
-              \__msg_expandable_error:nn
+\cs_new_eq:NN \__zutil_test_kernel_msg_expandable_error_orig:nn
+              \__kernel_msg_expandable_error:nn
 % #1 and #2 curried
-\cs_gset:Npn \__msg_expandable_error:nn
+\cs_gset:Npn \__kernel_msg_expandable_error:nn  % noqa: w429
   {
     \zutil_test_count_exp_errors:
-    \__zutil_test_msg_expandable_error_orig:nn
+    \__zutil_test_kernel_msg_expandable_error_orig:nn
   }
