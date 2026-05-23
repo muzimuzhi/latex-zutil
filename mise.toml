@@ -48,6 +48,11 @@ arg "[command]" default="check"
 run = 'ruff {{ usage.command }}'
 interactive = true
 
+[tasks."lint:toml"]
+description = 'Lint TOML files'
+alias = 'tombi'
+run = 'tombi lint'
+
 [tasks."lint:typos"]
 description = "Check spelling"
 alias = 'typos'
@@ -56,7 +61,10 @@ run = 'typos --config=config/typos.toml'
 [tasks."lint:pre-commit"]
 description = "Run pre-commit checks on all files"
 alias = 'pre-commit'
-env.SKIP = '{{ get_env(name="SKIP", default="typos,justfile,explcheck,ruff") }}'
+# the list of skipped hooks is composed in the `ci.skip` item, in pre-commit
+# config too
+env.SKIP = """
+{{ get_env(name="SKIP", default="justfile,typos,explcheck,ruff,tombi") }}"""
 run = [
   'echo "Skipped checks: {{ env.SKIP }}"',
   'pre-commit run --all-files --color=always'

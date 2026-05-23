@@ -1,4 +1,5 @@
 # loaded in addition to mise.toml when MISE_ENV=ci, see lint.yml
 [tools]
 ruff = 'latest'
+tombi = 'latest'
 typos = 'latest'
