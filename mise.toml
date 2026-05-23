@@ -1,3 +1,4 @@
+#:tombi toml-version = "v1.1.0"
 [settings]
 env_shell_expand = true
 
@@ -21,6 +22,15 @@ explcheck \
   zutil/*.sty zutil/*.tex support/*.cfg
 '''
 interactive = true
+
+# use a different prefix to avoid being picked up by the `lint:*` wildcard,
+# `lint` task
+[tasks."lint-slow:expl3"]
+alias = 'explcheck-slow'
+run = {
+  task = "lint:expl3",
+  args = ["--inline-config", "stop_early_when_confused=false"]
+}
 
 [tasks."fmt:justfile"]
 description = 'Format justfiles'
