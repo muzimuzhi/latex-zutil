@@ -10,6 +10,7 @@ ci:
 
       for more information, see https://pre-commit.ci
   autoupdate_commit_msg: 'chore(pre-commit): autoupdate'
+  # the list of skipped hooks is composed in mise task `lint:pre-commit` too
   skip: [justfile,typos,explcheck,ruff,tombi]
 
 # path separator is normalized to "/", so no need to use "[\\/]" in python
