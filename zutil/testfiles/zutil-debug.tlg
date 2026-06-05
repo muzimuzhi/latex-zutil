@@ -7,12 +7,12 @@ TEST: labels
 ! debug [label]l2/l3 >>text<<
 ! debug [Label] >>text<<
 ! debug [Label]l2/l3 >>text<<
-! debug [-NoValue-]\c_novalue_tl/-NoValue- >>text<<
+! debug [-NoValue-]\c_zutil_novalue_tl/-NoValue- >>text<<
 ============================================================
 ============================================================
 TEST: \zutil_debug:n , \zutil_debug:N 
 ============================================================
-! debug >>\c_novalue_tl <<
+! debug >>\c_zutil_novalue_tl <<
 ! debug >>-NoValue-<<
 ! debug >>-NoValue-<<
 ! debug >>undefined<<

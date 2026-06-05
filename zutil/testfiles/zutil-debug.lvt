@@ -20,13 +20,13 @@
   \zutil_debug:nn { Label } { text }
   \zutil_debug:nn { Label, l2, l3 } { text }
   % expansion on labels
-  \zutil_debug:nn { label=\c_novalue_tl, \c_novalue_tl, e=\c_novalue_tl} {text}
+  \zutil_debug:nn { label=\c_zutil_novalue_tl, \c_zutil_novalue_tl, e=\c_zutil_novalue_tl} {text}
 }
 
 \TEST{\zutil_debug:n,~ \zutil_debug:N}{
-  \zutil_debug:n { \c_novalue_tl }
-  \zutil_debug:e { \c_novalue_tl }
-  \zutil_debug:N \c_novalue_tl
+  \zutil_debug:n { \c_zutil_novalue_tl }
+  \zutil_debug:e { \c_zutil_novalue_tl }
+  \zutil_debug:N \c_zutil_novalue_tl
   \zutil_debug:c { my_novalue_tl }
 }
 
