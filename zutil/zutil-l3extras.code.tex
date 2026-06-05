@@ -168,6 +168,12 @@
 %% l3tl extras
 %%
 
+% Since LaTeX 2026-06-01, in LaTeX `\c_novalue_tl` is redefined to hold
+% `\NoValue`. And `\NoValue` one-step expands to tokens `-NoValue-` in document
+% category code régime (both the dashes are in catcode 12, character).
+\tl_const:Ne \c_zutil_novalue_tl  % noqa: w415
+  { \char_generate:nn { `- } { 11 } NoValue \token_to_str:N - }
+
 % Example
 %     \zutil_prg_new_conditional_tl_if_in:Nnn \zutil_if_colon_in:n
 %       { : } { TF }

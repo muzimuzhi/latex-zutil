@@ -37,6 +37,8 @@
   - `\zutil_cs_generate_variant:n {⟨cs variants list⟩}`
     - example: `\zutil_cs_generate_variant:n { \zutil_func_a:v, \zutil_func_b:e }`
 - `l3tl` extras
+  - `\c_zutil_novalue_tl`
+    - equals to the original `\c_novalue_tl` defined in `l3kernel`. Note that LaTeX 2026-06-01 redefines `\c_novalue_tl` to hold `\NoValue`.
   - `\zutil_prg_new_conditional_tl_if_in:Nnn \⟨name⟩:⟨arg spec⟩ {⟨test token list⟩} {⟨conditions⟩}`
     - variants `Non`, `NVn`, `Nen`
     - works like `\prg_new_conditional:N(p)nn` but specifically creates expandable conditional to test if `⟨test token list⟩` is in an token list

@@ -110,6 +110,32 @@ Defining \zutil_set:e on line ...
 Defining \test_tmp:cf on line ...
 ============================================================
 ============================================================
+TEST: \c_zutil_novalue_tl 
+============================================================
+The token list \c_zutil_novalue_tl contains the tokens:
+>  - (the letter -)
+>  N (the letter N)
+>  o (the letter o)
+>  V (the letter V)
+>  a (the letter a)
+>  l (the letter l)
+>  u (the letter u)
+>  e (the letter e)
+>  - (the character -).
+The token list \c_novalue_tl contains the tokens:
+>  \NoValue (control sequence=\protected\long macro:->-NoValue-).
+The token list \NoValue contains the tokens:
+>  - (the character -)
+>  N (the letter N)
+>  o (the letter o)
+>  V (the letter V)
+>  a (the letter a)
+>  l (the letter l)
+>  u (the letter u)
+>  e (the letter e)
+>  - (the character -).
+============================================================
+============================================================
 TEST: \zutil_prg_new_conditional_tl_if_in:Nnn 
 ============================================================
 Defining \test_if_colon_in_aux:w on line ...

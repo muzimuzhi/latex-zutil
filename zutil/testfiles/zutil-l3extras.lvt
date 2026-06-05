@@ -108,6 +108,12 @@
   \zutil_cs_generate_variant:n { \zutil_set:v, \zutil_set:e, \test_tmp:cf }
 }
 
+\TEST{\c_zutil_novalue_tl}{
+  \tl_analysis_log:N \c_zutil_novalue_tl
+  \tl_analysis_log:N \c_novalue_tl
+  \tl_analysis_log:N \NoValue
+}
+
 \TEST{\zutil_prg_new_conditional_tl_if_in:Nnn}{
   \debug_on:n { log-functions }
   \zutil_prg_new_conditional_tl_if_in:Nnn \test_if_colon_in:n {:} { p, TF }
