@@ -140,6 +140,7 @@
 ## `zutil-regression-test.tex` file
 - `l3build` `regression-test.tex` extended
 - new features
+  - nestable `\OMIT ... \TIMO` blocks: only the outer-most block is effective and unmatched `\TIMO` is ignored
   - removed test numbering
   - log number of errors and passed checks at the end of a test and the entire test file
     - errors raised through `\errmessage` are all counted

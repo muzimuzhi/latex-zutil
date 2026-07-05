@@ -82,8 +82,29 @@
 \cs_set_eq:Nc \zutil_test_end: { @@end }
 \cs_set_eq:cN { @@end } \END
 
-\cs_new_protected:Npn \OMIT { \TYPE { OMIT } }
-\cs_new_protected:Npn \TIMO { \TYPE { TIMO } }
+% When nested, only the outer-most \OMIT ... \TIMO block works. Extra \TIMO is
+% ignored. This is different to l3build 2026-07-02, which added partial
+% support for nestable \OMIT ... \TIMO blocks.
+\int_new:N \g_test_omit_level_int
+\cs_new_protected:Npn \OMIT
+  {
+    \int_if_zero:nT { \g_test_omit_level_int }
+      {
+        \TYPE { OMIT }
+      }
+    \int_gincr:N \g_test_omit_level_int
+  }
+\cs_new_protected:Npn \TIMO
+  {
+    \int_compare:nNnT { \g_test_omit_level_int } = { \c_one_int }
+      {
+        \TYPE { TIMO }
+      }
+    \int_compare:nNnT { \g_test_omit_level_int } > { \c_zero_int }
+      {
+        \int_gdecr:N \g_test_omit_level_int
+      }
+  }
 
 \ExplSyntaxOff
 \makeatletter
@@ -274,11 +295,17 @@
   \fi
 \fi
 
-\AddToHook{enddocument/info}[kernel/testmode]{}
-\DeclareHookRule{enddocument/info}{kernel/testmode}{voids}{kernel/release}
-
 \makeatother
 \ExplSyntaxOn
+
+\hook_gput_code:nnn { enddocument/info } { l3build/before } { \OMIT }
+\hook_gput_code:nnn { enddocument/info } { l3build/after } { \TIMO }
+\hook_gset_rule:nnnn { enddocument/info }
+  { l3build/before } { before } { kernel/release }
+\hook_gset_rule:nnnn { enddocument/info }
+  { l3build/after } { after } { kernel/release }
+\hook_gset_rule:nnnn { enddocument/info }
+  { l3build/after } { before } { kernel/filelist }
 
 \int_set:Nn \l_iow_line_count_int { 9999 }
 
@@ -369,7 +396,7 @@
 % end-of-file logging
 \hook_gput_code:nnn { zutil/test/END } { . }
   {
-    % \OMIT ... \TIMO are not nestable, so unpaired \TIMO is valid use.
+    % unmatched \TIMO is ignored
     \TIMO
     % emulate output of l3build "recordstatus = true"
     \iow_term:n { *************** }

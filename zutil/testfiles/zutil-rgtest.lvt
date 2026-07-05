@@ -13,6 +13,24 @@
 
 \START
 
+\TEST{Nestable~\OMIT~...\TIMO}{
+  \TYPE { normal }
+  \OMIT
+    \TYPE { \FAILED }
+    \OMIT % ignored
+      \TYPE { \FAILED }
+    \TIMO % ignored
+    \TYPE { \FAILED }
+  \TIMO
+  \TYPE { restored }
+}
+
+\TEST{Extra~\TIMO}{
+  \TYPE { normal }
+  \TIMO
+  \TYPE { normal }
+}
+
 \TEST{No~errors~nor~checks}{
 }
 
