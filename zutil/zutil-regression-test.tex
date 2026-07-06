@@ -96,12 +96,12 @@
   }
 \cs_new_protected:Npn \TIMO
   {
-    \int_compare:nNnT { \g_test_omit_level_int } = { \c_one_int }
-      {
-        \TYPE { TIMO }
-      }
     \int_compare:nNnT { \g_test_omit_level_int } > { \c_zero_int }
       {
+        \int_compare:nNnT { \g_test_omit_level_int } = { \c_one_int }
+          {
+            \TYPE { TIMO }
+          }
         \int_gdecr:N \g_test_omit_level_int
       }
   }
