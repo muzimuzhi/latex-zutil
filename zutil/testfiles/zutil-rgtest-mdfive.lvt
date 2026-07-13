@@ -11,7 +11,7 @@
 \START
 
 \str_const:Nn \c_test_mdfive_expected_str
-  { 6CACA95A3EDD900811C8B97CB586541C } % l3build 2026-07-03
+  { 1A32494A36F36FF76D2B1CB4DD3C1E81 } % l3build 2026-07-10
 
 % moved out of \TEST to avoid a luatex-only log line created by \cctab_select:N
 %    \g__cctab_tmpii_cctab=\catcodetable...
