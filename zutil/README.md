@@ -146,5 +146,6 @@
     - errors raised through `\errmessage` are all counted
     - checks are stepped by the `\PASSED` new expandable command
 - new commands
-  - `\PASSED`
-  - `\FAILED` (undefined, can be used as `\ERROR`)
+  - `\PASSED` increases the count for passed checks, only available inside tests
+  - `\FAILED` undefined, can be used as `\ERROR`
+  - `\FAILWITH{⟨content⟩}` short for `\TYPE{⟨content⟩}\FAILED`, only available inside tests. Inspired by the OCaml builtin function `failwith`.

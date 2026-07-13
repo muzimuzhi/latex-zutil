@@ -34,10 +34,10 @@
         { \cctab_select:N \c_other_cctab \endlinechar=13 }
         \l_tmpa_tl
       \regex_extract_once:nVNF { \cO(Release\ \d\d\d\d-\d\d-\d\d) } \l_tmpa_tl \l_tmpa_seq
-        { \FAILED }
+        { \FAILWIDTH { Could~not~extract~release~date } }
       \str_const:Ne \c_test_release_actual_str
         { \use:e { \exp_not:N \use_none:nnnnnnnn \seq_item:Nn \l_tmpa_seq { 1 } } }
-      \iow_log:e
+      \FAILWITH
         {
           l3build~file~'regression-test.tex'~has~changed.~
           The~'zutil-regression-test.tex'~may~be~outdated.
