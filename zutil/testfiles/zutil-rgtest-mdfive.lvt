@@ -10,12 +10,14 @@
 
 \START
 
-\str_const:Nn \c_test_mdfive_expected_str
-  { 1A32494A36F36FF76D2B1CB4DD3C1E81 } % l3build 2026-07-10
+\str_const:Nn \c_test_mdfive_expected_str { 1A32494A36F36FF76D2B1CB4DD3C1E81 }
+\str_const:Nn \c_test_release_expected_str { 2026-07-10 }
 
-% moved out of \TEST to avoid a luatex-only log line created by \cctab_select:N
+% Moved out of \TEST to avoid a luatex-only log line created by \cctab_select:N
 %    \g__cctab_tmpii_cctab=\catcodetable...
-% where the "ii" in "tmpii" stands for the current group level
+% in which the "ii" in "tmpii" stands for the current group level.
+% Read in file contents then compute its md5sum, so changes in comments
+% (e.g., the copyright line) do not affect the md5sum.
 \file_get:nnN { regression-test.tex }
   { \cctab_select:N \c_document_cctab }
   \l_tmpa_tl
@@ -28,13 +30,25 @@
       \PASSED
     }
     {
+      \sys_get_shell:nnN { l3build~--version }
+        { \cctab_select:N \c_other_cctab \endlinechar=13 }
+        \l_tmpa_tl
+      \regex_extract_once:nVNF { \cO(Release\ \d\d\d\d-\d\d-\d\d) } \l_tmpa_tl \l_tmpa_seq
+        { \FAILED }
+      \str_const:Ne \c_test_release_actual_str
+        { \use:e { \exp_not:N \use_none:nnnnnnnn \seq_item:Nn \l_tmpa_seq { 1 } } }
       \iow_log:e
         {
           l3build~file~'regression-test.tex'~has~changed.~
           The~'zutil-regression-test.tex'~may~be~outdated.
           \iow_newline:
-          Expected:~ \c_test_mdfive_expected_str \iow_newline:
-          Actual:~ \use:n {~} ~ \c_test_mdfive_actual_str \iow_newline:
+          Expected:~ \c_test_mdfive_expected_str \c_space_tl
+          % wrap release like <YYYY-MM-DD> to skip l3build log normalization
+          (since~l3build~<\c_test_release_expected_str>)
+          \iow_newline:
+          Actual:~ \use:n {~} ~ \c_test_mdfive_actual_str \c_space_tl
+          (l3build~<\c_test_release_actual_str>)
+          \iow_newline:
         }
     }
 }
