@@ -35,6 +35,7 @@ jobs:
         shell: bash
 
     env:
+      # load `mise.ci.toml` in addition to `mise.toml` for CI specific configs
       MISE_ENV: ci
 
     steps:
