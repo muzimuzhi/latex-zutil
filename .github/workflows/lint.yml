@@ -34,6 +34,9 @@ jobs:
       run:
         shell: bash
 
+    env:
+      MISE_ENV: ci
+
     steps:
     - uses: actions/checkout@v7
 
@@ -52,8 +55,6 @@ jobs:
 
     - name: Setup mise
       uses: jdx/mise-action@v4
-      env:
-        MISE_ENV: ci
 
     # setup-texlive-action only shows texlive revision
     - name: Version(s)
