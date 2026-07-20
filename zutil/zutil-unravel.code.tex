@@ -10,7 +10,6 @@
 \cs_new_protected:Npn \zutil_beginunravel:nw #1#2\endunravel
   {
     \unravel:nn
-      % TODO: maybe need only the `machine` meta key
       { max-action=1000, max-input=1000, max-output=1000, #1 }
       { #2 }
   }

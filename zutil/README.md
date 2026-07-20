@@ -134,8 +134,9 @@
 
 ## `unravel` module
 - provides thin wrapper for `unravel` package
-- `\beginunravel[⟨options⟩]⟨code⟩\endunravel`
-  - equivalent to using `\unravel[⟨options⟩]{⟨code⟩}`
+- new commands
+  - `\beginunravel[⟨options⟩] ⟨code⟩ \endunravel`
+    - equivalent to using `\unravel[max-action=1000,max-input=1000, max-output=1000,⟨options⟩]{⟨code⟩}`
 
 ## `zutil-regression-test.tex` file
 - `l3build` `regression-test.tex` extended
