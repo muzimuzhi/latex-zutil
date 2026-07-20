@@ -30,16 +30,32 @@
       \PASSED
     }
     {
-      \sys_get_shell:nnN { l3build~--version }
-        { \cctab_select:N \c_other_cctab \endlinechar=13 }
+      % helper
+      \cs_new:Npn \test_extract_date:w #1"#2"#3 \scan_stop: { #2 }
+      % Extract current l3build version from `l3build.lua` (the first one
+      % found by `kpsewhich'). This respects files in TEXMFHOME, while running
+      % `l3build --version' always executes the `l3build.lua` in the
+      % TEXMFDIST, which might be outdated if a newer version of `l3build.lua`
+      % is installed in other TDS trees like TEXMFHOME.
+      % Note: Restricted by `TEXINPUTS.latex` setting in `texmf.cnf`, we
+      % cannot directly input `l3build.lua` within LaTeX.
+      \sys_get_shell:nnN { kpsewhich~l3build.lua }
+        { \cctab_select:N \c_other_cctab }
         \l_tmpa_tl
-      \regex_extract_once:nVNF { \cO(Release\ \d\d\d\d-\d\d-\d\d) } \l_tmpa_tl \l_tmpa_seq
-        { \FAILWIDTH { Could~not~extract~release~date } }
-      \str_const:Ne \c_test_release_actual_str
-        { \use:e { \exp_not:N \use_none:nnnnnnnn \seq_item:Nn \l_tmpa_seq { 1 } } }
+      \ior_open:Nn \g_tmpa_ior { \l_tmpa_tl }
+      \ior_str_map_inline:Nn \g_tmpa_ior
+        {
+          % loosely match the line `release_date = "<YYYY-MM-DD>"`
+          \regex_extract_once:nnNT { \A \cO(release_date) } { #1 } \l_tmpa_seq
+            {
+              \str_const:Ne \c_test_release_actual_str
+                { \test_extract_date:w #1 \scan_stop: }
+              \ior_map_break:
+            }
+        }
       \FAILWITH
         {
-          l3build~file~'regression-test.tex'~has~changed.~
+          l3build~file~'regression-test.tex'~has~been~modified.~
           The~'zutil-regression-test.tex'~may~be~outdated.
           \iow_newline:
           Expected:~ \c_test_mdfive_expected_str \c_space_tl

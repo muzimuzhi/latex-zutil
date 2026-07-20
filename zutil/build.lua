@@ -10,10 +10,6 @@ checkengines    = { "pdftex", "xetex", "luatex" }
 stdengine       = "pdftex"
 checksuppfiles  = { "zutil-regression-test.cfg" }
 
-local escaped_commands = kpse.var_value("shell_escape_commands")
-checkopts       =
-  string.format("-interaction=batchmode -cnf-line 'shell_escape_commands=%s,l3build'", escaped_commands)
-
 -- show message of expandable errors as full as possible
 -- these are the maximum values accepted by the TeX Live, see texmf.cnf
 --
