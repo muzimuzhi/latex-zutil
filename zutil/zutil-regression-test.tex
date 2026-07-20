@@ -498,7 +498,7 @@
     \socket_assign_plug:nn { zutil/test/count-exp-errors } { normal }
   }
 
-% \PASSED and \FAILWIDTH are defined at the beginning of each test
+% \PASSED and \FAILWITH are defined at the beginning of each test
 \cs_new:Npn \zutil_test_PASSED:
   {
     \int_compare:nNnTF
@@ -507,7 +507,7 @@
       { \flag_raise:N \l_zutil_test_checks_cnt_flag }
   }
 \cs_undefine:N \FAILED
-\cs_new_protected:Npn \zutil_test_FAILWITH:n
+\cs_new_protected:Npn \zutil_test_FAILWITH:n #1
   {
     \TYPE { #1 }
     \FAILED
