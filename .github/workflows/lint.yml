@@ -57,6 +57,14 @@ jobs:
     - name: Setup mise
       uses: jdx/mise-action@v4
 
+    # needed because we don't use `mise.lock` and `mise-action` uses fileHash
+    # of mise configs as cache key, which will result in outdated tools being
+    # cached and restored
+    - name: Upgrade mise tools
+      run: |
+        mise upgrade
+        mise prune cache
+
     # setup-texlive-action only shows texlive revision
     - name: Version(s)
       run: |
