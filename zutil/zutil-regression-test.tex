@@ -295,17 +295,18 @@
   \fi
 \fi
 
+\AddToHook{enddocument/info}[kernel/testmode]{}
+\DeclareHookRule{enddocument/info}{kernel/testmode}{voids}{kernel/release}
+
+\begingroup
+  \let\show@release@info\wlog
+  \show@release@info{ ***********}
+  \the\LaTeXReleaseInfo
+  \show@release@info{ ***********}
+\endgroup
+
 \makeatother
 \ExplSyntaxOn
-
-\hook_gput_code:nnn { enddocument/info } { l3build/before } { \OMIT }
-\hook_gput_code:nnn { enddocument/info } { l3build/after } { \TIMO }
-\hook_gset_rule:nnnn { enddocument/info }
-  { l3build/before } { before } { kernel/release }
-\hook_gset_rule:nnnn { enddocument/info }
-  { l3build/after } { after } { kernel/release }
-\hook_gset_rule:nnnn { enddocument/info }
-  { l3build/after } { before } { kernel/filelist }
 
 \int_set:Nn \l_iow_line_count_int { 9999 }
 
