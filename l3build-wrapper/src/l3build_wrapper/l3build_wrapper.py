@@ -4,7 +4,7 @@ import argparse
 import fnmatch
 import logging
 import os
-import subprocess  # noqa: S404
+import subprocess  # ruff:ignore[S404]
 import sys
 from dataclasses import asdict, dataclass, replace
 from enum import UNIQUE, StrEnum, verify
@@ -175,7 +175,7 @@ class TestSuiteRun:
         self.run_as_whole: bool = False
 
     @classmethod
-    def _set_shared_l3build_options(cls, args: argparse.Namespace) -> None:  # noqa: C901
+    def _set_shared_l3build_options(cls, args: argparse.Namespace) -> None:  # ruff:ignore[C901]
         """Compose l3build options for all test suite runs."""
 
         def add_option(option: str) -> None:
@@ -237,7 +237,7 @@ class TestSuiteRun:
 
         if self.ts.config:
             add_option(f'-c{self.ts.config}')
-        if args.engine and args.engine not in (self.ts.stdengine, _OPTION_ALL_ENGINES):  # noqa: PLR6201
+        if args.engine and args.engine not in (self.ts.stdengine, _OPTION_ALL_ENGINES):  # ruff:ignore[PLR6201]
             add_option(f'-e{args.engine}')
 
     def parse_known_names(
@@ -249,7 +249,7 @@ class TestSuiteRun:
         names_unknown = Names(set())
         for name in names:
             # a name is either a test suite or a test glob, but not both
-            if name in (ts.name, ts.alias):  # noqa: PLR6201
+            if name in (ts.name, ts.alias):  # ruff:ignore[PLR6201]
                 self.run_as_whole = True
                 logger.debug(
                     'name "%s" matches test suite "%s"',
@@ -288,7 +288,7 @@ class TestSuiteRun:
         if self.dry_run:
             return
         try:
-            subprocess.run(commands, cwd=path, check=True)  # noqa: S603
+            subprocess.run(commands, cwd=path, check=True)  # ruff:ignore[S603]
         except subprocess.CalledProcessError:
             logger.error('l3build run failed')
             sys.exit(1)
@@ -347,7 +347,7 @@ class TestSuiteRun:
 
 
 LOGGING_DEFAULT_FORMAT = '[%(name)s %(levelname)-5s] %(message)s'
-# LOGGING_DEBUG_FORMAT = '[%(name)s %(levelname)-5s] %(filename)s:%(lineno)d - %(funcName)-17s - %(message)s'  # noqa: E501, ERA001
+# LOGGING_DEBUG_FORMAT = '[%(name)s %(levelname)-5s] %(filename)s:%(lineno)d - %(funcName)-17s - %(message)s'  # ruff:ignore[E501, ERA001]
 
 LOGGER_NAME: Final[str] = 'wrapper'
 
@@ -409,7 +409,7 @@ def is_l3build_patched() -> bool:
     """Check if the l3build is patched, which gains extra options."""
     is_patched = False
     try:
-        rst = subprocess.run(['l3build', '--version'], check=True, capture_output=True)  # noqa: S607
+        rst = subprocess.run(['l3build', '--version'], check=True, capture_output=True)  # ruff:ignore[S607]
         is_patched = '(with patch)' in rst.stdout.decode('utf-8')
     except subprocess.CalledProcessError:
         logger.exception('"l3build --version" failed.')
@@ -442,7 +442,7 @@ def set_logging(args: argparse.Namespace) -> None:
 
     def set_level(level: int) -> None:
         # if level == logging.DEBUG:
-        #     logging.basicConfig(force=True, format=LOGGING_DEBUG_FORMAT)  # noqa: ERA001
+        #     logging.basicConfig(force=True, format=LOGGING_DEBUG_FORMAT)  # ruff:ignore[ERA001]
         logger.setLevel(level)
 
     if debug_logging_enabled():
@@ -534,14 +534,14 @@ parser.add_argument('--all-engines',
                          'useful for auto-saving engine-specific tests')
 parser.add_argument('-n', '--dry-run',
                     action='store_true',
-                    help='print what l3build command(s) would be executed without execution')  # noqa: E501
+                    help='print what l3build command(s) would be executed without execution')  # ruff:ignore[E501]
 parser.add_argument('--recheck',
                     action='store_true',
                     help='after saving, rerun checks using the same arguments')
 parser.add_argument('-v', '--verbose',
                     action='count',
                     default=0,
-                    help='print more information; given twice enables debug logging and would be passed to "l3build" if patched l3build is detected')  # noqa: E501
+                    help='print more information; given twice enables debug logging and would be passed to "l3build" if patched l3build is detected')  # ruff:ignore[E501]
 
 # inherited l3build options and flags
 inherited = parser.add_argument_group('inherited l3build options')
@@ -552,7 +552,7 @@ inherited.add_argument('-H', '--halt-on-error', action='store_true')
 inherited.add_argument('-q', '--quiet',
                        action=argparse.BooleanOptionalAction,
                        default=True,
-                       help='suppress TeX standard output (support for "save" target needs local l3build patch)')  # noqa: E501
+                       help='suppress TeX standard output (support for "save" target needs local l3build patch)')  # ruff:ignore[E501]
 inherited.add_argument('--rerun', action='store_true')
 inherited.add_argument('--show-log-on-error', action='store_true')
 inherited.add_argument('-S', '--show-saves', action='store_true')
@@ -561,7 +561,7 @@ inherited.add_argument('-s', '--stdengine', action='store_true')
 
 
 def main(argv: list[str] | None = None) -> None:
-    """Main function to run the l3build wrapper."""  # noqa: D401
+    """Main function to run the l3build wrapper."""  # ruff:ignore[D401]
     try:
         # `args` defaults to `None`, which is equivalent to passing `sys.argv[1:]`
         args = parser.parse_intermixed_args(args=argv)
