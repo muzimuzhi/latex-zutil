@@ -107,7 +107,9 @@ jobs:
         # different branches may have caches with the same cache key
         for key in $(gh cache list --key "$prefix" --json key --jq '.[] | .key' | sort -u); do
             echo "Deleting cache(s) with key \"$key\""
-            gh cache delete "$key"
+            # ignore errors, since cache may already have been deleted by
+            # prefix-matching of cache keys
+            gh cache delete "$key" 2>&1
         done
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
