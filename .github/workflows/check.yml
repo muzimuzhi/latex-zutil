@@ -103,13 +103,13 @@ jobs:
         prefix="setup-texlive-action\
         -$(node -e 'console.log(`${os.platform()}-${os.arch()}`)')"
         echo "cache key prefix: $prefix"
-        # cache id is unique; cache key may not
-        # different branches may have caches with the same cache key
+        # cache id is unique; cache key may not. Different branches may have
+        # caches with the same cache key, so act on unique cache keys only.
         for key in $(gh cache list --key "$prefix" --json key --jq '.[] | .key' | sort -u); do
             echo "Deleting cache(s) with key \"$key\""
             # ignore errors, since cache may already have been deleted by
             # prefix-matching of cache keys
-            gh cache delete "$key" 2>&1
+            gh cache delete "$key" 2>&1 || true
         done
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
