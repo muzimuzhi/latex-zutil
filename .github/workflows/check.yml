@@ -62,8 +62,8 @@ jobs:
     timeout-minutes: 30
 
     permissions:
-      # required for for "gh cache delete"
-      # https://docs.github.com/en/rest/actions/cache?apiVersion=2022-11-28#delete-a-github-actions-cache-for-a-repository-using-a-cache-id
+      # for "gh cache delete"
+      # https://docs.github.com/en/rest/actions/cache?apiVersion=2026-03-10#delete-a-github-actions-cache-for-a-repository-using-a-cache-id
       actions: write
 
     # Overwrite the default `pwsh` shell on Windows, to get consistent
@@ -99,23 +99,17 @@ jobs:
       # https://github.com/koalaman/shellcheck/wiki/Ignore
       run: |
         # emulate TeX-Live/setup-texlive-action cache key prefix
-        prefix="setup-texlive-action"
         # shellcheck disable=SC2016
-        prefix="$prefix\
+        prefix="setup-texlive-action\
         -$(node -e 'console.log(`${os.platform()}-${os.arch()}`)')"
-        echo "prefix=$prefix"
-        caches=()
-        while IFS= read -r line; do
-            caches+=( "$line" )
-        done < <(gh cache list \
-                --key "$prefix" --json id,key --jq '.[] | .id, .key')
-        # cache id is unique; cache key may not
-        # branches may have different caches using the same cache key
-        for ((i=0; i<${#caches[@]}; i+=2)); do
-            id=${caches[i]}
-            key=${caches[i+1]}
-            echo "Deleting cache with id \"$id\", key \"$key\""
-            gh cache delete "$id"
+        echo "cache key prefix: $prefix"
+        # cache id is unique; cache key may not. Different branches may have
+        # caches with the same cache key, so act on unique cache keys only.
+        for key in $(gh cache list --key "$prefix" --json key --jq '.[] | .key' | sort -u); do
+            echo "Deleting cache(s) with key \"$key\""
+            # ignore errors, since cache may already have been deleted by
+            # prefix-matching of cache keys
+            gh cache delete "$key" 2>&1 || true
         done
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
