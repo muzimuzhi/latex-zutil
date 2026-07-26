@@ -11,12 +11,13 @@ diffext = { default = ".diff" }
 diffexe = { default = "git diff --no-index --text --" }
 
 [tasks.lint]
-depends = ["lint:*", "fmt:justfile --check"]
+depends = ["lint:*"]
 
 [tasks."lint:expl3"]
 description = "Lint expl3 code"
 alias = "explcheck"
 env.EXPLCHECK_CONFIG = { default = "config/explcheck.toml" }
+interactive = true
 # a) the glob file list is composed in the file inclusion pattern, in
 #    pre-commit config too,
 # b) explcheck allows intermixing optional arguments with positional
@@ -26,23 +27,16 @@ explcheck \
   --config-file "$EXPLCHECK_CONFIG" \
   zutil/*.sty zutil/*.tex support/*.cfg
 """
-interactive = true
-
-[tasks."fmt:justfile"]
-description = "Format justfiles"
-alias = "justfile"
-run = "just --fmt"
-interactive = true
 
 [tasks."lint:python"]
 description = "Lint python code"
 alias = "ruff"
 dir = "l3build-wrapper"
+interactive = true
 usage = """
 arg "[command]" default="check"
 """
 run = "ruff {{ usage.command }}"
-interactive = true
 
 [tasks."lint:toml"]
 description = "Lint TOML files"
@@ -59,45 +53,55 @@ description = "Run pre-commit checks on all files"
 alias = "pre-commit"
 # the list of skipped hooks is composed in the `ci.skip` item, in pre-commit
 # config too
-env.SKIP = { default = "justfile,typos,explcheck,ruff,tombi" }
+env.SKIP = { default = "typos,explcheck,ruff,tombi" }
+interactive = true
 run = '''
-#!/usr/bin/env -S bash
+#!/usr/bin/env bash
 echo "Skipped checks: {{ env.SKIP }}"
 pre-commit run --all-files --color=always
 '''
-interactive = true
 
 [tasks.test]
 depends = ["test:zutil"]
 
 [tasks.test-inactive]
-depends = ["test:tblr", "test:tblr-old", "test:tblr-ppm"]
+# must run in series
+run = [
+  { task = "test:tblr" },
+  { task = "test:tblr-old" },
+  { task = "test:tblr-ppm" },
+]
 
 [tasks."test:zutil"]
-depends = ["dev:l3build-check zutil"]
+depends = ["L3BUILD_MODULE=zutil test:check zutil"]
 
 [tasks."test:tblr"]
-depends = ["dev:l3build-check tblr"]
+depends = ["L3BUILD_MODULE=tblr test:check tblr"]
 
 [tasks."test:tblr-old"]
-depends = ["dev:l3build-check tblr-old"]
+depends = ["L3BUILD_MODULE=tblr-old test:check tblr-old"]
 
 [tasks."test:tblr-ppm"]
 dir = "tabularray"
 run = '''
-#!/usr/bin/env -S bash
+#!/usr/bin/env bash
 echo "Running tblr-ppm tests, \"config-old\" config..."
 texlua buildend.lua
 '''
 
-[tasks."dev:l3build-check"]
+[tasks."test:check"]
 alias = "check"
 env.L3BUILD_CHECK_OPTIONS = { default = "-q --show-saves" }
+interactive = true
 run = '''
-l3build-wrapper check {{ env.L3BUILD_CHECK_OPTIONS }}
+#!/usr/bin/env bash
+if [[ -n "$L3BUILD_MODULE" ]]; then
+  echo "[$MISE_TASK_NAME] Checking l3build tests for module \"$L3BUILD_MODULE\""
+fi
+l3build-wrapper check {{ env.L3BUILD_CHECK_OPTIONS }} "$@"
 '''
 
-[tasks."dev:l3build-save"]
+[tasks."test:save"]
 alias = "save"
 env.L3BUILD_SAVE_OPTIONS = { default = "-q" }
 run = '''
@@ -111,7 +115,7 @@ arg "module"
 arg "name"
 """
 run = '''
-#!/usr/bin/env -S bash
+#!/usr/bin/env bash
 echo "Creating new l3build test \"$usage_module-$usage_name.lvt\" for module \"$usage_module\""
 template="support/TEMPLATE-$usage_module-test.lvt"
 new_test="$usage_module/testfiles/$usage_module-$usage_name.lvt"
@@ -130,7 +134,7 @@ code "$new_test"
 [tasks."dev:install-wrapper"]
 description = "Reinstall l3build-wrapper in editable mode"
 run = '''
-#!/usr/bin/env -S bash
+#!/usr/bin/env bash
 echo "Reinstalling l3build-wrapper in editable mode"
 cd l3build-wrapper && uv tool install --reinstall -e .
 '''

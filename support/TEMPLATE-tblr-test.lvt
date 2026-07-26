@@ -25,7 +25,7 @@
 
 \end{document}
 
-% below are just comments
+% below are all comments
 
 \ExplSyntaxOn
 % loading tabularray with debug on is tested in tblr-loading.lvt
