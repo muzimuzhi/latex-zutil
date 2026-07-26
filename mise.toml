@@ -5,6 +5,11 @@ min_version = "2026.7.0"
 [settings.task]
 output = "keep-order"
 
+[env]
+# l3build env vars
+diffext = { default = ".diff" }
+diffexe = { default = "git diff --no-index --text --" }
+
 [tasks.lint]
 depends = ["lint:*", "fmt:justfile --check"]
 
@@ -55,8 +60,77 @@ alias = "pre-commit"
 # the list of skipped hooks is composed in the `ci.skip` item, in pre-commit
 # config too
 env.SKIP = { default = "justfile,typos,explcheck,ruff,tombi" }
-run = [
-  'echo "Skipped checks: {{ env.SKIP }}"',
-  "pre-commit run --all-files --color=always"
-]
+run = '''
+#!/usr/bin/env -S bash
+echo "Skipped checks: {{ env.SKIP }}"
+pre-commit run --all-files --color=always
+'''
 interactive = true
+
+[tasks.test]
+depends = ["test:zutil"]
+
+[tasks.test-inactive]
+depends = ["test:tblr", "test:tblr-old", "test:tblr-ppm"]
+
+[tasks."test:zutil"]
+depends = ["dev:l3build-check zutil"]
+
+[tasks."test:tblr"]
+depends = ["dev:l3build-check tblr"]
+
+[tasks."test:tblr-old"]
+depends = ["dev:l3build-check tblr-old"]
+
+[tasks."test:tblr-ppm"]
+dir = "tabularray"
+run = '''
+#!/usr/bin/env -S bash
+echo "Running tblr-ppm tests, \"config-old\" config..."
+texlua buildend.lua
+'''
+
+[tasks."dev:l3build-check"]
+alias = "check"
+env.L3BUILD_CHECK_OPTIONS = { default = "-q --show-saves" }
+run = '''
+l3build-wrapper check {{ env.L3BUILD_CHECK_OPTIONS }}
+'''
+
+[tasks."dev:l3build-save"]
+alias = "save"
+env.L3BUILD_SAVE_OPTIONS = { default = "-q" }
+run = '''
+l3build-wrapper save {{ env.L3BUILD_SAVE_OPTIONS }}
+'''
+
+[tasks."dev:new-test"]
+description = "Create a new l3build test from template"
+usage = """
+arg "module"
+arg "name"
+"""
+run = '''
+#!/usr/bin/env -S bash
+echo "Creating new l3build test \"$usage_module-$usage_name.lvt\" for module \"$usage_module\""
+template="support/TEMPLATE-$usage_module-test.lvt"
+new_test="$usage_module/testfiles/$usage_module-$usage_name.lvt"
+if [[ ! -f "$template" ]]; then
+  echo "Template file \"$template\" does not exist"
+  exit 1
+fi
+if [[ -f "$new_test" ]]; then
+  echo "Test file \"$new_test\" already exists."
+  exit 1
+fi
+cp "$template" "$new_test"
+code "$new_test"
+'''
+
+[tasks."dev:install-wrapper"]
+description = "Reinstall l3build-wrapper in editable mode"
+run = '''
+#!/usr/bin/env -S bash
+echo "Reinstalling l3build-wrapper in editable mode"
+cd l3build-wrapper && uv tool install --reinstall -e .
+'''
