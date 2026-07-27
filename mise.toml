@@ -97,7 +97,8 @@ l3build-wrapper check {{ env.L3BUILD_CHECK_OPTIONS }} {{ env.L3BUILD_MODULE or "
 alias = "save"
 env.L3BUILD_SAVE_OPTIONS = { default = "-q" }
 run = '''
-l3build-wrapper save {{ env.L3BUILD_SAVE_OPTIONS }}
+#!/usr/bin/env bash
+l3build-wrapper save {{ env.L3BUILD_SAVE_OPTIONS }} "$@"
 '''
 
 [tasks."dev:new-test"]

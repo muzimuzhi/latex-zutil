@@ -28,7 +28,7 @@
   - `mise run test`: tests for actively maintained LaTeX packages
   - `mise run test-inactive`: tests for inactive LaTeX packages
 - Misc check
-  - `mise lint:expl3 --inline-config 'stop_early_when_confused=false'`: deeper thus slower expl3 code linting
+  - `mise run lint:expl3 --inline-config 'stop_early_when_confused=false'`: deeper thus slower expl3 code linting
 - Checks run on CI
   - [`lint.yml`](./.github/workflows/lint.yml) full quick checks (on Ubuntu)
   - [`check.yml`](./.github/workflows/check.yml) actively maintained slow checks (on Ubuntu)
