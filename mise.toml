@@ -84,15 +84,13 @@ texlua buildend.lua
 alias = "check"
 env.L3BUILD_CHECK_OPTIONS = { default = "-q --show-saves" }
 interactive = true
-# use Tera templates to get clean task header in output
+# use Tera templates to get more meaningful task header in stdout
 run = '''
 #!/usr/bin/env bash
-{% if env.L3BUILD_MODULE is defined and env.L3BUILD_MODULE != "" %}
-echo "[{{ env. MISE_TASK_NAME }}] Checking l3build tests for module \"{{ env.L3BUILD_MODULE }}\"..."
-l3build-wrapper check {{ env.L3BUILD_CHECK_OPTIONS }} {{ env.L3BUILD_MODULE }} "$@"
-{% else %}
-l3build-wrapper check {{ env.L3BUILD_CHECK_OPTIONS }} "$@"
-{% endif %}
+{% if env.L3BUILD_MODULE is defined and env.L3BUILD_MODULE != "" -%}
+  echo "[{{ env.MISE_TASK_NAME }}] Checking l3build tests for module \"{{ env.L3BUILD_MODULE }}\"..."
+{% endif -%}
+l3build-wrapper check {{ env.L3BUILD_CHECK_OPTIONS }} {{ env.L3BUILD_MODULE or "" }} "$@"
 '''
 
 [tasks."test:save"]
