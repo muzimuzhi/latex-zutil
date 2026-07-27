@@ -50,6 +50,8 @@
 - `pre-commit`: a Git hook framework\
   https://github.com/pre-commit/pre-commit \
   Installation: (recommended) `uv tool install pre-commit`
+- `tombi`: TOML Formatter / Linter / Language Server\
+  https://github.com/tombi-toml/tombi
 - `typos`: Source code spell checker\
   https://github.com/crate-ci/typos
 - `uv`: An extremely fast Python package and project manager\
