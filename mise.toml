@@ -62,7 +62,7 @@ pre-commit run --all-files --color=always
 '''
 
 [tasks.test]
-depends = ["L3BUILD_MODULE=zutil test:check"]
+depends = [{ task = "test:check", env = { L3BUILD_MODULE = "zutil" } }]
 
 [tasks.test-inactive]
 # must run in series
