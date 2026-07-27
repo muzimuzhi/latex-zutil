@@ -62,24 +62,15 @@ pre-commit run --all-files --color=always
 '''
 
 [tasks.test]
-depends = ["test:zutil"]
+depends = ["L3BUILD_MODULE=zutil test:check"]
 
 [tasks.test-inactive]
 # must run in series
 run = [
-  { task = "test:tblr" },
-  { task = "test:tblr-old" },
+  { task = "test:check", env = { L3BUILD_MODULE = "tblr" } },
+  { task = "test:check", env = { L3BUILD_MODULE = "tblr-old" } },
   { task = "test:tblr-ppm" },
 ]
-
-[tasks."test:zutil"]
-depends = ["L3BUILD_MODULE=zutil test:check zutil"]
-
-[tasks."test:tblr"]
-depends = ["L3BUILD_MODULE=tblr test:check tblr"]
-
-[tasks."test:tblr-old"]
-depends = ["L3BUILD_MODULE=tblr-old test:check tblr-old"]
 
 [tasks."test:tblr-ppm"]
 dir = "tabularray"
@@ -93,12 +84,15 @@ texlua buildend.lua
 alias = "check"
 env.L3BUILD_CHECK_OPTIONS = { default = "-q --show-saves" }
 interactive = true
+# use Tera templates to get clean task header in output
 run = '''
 #!/usr/bin/env bash
-if [[ -n "$L3BUILD_MODULE" ]]; then
-  echo "[$MISE_TASK_NAME] Checking l3build tests for module \"$L3BUILD_MODULE\""
-fi
+{% if env.L3BUILD_MODULE is defined and env.L3BUILD_MODULE != "" %}
+echo "[{{ env. MISE_TASK_NAME }}] Checking l3build tests for module \"{{ env.L3BUILD_MODULE }}\"..."
+l3build-wrapper check {{ env.L3BUILD_CHECK_OPTIONS }} {{ env.L3BUILD_MODULE }} "$@"
+{% else %}
 l3build-wrapper check {{ env.L3BUILD_CHECK_OPTIONS }} "$@"
+{% endif %}
 '''
 
 [tasks."test:save"]
@@ -116,7 +110,7 @@ arg "name"
 """
 run = '''
 #!/usr/bin/env bash
-echo "Creating new l3build test \"$usage_module-$usage_name.lvt\" for module \"$usage_module\""
+echo "Creating new l3build test \"$usage_module-$usage_name.lvt\" for module \"$usage_module\"..."
 template="support/TEMPLATE-$usage_module-test.lvt"
 new_test="$usage_module/testfiles/$usage_module-$usage_name.lvt"
 if [[ ! -f "$template" ]]; then
@@ -135,6 +129,6 @@ code "$new_test"
 description = "Reinstall l3build-wrapper in editable mode"
 run = '''
 #!/usr/bin/env bash
-echo "Reinstalling l3build-wrapper in editable mode"
+echo "Reinstalling l3build-wrapper in editable mode..."
 cd l3build-wrapper && uv tool install --reinstall -e .
 '''
