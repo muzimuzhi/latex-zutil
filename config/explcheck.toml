@@ -2,8 +2,10 @@
 # https://github.com/Witiko/expltools/blob/main/explcheck/src/explcheck-config.toml
 
 [defaults]
-ignored_issues = [
-  "e408", # E408 calling an undefined function
-]
 stop_early_when_confused = false
 warnings_are_errors = true
+
+[filename."zutil-debug.code.tex"]
+defined_csnames = [
+  "zutil_debug:ne"
+]
