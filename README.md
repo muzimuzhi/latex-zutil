@@ -23,48 +23,30 @@
     - auto triggered by `git commit` (`pre-commit` git hook in use), or
     - run `pre-commit run` manually
   - full run
-    - `just lint` or `pre-commit run -a`
+    - `mise run lint` or `pre-commit run -a`
 - Slow checks (`l3build` tests)
-  - `just test`: tests for actively maintained LaTeX packages
-  - `just test-inactive`: tests for inactive LaTeX packages
+  - `mise run test`: tests for actively maintained LaTeX packages
+  - `mise run test-inactive`: tests for inactive LaTeX packages
 - Misc check
-  - `just explcheck-slow`: deeper thus slower expl3 code linting
+  - `mise run lint:expl3 --inline-config 'stop_early_when_confused=false'`: deeper thus slower expl3 code linting
 - Checks run on CI
-  - [`lint.yml`](./.github/workflows/lint.yml) full quick checks and `just explcheck-slow --verbose` (on Ubuntu)
-  - [`check.yml`](./.github/workflows/check.yml) actively maintained slow checks (on Ubuntu by default)
+  - [`lint.yml`](./.github/workflows/lint.yml) full quick checks (on Ubuntu)
+  - [`check.yml`](./.github/workflows/check.yml) actively maintained slow checks (on Ubuntu)
   - [`schedule.yml`](./.github/workflows/schedule.yml)
     - run once a week
     - call `lint.yml`
-    - call `check.yml` on 3 OSes, with `just test-inactive` enabled
-
-### General `just` usages
-
-```shell
-# list all "just" available recipes
-$ just
-# list commands that would run by RECIPE
-$ just -n/--dry-run RECIPE
-
-# (just recipes `check` and `save` both use `l3build_wrapper.py`)
-# print help text of `l3build_wrapper.py`
-$ just [check|save] -h
-# check/save one or more tests and/or testsuites
-$ just check zutil tblr
-$ just save --all-engines zutil-001 tblr-loading
-```
-
-Note: As configured by `justfile` in this repository, `just` invoked from any subdirectories acts the same as being invoked from the top-level directory.
+    - call `check.yml` on 3 OSes, check inactive l3build tests in addition
 
 ### Tools
 
 - `explcheck`: Development tools for expl3 programmers\
   https://github.com/Witiko/expltools \
   Installation: `tlmgr install expltools`
-- `just`: Just a command runner\
-  https://github.com/casey/just
 - `l3build`: A testing and building system for LaTeX\
   https://github.com/latex3/l3build\
   Installation: `tlmgr install l3build`
+- `mise`: One tool that manages dev tools, env vars, and tasks per project\
+  https://github.com/jdx/mise
 - `pre-commit`: a Git hook framework\
   https://github.com/pre-commit/pre-commit \
   Installation: (recommended) `uv tool install pre-commit`
