@@ -17,7 +17,7 @@ jobs:
   check:
     permissions:
       actions: write
-    uses: ./.github/workflows/check.yml
+    uses: $/.github/workflows/check.yml
     with:
       images: '["ubuntu-latest", "macos-latest", "windows-latest"]'
       install-texlive-cleanly: ${{ inputs.install-texlive-cleanly || true}}
@@ -25,4 +25,4 @@ jobs:
   lint:
     permissions:
       contents: read
-    uses: ./.github/workflows/lint.yml
+    uses: $/.github/workflows/lint.yml
