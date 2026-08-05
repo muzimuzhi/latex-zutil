@@ -10,8 +10,8 @@
 
 \START
 
-\str_const:Nn \c_test_mdfive_expected_str { 9E1F7E08B77EFEEB1BEF258E30122985 }
-\str_const:Nn \c_test_release_expected_str { 2026-07-20 }
+\str_const:Nn \c_test_mdfive_expected_str { 401825B5BCB91C02695B414D6D20239F }
+\str_const:Nn \c_test_release_expected_str { 2026-08-02 }
 
 % Moved out of \TEST to avoid a luatex-only log line created by \cctab_select:N
 %    \g__cctab_tmpii_cctab=\catcodetable...
