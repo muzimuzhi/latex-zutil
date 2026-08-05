@@ -208,6 +208,23 @@
       { \TYPE { FAILED } }
   }
 
+\box_new:N \TESTBOX
+\cs_new_protected:Npn \BEGINBOXTEST #1
+  {
+    \BEGINTEST {#1}
+      \hbox_set:Nwn \TESTBOX
+        \ignorespaces
+  }
+\cs_new_protected:Npn \ENDBOXTEST
+  {
+        \mode_if_horizontal:T { \unskip }
+      \hbox_set_end:
+      \SHOWBOX { \TESTBOX }
+    \ENDTEST
+  }
+% compared to \box_show:N, \box_log:N does't write to terminal
+\cs_new_eq:NN \SHOWBOX \box_log:N
+
 \ExplSyntaxOff
 \makeatletter
 \ifnum 0%
