@@ -222,7 +222,8 @@
       \SHOWBOX { \TESTBOX }
     \ENDTEST
   }
-\cs_new_eq:NN \SHOWBOX \box_show:N
+% compared to \box_show:N, \box_log:N does't write to terminal
+\cs_new_eq:NN \SHOWBOX \box_log:N
 
 \ExplSyntaxOff
 \makeatletter
