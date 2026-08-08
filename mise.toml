@@ -74,6 +74,7 @@ run = [
 
 [tasks."test:tblr-ppm"]
 dir = "tabularray"
+interactive = true
 run = '''
 #!/usr/bin/env bash
 echo "Running tblr-ppm tests, \"config-old\" config..."
