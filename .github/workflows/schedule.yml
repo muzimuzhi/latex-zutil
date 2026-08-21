@@ -29,8 +29,8 @@ jobs:
     uses: $/.github/workflows/check.yml
     with:
       runs-on: ${{ matrix.runs-on }}
-      install-texlive-cleanly: ${{ inputs.install-texlive-cleanly }}
-      l3build-check-extra-options: ${{ inputs.l3build-check-extra-options }}
+      install-texlive-cleanly: ${{ inputs.install-texlive-cleanly || true }}
+      l3build-check-extra-options: ${{ inputs.l3build-check-extra-options || '' }}
       test-inactive: true
   lint:
     permissions:
