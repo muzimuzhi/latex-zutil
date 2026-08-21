@@ -1,5 +1,12 @@
 name: Schedule
 
+run-name: >-
+  ${{ case(
+    github.event_name == 'workflow_dispatch',
+    format('Schedule ({0})', github.event_name),
+    ''
+  )}}
+
 on:
   schedule:
     # at 12:21 UTC (20:21 CST/UTC +8) on every Thursday
@@ -32,6 +39,7 @@ jobs:
       install-texlive-cleanly: ${{ inputs.install-texlive-cleanly || true }}
       l3build-check-extra-options: ${{ inputs.l3build-check-extra-options || '' }}
       test-inactive: true
+
   lint:
     permissions:
       contents: read

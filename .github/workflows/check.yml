@@ -1,6 +1,12 @@
 name: Check
 
-run-name: ${{ contains(fromJSON('["workflow_call", "workflow_dispatch"]'), github.event_name) && format('Check ({0})', github.event_name) || ''}}
+# `run-name` is not used if the workflow is triggered by `workflow_call`
+run-name: >-
+  ${{ case(
+    github.event_name == 'workflow_dispatch',
+    format('Check ({0})', github.event_name),
+    ''
+  ) }}
 
 on:
   pull_request:
@@ -74,6 +80,19 @@ jobs:
       L3BUILD_CHECK_OPTIONS: >-
         --halt-on-error --show-log-on-error --show-saves
         ${{ inputs.l3build-check-extra-options || '' }}
+
+    # do not append event name if triggered by `workflow_call`, in which case
+    # the `github.workflow_ref` is the full path ref of the calling workflow,
+    # not the current workflow
+    # `github` context doc https://docs.github.com/en/actions/reference/workflows-and-actions/contexts#github-context
+    name: >-
+      Check${{ case(
+        !contains(github.workflow_ref, '/.github/workflows/check.yml@refs/'),
+        '',
+        github.event_name == 'workflow_dispatch',
+        format(' ({0})', inputs.runs-on),
+        ''
+      ) }}
 
     steps:
     - uses: actions/checkout@v7
