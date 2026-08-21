@@ -144,6 +144,10 @@ jobs:
       run: |
         mise run test-inactive
 
+    - name: Generate unique id
+      if: failure()
+      uses: muzimuzhi/actions/unique-id@main
+
     # TODO: generate a list of files related to failed tests, then
     # upload all of them (.tex, .log, .pdf, .png, .md5, etc.)
     - name: Upload diff files
@@ -151,7 +155,7 @@ jobs:
       uses: actions/upload-artifact@v7
       with:
         # here "zutil" means repo name, not LaTeX package name
-        name: zutil-diffs
+        name: zutil-diffs-${{ env.unique_id }}
         # configured in `mise.toml` so l3build uses OS-independent diff file extension
         path: |
           build/**/*.diff
