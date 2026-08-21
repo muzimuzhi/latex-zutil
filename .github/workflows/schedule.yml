@@ -8,19 +8,29 @@ on:
   workflow_dispatch:
     inputs:
       install-texlive-cleanly:
-        description: "Install TeX live from scratch?"
+        description: "Install TeX Live from scratch?"
         required: false
         type: boolean
         default: true
+      l3build-check-extra-options:
+        description: "Extra \"l3build check\" options, e.g., --dev"
+        required: false
+        type: string
+        default: ""
 
 jobs:
   check:
     permissions:
       actions: write
+    strategy:
+      fail-fast: false
+      matrix:
+        runs-on: [ubuntu-latest, macos-latest, windows-latest]
     uses: $/.github/workflows/check.yml
     with:
-      images: '["ubuntu-latest", "macos-latest", "windows-latest"]'
-      install-texlive-cleanly: ${{ inputs.install-texlive-cleanly || true}}
+      runs-on: ${{ matrix.runs-on }}
+      install-texlive-cleanly: ${{ inputs.install-texlive-cleanly || true }}
+      l3build-check-extra-options: ${{ inputs.l3build-check-extra-options || '' }}
       test-inactive: true
   lint:
     permissions:

@@ -17,13 +17,13 @@ on:
     # yaml anchor is supported in Aug, 2025
     # https://github.com/actions/runner/issues/1182
     inputs: &inputs
-      images:
-        description: "Array of images to run on"
+      runs-on:
+        description: "runner to run on"
         required: false
         type: string
-        default: '["ubuntu-latest"]'
+        default: ubuntu-latest
       install-texlive-cleanly:
-        description: "Install TeX live from scratch?"
+        description: "Install TeX Live from scratch?"
         required: false
         type: boolean
         default: false
@@ -32,6 +32,11 @@ on:
         required: false
         type: boolean
         default: true
+      l3build-check-extra-options:
+        description: "Extra \"l3build check\" options, e.g., --dev"
+        required: false
+        type: string
+        default: ""
       test-inactive:
         description: "Run tests for inactive packages?"
         required: false
@@ -42,23 +47,7 @@ on:
 
 jobs:
   check:
-    strategy:
-      fail-fast: false
-      matrix:
-        # TODO: find a way to handle different testfiles when checking
-        #       with latex and latex-dev
-        # options: ["", "--dev"]
-        options: [""]
-        # only `workflow_call` and `workflow_dispatch` would set `inputs`
-        # context
-        runs-on: ${{ fromJSON(inputs.images || '["ubuntu-latest"]') }}
-    # example `name`s:
-    #     - Check (ubuntu-latest)
-    #     - Check (ubuntu-latest, --dev)
-    name: "Check (\
-      ${{ inputs && format('{0}', matrix.runs-on) || '' }}\
-      ${{ matrix.options && format(', {0}', matrix.options) || '' }})"
-    runs-on: ${{ matrix.runs-on }}
+    runs-on: ${{ inputs.runs-on || 'ubuntu-latest' }}
     timeout-minutes: 30
 
     permissions:
@@ -83,7 +72,8 @@ jobs:
 
     env:
       L3BUILD_CHECK_OPTIONS: >-
-        --halt-on-error --show-log-on-error --show-saves ${{ matrix.options }}
+        --halt-on-error --show-log-on-error --show-saves
+        ${{ inputs.l3build-check-extra-options || '' }}
 
     steps:
     - uses: actions/checkout@v7
@@ -160,11 +150,8 @@ jobs:
       if: failure()
       uses: actions/upload-artifact@v7
       with:
-        # example names:
-        #   - zutil-diffs
-        #   - zutil-diffs-dev
-        name: "zutil-diffs-\
-          ${{ matrix.options != '' && '-dev' || '' }}"
+        # here "zutil" means repo name, not LaTeX package name
+        name: zutil-diffs
         # configured in `mise.toml` so l3build uses OS-independent diff file extension
         path: |
           build/**/*.diff
