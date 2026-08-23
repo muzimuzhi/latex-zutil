@@ -6,9 +6,11 @@ min_version = "2026.7.0"
 output = "keep-order"
 
 [env]
-# set OS-independent diff file extension and program for l3build
-diffext = { default = ".diff" }
+# set l3build envs for OS-independent diff program and file extension
 diffexe = { default = "git diff --no-index --text --" }
+diffext = { default = ".diff" }
+EXPLCHECK_CONFIG = { default = "config/explcheck.toml" }
+TYPOS_CONFIG = { default = "config/typos.toml" }
 
 [tasks.lint]
 depends = ["lint:*"]
@@ -16,15 +18,15 @@ depends = ["lint:*"]
 [tasks."lint:expl3"]
 description = "Lint expl3 code"
 alias = "explcheck"
-env.EXPLCHECK_CONFIG = { default = "config/explcheck.toml" }
 interactive = true
 # a) the glob file list is composed in the file inclusion pattern, in
 #    pre-commit config too,
 # b) explcheck allows intermixing optional arguments with positional
 #    arguments, so extra arguments can be passed when invoking the task
+# c) Prefer `{{ env.ENVVAR }}` because it's rendered in task head line
 run = """
 explcheck \
-  --config-file "$EXPLCHECK_CONFIG" \
+  --config-file "{{ env.EXPLCHECK_CONFIG }}" \
   zutil/*.sty zutil/*.tex support/*.cfg
 """
 
@@ -46,7 +48,7 @@ run = "tombi lint"
 [tasks."lint:typos"]
 description = "Check spelling"
 alias = "typos"
-run = "typos --config=config/typos.toml"
+run = 'typos --config="{{ env.TYPOS_CONFIG }}"'
 
 [tasks."lint:pre-commit"]
 description = "Run pre-commit checks on all files"
