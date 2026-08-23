@@ -38,7 +38,8 @@ jobs:
       runs-on: ${{ matrix.runs-on }}
       install-texlive-cleanly: ${{ inputs.install-texlive-cleanly || true }}
       l3build-check-extra-options: ${{ inputs.l3build-check-extra-options || '' }}
-      test-inactive: true
+      # TODO: perhaps reenable this when `tabularray` resumes updates
+      test-inactive: false
 
   lint:
     permissions:
