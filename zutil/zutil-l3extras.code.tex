@@ -1,9 +1,22 @@
-\ProvidesExplFile {zutil-l3extras.code.tex} {2026-04-15} {0.6.0}
+\ProvidesExplFile {zutil-l3extras.code.tex} {2026-08-29} {0.6.0}
   {Z's utilities, the l3kernel extras module}
 
 %%
 %% l3basice extras
 %%
+
+\cs_new_protected:Npn \zutil_cs_local_undefine:N #1
+  {
+    \cs_set_eq:NN #1 \tex_undefined:D  % noqa: w200
+  }
+\cs_new_protected:Npn \zutil_cs_local_undefine:c #1
+  {
+    \if_cs_exist:w #1 \cs_end:
+    \else:
+      \use_i:nnnn
+    \fi:  % noqa: w302
+    \exp_args:Nc \zutil_cs_local_undefine:N {#1}  % noqa: w302
+  }
 
 \prg_new_conditional:Npnn \zutil_cs_if_function:N #1 { p, T, F, TF }
   {

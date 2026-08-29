@@ -15,6 +15,9 @@
 ## `l3extras` module
 - additions to the `l3kernel`
 - `l3basics` extras
+  - `\zutil_cs_local_undefine:N ⟨cs⟩`
+    - undefines `⟨cs⟩` locally; the local-scope version of `\cs_undefine:N`
+    - variant `c` (hand-tuned, no `\relax` issue)
   - `\zutil_cs_if_function:NTF ⟨cs⟩ {⟨true code⟩} {⟨false code⟩}`\
     `\zutil_cs_if_function_p:N ⟨cs⟩`
     - checks if the csname of `⟨cs⟩` contains colon `:`
