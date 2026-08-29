@@ -184,6 +184,7 @@
     \BEGINTEST {#1}
     % a group-free \LONGOUTPUT needed by local-scope \flag_raise:N
     \cs_set_eq:NN \TYPE \use:n
+    \cs_set_eq:NN \PASSED \PASSEDEXP
     \iow_term:e { #2 }
     \cs_set_eq:NN \TYPE \LONGOUTPUT
     \ENDTEST
@@ -337,8 +338,9 @@
 \int_new:N \g_zutil_test_errors_tmp_int
 \flag_new:N \l_zutil_test_exp_errors_cnt_flag
 % count number of checks (\PASSED)
-\int_new:N \g_zutil_test_check_cnt_int
-\flag_new:N \l_zutil_test_checks_cnt_flag
+\int_new:N \g_zutil_test_checks_cnt_int
+\int_new:N \g_zutil_test_checks_tmp_int
+\flag_new:N \l_zutil_test_exp_checks_cnt_flag
 
 % end-of-file logging
 \hook_new:n { zutil/test/END }
@@ -351,10 +353,11 @@
 
 \msg_new:nnn { zutil/test } { PASSED }
   {
-    PASSED
+    PASSED~an~expandable~check.~
+    Not~counted~due~to~too~deep~group~level~(\the\currentgrouplevel).
   }
 \prop_gput:Nnn \g_msg_module_name_prop { zutil/test } { }
-\prop_gput:Nnn \g_msg_module_type_prop { zutil/test } { Regression~Test }
+\prop_gput:Nnn \g_msg_module_type_prop { zutil/test } { Test }
 
 %%
 %% counting errors and passed checks
@@ -422,7 +425,7 @@
     \zutil_test_add_expandable_errors_cnt:
     \zutil_test_log_error_counts:n { \g_zutil_test_errors_cnt_int }
     % log check counts, always
-    \zutil_test_log_check_counts:n { \g_zutil_test_check_cnt_int }
+    \zutil_test_log_check_counts:n { \g_zutil_test_checks_cnt_int }
   }
 
 % before-test logging
@@ -441,14 +444,14 @@
         \flag_clear:N \l_zutil_test_exp_errors_cnt_flag
       }
     % reset check counts
-    \flag_if_raised:NT \l_zutil_test_checks_cnt_flag
+    \flag_if_raised:NT \l_zutil_test_exp_checks_cnt_flag
       {
         \zutil_test_type:e
           {
-            \flag_height:N \l_zutil_test_checks_cnt_flag \c_space_tl
+            \flag_height:N \l_zutil_test_exp_checks_cnt_flag \c_space_tl
             checks~used~between~tests.
           }
-        \flag_clear:N \l_zutil_test_checks_cnt_flag
+        \flag_clear:N \l_zutil_test_exp_checks_cnt_flag
       }
   }
 
@@ -456,7 +459,8 @@
   {
     \int_gset_eq:NN \g_zutil_test_group_level_int \currentgrouplevel
     % enable checking commands
-    \cs_set_eq:NN \PASSED \zutil_test_PASSED:
+    \cs_set_eq:NN \PASSED \zutil_test_protected_PASSED:
+    \cs_set_eq:NN \PASSEDEXP \zutil_test_PASSED:
     \cs_set_eq:NN \FAILWITH \zutil_test_FAILWITH:n
   }
 \cs_new_protected:Npn \zutil_test_type:e #1
@@ -478,13 +482,19 @@
           { \g_zutil_test_errors_cnt_int - \g_zutil_test_errors_tmp_int }
       }
     % log check counts
-    \flag_if_raised:NT \l_zutil_test_checks_cnt_flag
+    \flag_if_raised:NT \l_zutil_test_exp_checks_cnt_flag
       {
-        \int_gadd:Nn \g_zutil_test_check_cnt_int
-          { \flag_height:N \l_zutil_test_checks_cnt_flag }
+        \int_gadd:Nn \g_zutil_test_checks_tmp_int
+          { \flag_height:N \l_zutil_test_exp_checks_cnt_flag }
+        \flag_clear:N \l_zutil_test_exp_checks_cnt_flag
+      }
+    \int_if_zero:nF { \g_zutil_test_checks_tmp_int }
+      {
         \zutil_test_log_check_counts:n
-          { \flag_height:N \l_zutil_test_checks_cnt_flag }
-        \flag_clear:N \l_zutil_test_checks_cnt_flag
+          { \g_zutil_test_checks_tmp_int }
+        \int_gadd:Nn \g_zutil_test_checks_cnt_int
+          { \g_zutil_test_checks_tmp_int }
+        \int_gzero:N \g_zutil_test_checks_tmp_int
       }
   }
 
@@ -522,7 +532,11 @@
     \int_compare:nNnTF
       { \currentgrouplevel } > { \g_zutil_test_group_level_int }
       { \msg_expandable_error:nn { zutil/test } { PASSED } }
-      { \flag_raise:N \l_zutil_test_checks_cnt_flag }
+      { \flag_raise:N \l_zutil_test_exp_checks_cnt_flag }
+  }
+\cs_new_protected:Npn \zutil_test_protected_PASSED:
+  {
+    \int_gincr:N \g_zutil_test_checks_tmp_int
   }
 \cs_undefine:N \FAILED
 \cs_new_protected:Npn \zutil_test_FAILWITH:n #1

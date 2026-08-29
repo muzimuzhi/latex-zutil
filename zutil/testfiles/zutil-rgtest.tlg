@@ -67,18 +67,25 @@ TEST: Count expandable errors between tests
 BODY
 ============================================================
 ============================================================
-TEST: Count checks
-============================================================
-[test] 1 check(s) passed
-============================================================
-PASSED
-============================================================
-TEST: Not counted: checks used in deeper groups
+TEST: Count checks in normal \TEST 
 ============================================================
 ! Use of \??? doesn't match its definition.
 <argument> \???  
-                 ! Regression Test Error: PASSED
+                 ! Test Error: PASSED an expandable check. Not counted due to too deep group level (2).
 l. ...}
+! Use of \??? doesn't match its definition.
+<argument> \???  
+                 ! Test Error: PASSED an expandable check. Not counted due to too deep group level (3).
+l. ...}
+[test] 3 check(s) passed
+============================================================
+PASSED
+PASSEDEXP
+============================================================
+TEST: Count checks in \TESTEXP 
+============================================================
+{{}{}}
+[test] 5 check(s) passed
 ============================================================
 ============================================================
 TEST: Errors and checks in a deeper-group test
@@ -105,4 +112,4 @@ TEST: Check group level at end of test
 ============================================================
 ***************
 [test] 9 error(s) raised
-[test] 2 check(s) passed
+[test] 9 check(s) passed
