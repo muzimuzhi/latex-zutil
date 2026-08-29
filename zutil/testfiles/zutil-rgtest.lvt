@@ -70,16 +70,28 @@
   \TYPE { BODY }
 }
 
-\TEST{Count~checks}{
+\TEST{Count~checks~in~normal~\TEST}{
   \PASSED
+  {
+    \PASSED
+    { \PASSED }
+    \PASSEDEXP
+    { \PASSEDEXP }
+  }
 }
 
 % \PASSED is only defined in tests
 \cs_if_exist:NF \PASSED { \TYPE { PASSED } }
 
-\TEST{Not~counted:~checks~used~in~deeper~groups}{
+% groups don't account in expansion-only contexts, so all the \PASSED(EXP) are
+% counted
+\TESTEXP{Count~checks~in~\TESTEXP}{
+  \PASSED
   {
     \PASSED
+    { \PASSED }
+    \PASSEDEXP
+    { \PASSEDEXP }
   }
 }
 
