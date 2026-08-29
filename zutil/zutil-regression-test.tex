@@ -1,4 +1,4 @@
-\ProvidesExplFile {zutil-regression-test.tex} {2025-12-11} {0.2.0}
+\ProvidesExplFile {zutil-regression-test.tex} {2026-08-30} {0.3.0}
   {regression-test.tex extended}
 
 %%
@@ -337,7 +337,7 @@
 \int_new:N \g_zutil_test_errors_cnt_int
 \int_new:N \g_zutil_test_errors_tmp_int
 \flag_new:N \l_zutil_test_exp_errors_cnt_flag
-% count number of checks (\PASSED)
+% count number of passing checks (issued by \PASSED and \PASSEDEXP)
 \int_new:N \g_zutil_test_checks_cnt_int
 \int_new:N \g_zutil_test_checks_tmp_int
 \flag_new:N \l_zutil_test_exp_checks_cnt_flag
@@ -353,8 +353,9 @@
 
 \msg_new:nnn { zutil/test } { PASSED }
   {
-    PASSED~an~expandable~check.~
-    Not~counted~due~to~too~deep~group~level~(\the\currentgrouplevel).
+    PASSED~an~expandable~check.~ Not~counted~due~to~bad~group~level~
+    \int_use:N \currentgrouplevel,~
+    expected~ \int_use:N \g_zutil_test_group_level_int .
   }
 \prop_gput:Nnn \g_msg_module_name_prop { zutil/test } { }
 \prop_gput:Nnn \g_msg_module_type_prop { zutil/test } { Test }
@@ -379,17 +380,17 @@
 % of _all_ check runs, thus is more time consuming.
 % https://github.com/latex3/l3build/issues/398
 %
-% Checks issued by the expandable \PASSED are counted too.
+% Checks issued by the \PASSED and \PASSEDEXP are counted too.
 %
 % In expandable contexts, the counts are stored in a l3flag variable.
 %
 % end-of-test logging [n > 0]
-%     [test] <n> error(s)
-%     [test] <n> check(s)
+%     [test] <n> error(s) raised
+%     [test] <n> check(s) passed
 % end-of-file logging [n >= 0]
 %     ***************
-%     [test] <n> error(s)
-%     [test] <n> check(s)
+%     [test] <n> error(s) raised
+%     [test] <n> check(s) passed
 
 \socket_new_plug:nnn { zutil/test/count-errors } { normal }
   {
@@ -526,7 +527,7 @@
     \socket_assign_plug:nn { zutil/test/count-exp-errors } { normal }
   }
 
-% \PASSED and \FAILWITH are defined at the beginning of each test
+% \PASSED, \PASSEDEXP, and \FAILWITH are defined at the beginning of each test
 \cs_new:Npn \zutil_test_PASSED:
   {
     \int_compare:nNnTF

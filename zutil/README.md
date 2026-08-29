@@ -146,9 +146,9 @@
 - new features
   - nestable `\OMIT ... \TIMO` blocks: only the outer-most block is effective and unmatched `\TIMO` is ignored
   - removed test numbering
-  - log number of errors and passed checks at the end of a test and the entire test file
+  - log number of errors and passed checks at the end of each test and the entire test file
     - errors raised by `\errmessage` are all counted
-    - checks marked by `\PASSED` or `\PASSEDEXP` are counted
+    - checks issued by `\PASSED` and `\PASSEDEXP` are counted
 - new commands
   - `\PASSED` steps the count for passed checks, only available inside tests. In `\TESTEXP`, `\PASSED` is the same as `\PASSEDEXP`.
   - `\PASSEDEXP` steps the count for passed checks in expansion-only context, only available inside tests

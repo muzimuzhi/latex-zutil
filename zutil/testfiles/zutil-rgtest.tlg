@@ -71,11 +71,11 @@ TEST: Count checks in normal \TEST
 ============================================================
 ! Use of \??? doesn't match its definition.
 <argument> \???  
-                 ! Test Error: PASSED an expandable check. Not counted due to too deep group level (2).
+                 ! Test Error: PASSED an expandable check. Not counted due to bad group level 2, expected 1.
 l. ...}
 ! Use of \??? doesn't match its definition.
 <argument> \???  
-                 ! Test Error: PASSED an expandable check. Not counted due to too deep group level (3).
+                 ! Test Error: PASSED an expandable check. Not counted due to bad group level 3, expected 1.
 l. ...}
 [test] 3 check(s) passed
 ============================================================
