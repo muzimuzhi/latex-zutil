@@ -82,6 +82,7 @@
 
 % \PASSED is only defined in tests
 \cs_if_exist:NF \PASSED { \TYPE { PASSED } }
+\cs_if_exist:NF \PASSED { \TYPE { PASSEDEXP } }
 
 % groups don't account in expansion-only contexts, so all the \PASSED(EXP) are
 % counted
