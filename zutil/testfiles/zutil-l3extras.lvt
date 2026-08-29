@@ -12,6 +12,28 @@
 
 \START
 
+\OMIT
+% #2 and #3 are curried
+\cs_new:Npn \test_if_undefined:NTF #1
+  {
+    \cs_if_eq:NNTF #1 \tex_undefined:D
+  }
+\cs_new:Npn \test_tmpa:n #1 {}
+\cs_new:Npn \test_tmpb:n #1 {}
+\TIMO
+
+
+\TEST{\zutil_cs_local_undefine:N}{
+  \group_begin:
+    \zutil_cs_local_undefine:N \test_tmpa:n
+    \zutil_cs_local_undefine:c { test_tmpb:n }
+    \test_if_undefined:NTF \test_tmpa:n \PASSED \FAILED
+    \test_if_undefined:NTF \test_tmpb:n \PASSED \FAILED
+  \group_end:
+  \test_if_undefined:NTF \test_tmpa:n \FAILED \PASSED
+  \test_if_undefined:NTF \test_tmpb:n \FAILED \PASSED
+}
+
 \TESTEXP{\zutil_cs_if_function:NTF}{
   % functions: {defined, undefined} * {has sig, no sig}
   \zutil_cs_if_function:NTF \zutil_set:n       \PASSED \FAILED
