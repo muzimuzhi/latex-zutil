@@ -1,0 +1,9 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  // https://docs.renovatebot.com/presets-config/#configrecommended
+  "extends": ["config:recommended"],
+  // https://docs.renovatebot.com/modules/manager/pre-commit/
+  "pre-commit": {
+    "enabled": true
+  }
+}
