@@ -150,7 +150,7 @@ jobs:
 
     - name: Install ppmcheckpdf dependencies
       if: inputs.test-inactive
-      uses: muzimuzhi/actions/ppmcheckpdf-deps@main
+      uses: muzimuzhi/reusable/actions/ppmcheckpdf-deps@main
 
     # uses "L3BUILD_CHECK_OPTIONS" job env
     - name: Run active l3build tests
@@ -165,7 +165,7 @@ jobs:
 
     - name: Generate unique id
       if: failure()
-      uses: muzimuzhi/actions/unique-id@main
+      uses: muzimuzhi/reusable/actions/unique-id@main
 
     # TODO: generate a list of files related to failed tests, then
     # upload all of them (.tex, .log, .pdf, .png, .md5, etc.)
