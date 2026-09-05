@@ -16,19 +16,24 @@
 % remove version definitions which bumps per release
 \cs_new:Npn \test_drop_FILEDATE:N #1
   {
-    \exp_after:wN \test_drop_FILEDATE:w #1
-      \def \REGRESSIONFILEDATE {} ~ \s_stop
+    \exp_last_unbraced:NV \test_drop_FILEDATE_auxi:w #1
+      \def \REGRESSIONTESTFILEDATE {} ~ \q_stop
   }
 % #1: content before
 % #2: date string (YYYY-MM-DD) (if matched) or empty
 % #3: content after till the `\s_stop` delimiter
-\cs_new:Npn \test_drop_FILEDATE:w
+\cs_new:Npn \test_drop_FILEDATE_auxi:w
     % the space (~) comes from newline character
-    #1 \def \REGRESSIONFILEDATE #2 ~ #3 \s_stop
+    #1 \def \REGRESSIONTESTFILEDATE #2 ~
   {
     \exp_not:n { #1 }
-    \tl_if_empty:nF { #2 } { \test_drop_FILEDATE:w #3 \s_stop }
+    \tl_if_empty:nTF { #2 }
+      { \use_none_delimit_by_q_stop:w }
+      { \test_drop_FILEDATE_auxii:w }
   }
+\cs_new:Npn \test_drop_FILEDATE_auxii:w
+    #1 \def \REGRESSIONTESTFILEDATE #2 \q_stop
+  { \exp_not:n { #1 } }
 
 % Moved out of \TEST to avoid a luatex-only log line created by \cctab_select:N
 %    \g__cctab_tmpii_cctab=\catcodetable...
@@ -52,21 +57,18 @@
       \tl_set:Nn \l_tmpa_tl { #1 }
       \tl_if_eq:enTF { \test_drop_FILEDATE:N \l_tmpa_tl } { #2 }
         { \PASSED }
-        { \FAILWITH { Expected~'#2'~but~got~'\l_tmpa_tl'. } }
+        { \FAILWITH { \exp_not:n { Expected~'#2'~but~got~'#1'. } } }
     }
   \test:nn { xxx } { xxx }
   \test:nn { ~ xxx ~ } { ~ xxx ~ }
   \test:nn
-    { before \def\REGRESSIONFILEDATE{0000-00-00} ~ after }
+    { before \def\REGRESSIONTESTFILEDATE{0000-00-00} ~ after }
     { before after }
   \test:nn
-    { ~ before \def\REGRESSIONFILEDATE{0000-00-00} ~ after ~ }
-    { ~ before after ~ }
-  \test:nn
-    { before ~ \def\REGRESSIONFILEDATE{0000-00-00} ~ after }
-    { before ~ after }
+    { ~ before ~ \def\REGRESSIONTESTFILEDATE{0000-00-00} ~ after ~ }
+    { ~ before ~ after ~ }
   \exp_args:Nee \test:nn
-    { before ~ \def \exp_not:N \REGRESSIONFILEDATE{0000-00-00} ~ \c_space_tl after }
+    { before ~ \def \exp_not:N \REGRESSIONTESTFILEDATE{0000-00-00} ~ \c_space_tl after }
     { before ~ \c_space_tl after }
 }
 

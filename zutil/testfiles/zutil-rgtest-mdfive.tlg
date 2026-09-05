@@ -4,7 +4,7 @@ Don't change this file in any respect.
 ============================================================
 TEST: \test_drop_FILEDATE:N 
 ============================================================
-[test] 6 check(s) passed
+[test] 5 check(s) passed
 ============================================================
 ============================================================
 TEST: Check md5sum of regression-test.tex
@@ -13,4 +13,4 @@ TEST: Check md5sum of regression-test.tex
 ============================================================
 ***************
 [test] 0 error(s) raised
-[test] 7 check(s) passed
+[test] 6 check(s) passed
