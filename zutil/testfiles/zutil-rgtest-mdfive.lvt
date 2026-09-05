@@ -13,6 +13,23 @@
 \str_const:Nn \c_test_mdfive_expected_str { 7A28A0CE01C19BC6AF69ACD3719133AD }
 \str_const:Nn \c_test_release_expected_str { 2026-09-01 }
 
+% remove version definitions which bumps per release
+\cs_new:Npn \test_drop_FILEDATE:N #1
+  {
+    \exp_after:wN \test_drop_FILEDATE:w #1
+      \def \REGRESSIONFILEDATE {} ~ \s_stop
+  }
+% #1: content before
+% #2: date string (YYYY-MM-DD) (if matched) or empty
+% #3: content after till the `\s_stop` delimiter
+\cs_new:Npn \test_drop_FILEDATE:w
+    % the space (~) comes from newline character
+    #1 \def \REGRESSIONFILEDATE #2 ~ #3 \s_stop
+  {
+    \exp_not:n { #1 }
+    \tl_if_empty:nF { #2 } { \test_drop_FILEDATE:w #3 \s_stop }
+  }
+
 % Moved out of \TEST to avoid a luatex-only log line created by \cctab_select:N
 %    \g__cctab_tmpii_cctab=\catcodetable...
 % in which the "ii" in "tmpii" stands for the current group level.
@@ -24,8 +41,34 @@
     \char_set_catcode_letter:N @
   }
   \l_tmpa_tl
+\tl_set:Ne \l_tmpa_tl
+  { \test_drop_FILEDATE:N \l_tmpa_tl }
 \str_const:Ne \c_test_mdfive_actual_str
   { \str_mdfive_hash:e { \exp_not:V \l_tmpa_tl } }
+
+\TEST{\test_drop_FILEDATE:N}{
+  \cs_new:Npn \test:nn #1#2
+    {
+      \tl_set:Nn \l_tmpa_tl { #1 }
+      \tl_if_eq:enTF { \test_drop_FILEDATE:N \l_tmpa_tl } { #2 }
+        { \PASSED }
+        { \FAILWITH { Expected~'#2'~but~got~'\l_tmpa_tl'. } }
+    }
+  \test:nn { xxx } { xxx }
+  \test:nn { ~ xxx ~ } { ~ xxx ~ }
+  \test:nn
+    { before \def\REGRESSIONFILEDATE{0000-00-00} ~ after }
+    { before after }
+  \test:nn
+    { ~ before \def\REGRESSIONFILEDATE{0000-00-00} ~ after ~ }
+    { ~ before after ~ }
+  \test:nn
+    { before ~ \def\REGRESSIONFILEDATE{0000-00-00} ~ after }
+    { before ~ after }
+  \exp_args:Nee \test:nn
+    { before ~ \def \exp_not:N \REGRESSIONFILEDATE{0000-00-00} ~ \c_space_tl after }
+    { before ~ \c_space_tl after }
+}
 
 \TEST{Check~md5sum~of~regression-test.tex}{
   \str_if_eq:VVTF \c_test_mdfive_expected_str \c_test_mdfive_actual_str
