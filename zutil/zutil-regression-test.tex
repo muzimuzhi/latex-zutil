@@ -357,6 +357,7 @@
     \int_use:N \currentgrouplevel,~
     expected~ \int_use:N \g_zutil_test_group_level_int .
   }
+% resulted error prefix: `! Test Error: ...`
 \prop_gput:Nnn \g_msg_module_name_prop { zutil/test } { }
 \prop_gput:Nnn \g_msg_module_type_prop { zutil/test } { Test }
 
@@ -542,8 +543,11 @@
 \cs_undefine:N \FAILED
 \cs_new_protected:Npn \zutil_test_FAILWITH:n #1
   {
-    \TYPE { #1 }
-    \FAILED
+    % emulate the custom error prefix of module `zutil/test', see uses of
+    % `\msg_new:' in this file
+    \TYPE { !~Test~Error:~#1 }
+    % to get normalized log output `<argument> \FAILED`
+    \use:n { \FAILED }
   }
 
 %%

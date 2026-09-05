@@ -153,4 +153,4 @@
   - `\PASSED` steps the count for passed checks, only available inside tests. In `\TESTEXP`, `\PASSED` is the same as `\PASSEDEXP`.
   - `\PASSEDEXP` steps the count for passed checks in expansion-only context, only available inside tests
   - `\FAILED` undefined, can be used as `\ERROR`
-  - `\FAILWITH{⟨content⟩}` short for `\TYPE{⟨content⟩}\FAILED`, only available inside tests. Inspired by the OCaml builtin function `failwith`.
+  - `\FAILWITH{⟨content⟩}` short for `\TYPE{! Test Error: ⟨content⟩}\FAILED`, only available inside tests. Macro name is inspired by OCaml builtin function `failwith`.

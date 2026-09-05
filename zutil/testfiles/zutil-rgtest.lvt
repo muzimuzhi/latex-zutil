@@ -105,6 +105,11 @@
   }
 }
 
+\TEST{\FAILED and~\FAILWITH}{
+  \use:n { \FAILED }
+  \FAILWITH { FAILWITH~message \use_none:n { \EATEN } }
+}
+
 \TEST{Check~group~level~at~end~of~test}{
   \zutil_test_type:e { GROUP-LEVEL:~\the\currentgrouplevel }
   \group_begin:
