@@ -117,4 +117,11 @@
 }
 \group_end:
 
+% see build-normalize-log.lua
+\TEST{Skipped~instructional~messages}{
+  % ! Undefined control sequence.
+  \UNDEFINED
+  %
+}
+
 \END

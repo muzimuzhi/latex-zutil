@@ -121,6 +121,13 @@ TEST: Check group level at end of test
 [test] GROUP-LEVEL: 2
 [test] Bad group level: 2! Expected 1.
 ============================================================
+============================================================
+TEST: Skipped instructional messages
+============================================================
+! Undefined control sequence.
+<argument> \UNDEFINED 
+l. ...}
+============================================================
 ***************
 [test] 9 error(s) raised
 [test] 9 check(s) passed
