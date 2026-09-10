@@ -25,22 +25,39 @@
     presets .multichoices:nn =
       { none, util, test, debug, all }
       {
-        \str_case:VnF \l_keys_choice_str
-          {
-            { none }  { \seq_clear:N \l__zutil_presets_seq }
-            { all }
-              {
-                \seq_clear:N \l__zutil_presets_seq
-                \seq_put_right:NV \l__zutil_presets_seq \l_keys_choice_str
-              }
-          }
-          {
-            \seq_put_right:NV \l__zutil_presets_seq \l_keys_choice_str
-          }
+        \exp_args:NV \__zutil_process_option:n \l_keys_choice_str
       }
   , presets .value_required:n = true
   , presets .usage:n    = load
+  % load `util` preset by default
   , presets .initial:n  = util
+  }
+
+\clist_map_inline:nn
+  { none, util, test, debug, all }
+  {
+    \DeclareKeys [ zutil ]
+      {
+        #1 .code:n = { \__zutil_process_option:n { #1 } }
+      , #1 .value_required:n = false
+      , #1 .usage:n    = load
+      }
+  }
+
+\cs_new_protected:Npn \__zutil_process_option:n #1
+  {
+    \str_case:nnF {#1}
+      {
+        { none }  { \seq_clear:N \l__zutil_presets_seq }
+        { all }
+          {
+            \seq_clear:N \l__zutil_presets_seq
+            \seq_put_right:NV \l__zutil_presets_seq \l_keys_choice_str
+          }
+      }
+      {
+        \seq_put_right:NV \l__zutil_presets_seq \l_keys_choice_str
+      }
   }
 
 % option "presets" internals
@@ -124,7 +141,6 @@
 \@onlypreamble \zutil_load_module:n
 
 % process package options
-% initially, "presets=util" is set
 \ProcessKeyOptions [ zutil ]  % noqa: w302
 
 \seq_map_inline:Nn \l__zutil_presets_seq
