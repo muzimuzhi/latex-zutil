@@ -10,8 +10,8 @@
 
 \START
 
-\str_const:Nn \c_test_mdfive_expected_str { 7A28A0CE01C19BC6AF69ACD3719133AD }
-\str_const:Nn \c_test_release_expected_str { 2026-09-01 }
+\str_const:Nn \c_test_mdfive_expected_str { 18D3BDA09A30D8BE7E8D759D1E4A0150 }
+\str_const:Nn \c_test_release_expected_str { 2026-09-09 }
 
 % remove version definitions which bumps per release
 \cs_new:Npn \test_drop_FILEDATE:N #1
