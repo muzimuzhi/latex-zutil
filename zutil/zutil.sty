@@ -19,6 +19,22 @@
       }
   }
 
+\cs_new_protected:Npn \__zutil_process_option:n #1
+  {
+    \str_case:nnF {#1}
+      {
+        { none }  { \seq_clear:N \l__zutil_presets_seq }
+        { all }
+          {
+            \seq_clear:N \l__zutil_presets_seq
+            \seq_put_right:NV \l__zutil_presets_seq \l_keys_choice_str
+          }
+      }
+      {
+        \seq_put_right:NV \l__zutil_presets_seq \l_keys_choice_str
+      }
+  }
+
 % package options
 \DeclareKeys [ zutil ]
   {
@@ -41,22 +57,6 @@
         #1 .code:n = { \__zutil_process_option:n { #1 } }
       , #1 .value_required:n = false
       , #1 .usage:n    = load
-      }
-  }
-
-\cs_new_protected:Npn \__zutil_process_option:n #1
-  {
-    \str_case:nnF {#1}
-      {
-        { none }  { \seq_clear:N \l__zutil_presets_seq }
-        { all }
-          {
-            \seq_clear:N \l__zutil_presets_seq
-            \seq_put_right:NV \l__zutil_presets_seq \l_keys_choice_str
-          }
-      }
-      {
-        \seq_put_right:NV \l__zutil_presets_seq \l_keys_choice_str
       }
   }
 
