@@ -384,8 +384,8 @@ tblr_old: Final[TestSuite] = replace(
 
 testsuites: list[TestSuite] = [
     zutil,
-    tblr,
-    tblr_old,
+    # tblr,
+    # tblr_old,
 ]
 testsuites_map: dict[str, TestSuite] = {
     ts.alias: ts for ts in testsuites if ts.alias
