@@ -152,6 +152,21 @@ jobs:
       if: inputs.test-inactive
       uses: muzimuzhi/reusable/actions/ppmcheckpdf-deps@main
 
+    - name: Install latest l3build
+      run: |
+        set -x
+        local_ver="$(l3build --version | grep -oP '\d\d\d\d-\d\d-\d\d')"
+        remote_ver="$(
+          gh release view -R latex3/l3build --json tagName --jq '.tagName'
+        )"
+        if [ "$local_ver" != "$remote_ver" ]; then
+          gh repo clone latex3/l3build -- --depth=1 --branch "$remote_ver"
+          cd l3build
+          l3build install
+        fi
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     # uses "L3BUILD_CHECK_OPTIONS" job env
     - name: Run active l3build tests
       run: |
