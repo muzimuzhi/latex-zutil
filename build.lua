@@ -3,7 +3,10 @@ module  = ""
 
 -- optional, otherwise the auto-detection will take over, see
 -- the `listmodules()` in `l3build-stdmain.lua`.
-modules = { "zutil", "tabularray" }
+
+-- TODO: add `tabularray` module when it publishes a new release. Last release
+--       prior to the transfer of ownership was 2025C (2025-11-27).
+modules = { "zutil" }
 
 --[[
 `diffext` and `diffexe` MUST be set as envvars, not `l3build` variables.
