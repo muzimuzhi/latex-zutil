@@ -155,7 +155,10 @@ jobs:
     - name: Install latest l3build
       run: |
         set -x
-        local_ver="$(l3build --version | grep -oP '\d\d\d\d-\d\d-\d\d')"
+        local_ver="$(
+          l3build --version \
+            | grep -oP '(?<=^Release )\d{4}-\d{2}-\d{2}'
+        )"
         remote_ver="$(
           gh release view -R latex3/l3build --json tagName --jq '.tagName'
         )"
