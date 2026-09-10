@@ -38,7 +38,7 @@ repos:
 # https://github.com/rhysd/actionlint/blob/main/docs/checks.md#shellcheck-integration-for-run
 # The GitHub-hosted ubuntu-latest image has shellcheck pre-installed.
 - repo: https://github.com/kjanat/actionlint
-  rev: 733ac2f73f6d80c269aa7a02d1ee83673fa5ab33  # frozen: v1.16
+  rev: 662318dd6bbd9c0c120e35b03168bc1be69bf428  # frozen: v1.16.1
   hooks:
   - id: actionlint
 - repo: local
