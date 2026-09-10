@@ -1,13 +1,14 @@
 # `zutil` - experimental LaTeX utility macros
 
 ## base package
-- package option(s)
-  - `presets[=none|util|test|debug|all]` (default `util`)
+- package options
+  - `presets[={<clist of presets>}]` (default `util`); available presets are
     - `none`: load no modules
     - `util`: load `l3extras` module
     - `test`: `util` presets + `softerror` module
     - `debug`: `util` presets + `debug` and `unravel` modules
     - `all`: load all modules
+  - each preset accepted by `presets` package option
 - `\zutil_set:n {⟨key-value list⟩}`
 - `\zutil_load_module:n {⟨module⟩}`
   - load a single module

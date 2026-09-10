@@ -5,7 +5,7 @@
 \tl_new:N    \l__zutil_tmpa_tl
 
 % variable(s)
-\str_new:N   \l__zutil_presets_str
+\seq_new:N   \l__zutil_presets_seq
 
 % shared message for raising short and one-time messages
 \msg_new:nnn { zutil } { _shared } { #1 }
@@ -19,37 +19,66 @@
       }
   }
 
+\cs_new_protected:Npn \__zutil_process_option:n #1
+  {
+    \str_case:nnF {#1}
+      {
+        { none }  { \seq_clear:N \l__zutil_presets_seq }
+        { all }
+          {
+            \seq_clear:N \l__zutil_presets_seq
+            \seq_put_right:NV \l__zutil_presets_seq \l_keys_choice_str
+          }
+      }
+      {
+        % NOTE may have dup keys
+        \seq_put_right:NV \l__zutil_presets_seq \l_keys_choice_str
+      }
+  }
+
 % package options
 \DeclareKeys [ zutil ]
   {
-    presets .choices:nn =
+    presets .multichoices:nn =
       { none, util, test, debug, all }
       {
-        \str_set_eq:NN \l__zutil_presets_str \l_keys_choice_str
+        \exp_args:NV \__zutil_process_option:n \l_keys_choice_str
       }
   , presets .value_required:n = true
   , presets .usage:n    = load
+  % load `util` preset by default
   , presets .initial:n  = util
   }
 
+\clist_map_inline:nn
+  { none, util, test, debug, all }
+  {
+    \DeclareKeys [ zutil ]
+      {
+        #1 .code:n = { \__zutil_process_option:n { #1 } }
+      , #1 .value_required:n = false
+      , #1 .usage:n    = load
+      }
+  }
+
 % option "presets" internals
-\cs_new_protected:Npn \__zutil_use_presets_none: { }
+\cs_new_protected:Npn \__zutil_use_presets_none: { }  % noqa: w401
 \cs_new_protected:Npn \__zutil_use_presets_util:
   {
     \zutil_load_module:n { l3extras }
     \zutil_load_module:n { l3patch }
   }
-\cs_new_protected:Npn \__zutil_use_presets_test:
+\cs_new_protected:Npn \__zutil_use_presets_test:  % noqa: w401
   {
     \__zutil_use_presets_util:
     \zutil_load_module:n { softerror }
   }
-\cs_new_protected:Npn \__zutil_use_presets_debug:
+\cs_new_protected:Npn \__zutil_use_presets_debug:  % noqa: w401
   {
     \zutil_load_module:n { debug }
     \zutil_load_module:n { unravel }
   }
-\cs_new_protected:Npn \__zutil_use_presets_all:
+\cs_new_protected:Npn \__zutil_use_presets_all:  % noqa: w401
   {
     \zutil_load_module:n { l3extras }
     \zutil_load_module:n { l3patch }
@@ -113,7 +142,9 @@
 \@onlypreamble \zutil_load_module:n
 
 % process package options
-% initially, "presets=util" is set
 \ProcessKeyOptions [ zutil ]  % noqa: w302
 
-\use:c { __zutil_use_presets_ \l__zutil_presets_str : }
+\seq_map_inline:Nn \l__zutil_presets_seq
+  {
+    \use:c { __zutil_use_presets_ #1 : }
+  }
