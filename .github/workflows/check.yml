@@ -134,6 +134,9 @@ jobs:
     - name: Setup mise
       uses: jdx/mise-action@v4
       with:
+        # `rg` is used in "Install latest l3build" step below
+        tool_versions: |
+          ripgrep: latest
         cache: false
 
     - name: Install uv
@@ -157,7 +160,7 @@ jobs:
         set -x
         local_ver="$(
           l3build --version \
-            | grep -oP '(?<=^Release )\d{4}-\d{2}-\d{2}'
+            | rg -oP '(?<=^Release )\d{4}-\d{2}-\d{2}'
         )"
         remote_ver="$(
           gh release view -R latex3/l3build --json tagName --jq '.tagName'
