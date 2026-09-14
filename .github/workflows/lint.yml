@@ -63,11 +63,6 @@ jobs:
           expltools
         update-all-packages: true
 
-    - name: Setup pre-commit
-      uses: muzimuzhi/reusable/actions/setup-pre-commit-uv@main
-      with:
-        run-pre-commit: false
-
     - name: Setup mise
       uses: jdx/mise-action@v4
 

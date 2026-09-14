@@ -1,6 +1,7 @@
 # loaded in addition to mise.toml when MISE_ENV=ci, see lint.yml
 [tools]
 "github:kjanat/actionlint" = "latest"
+pre-commit = "latest"
 ruff = "latest"
 shellcheck = "latest" # for actionlint
 tombi = "latest"
