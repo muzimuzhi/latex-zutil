@@ -16,6 +16,12 @@ TYPOS_CONFIG = { default = "config/typos.toml" }
 [tasks.lint]
 depends = ["lint:*"]
 
+[tasks."lint:actionlint"]
+description = "Lint GitHub Actions workflow files"
+alias = "actionlint"
+interactive = true
+run = "actionlint"
+
 [tasks."lint:expl3"]
 description = "Lint expl3 code"
 alias = "explcheck"
@@ -56,7 +62,7 @@ description = "Run pre-commit checks on all files"
 alias = "pre-commit"
 # the list of skipped hooks is composed in the `ci.skip` item, in pre-commit
 # config too
-env.SKIP = { default = "typos,explcheck,ruff,tombi" }
+env.SKIP = { default = "actionlint,typos,explcheck,ruff,tombi" }
 interactive = true
 run = '''
 #!/usr/bin/env bash
