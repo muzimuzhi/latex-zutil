@@ -144,9 +144,9 @@
 
 \int_new:N \g_zutil_test_cnt_int
 
-% All thin wrappers of `\TYPE` are defined as expandable, so them work in
-% expandable contexts (e.g. in \TESTEXP), in which `\TYPE` is redefined from
-% protected to expandable.
+% All thin `\TYPE` wrappers are defined as expandable, so they work in
+% expansion-only contexts (e.g. in `\TESTEXP`), where `\TYPE` is redefined
+% to be expandable.
 \cs_new:Npn \SEPARATOR  % noqa: w429
   {
     \TYPE
