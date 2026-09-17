@@ -9,3 +9,9 @@ warnings_are_errors = true
 defined_csnames = [
   "zutil_debug:ne"
 ]
+
+[filename."zutil-regression-test.tex"]
+ignored_issues = [
+  # TODO probably temp, see https://github.com/Witiko/expltools/issues/227
+  "s105"
+]
