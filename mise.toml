@@ -26,8 +26,8 @@ run = "actionlint"
 description = "Lint expl3 code"
 alias = "explcheck"
 interactive = true
-# a) the glob file list is composed in the file inclusion pattern, in
-#    pre-commit config too,
+# a) .pre-commit-config.yaml contains the same file pattern plus
+#    config/explcheck.toml,
 # b) explcheck allows intermixing optional arguments with positional
 #    arguments, so extra arguments can be passed when invoking the task
 # c) Prefer `{{ env.ENVVAR }}` because it's rendered in task head line
