@@ -57,8 +57,8 @@ repos:
     name: Lint expl3 files
     language: unsupported
     entry: mise run lint:expl3
-    # this file list is composed in mise.toml too
-    files: ^zutil/.*\.(sty|tex)|support/.*\.cfg$
+    # a similar file list is composed in mise.toml too
+    files: ^config/explcheck\.toml|zutil/.*\.(sty|tex)|support/.*\.cfg$
     pass_filenames: false
   # there exists an official ruff pre-commit
   # https://github.com/astral-sh/ruff-pre-commit
