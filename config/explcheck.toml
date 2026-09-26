@@ -10,10 +10,6 @@ defined_csnames = [
   "zutil_debug:ne"
 ]
 
-[filename."zutil-l3extras.code.tex"]
-# TODO workaround for https://github.com/Witiko/expltools/issues/226
-l3obsolete_max_deprecated_date = "2026-08-10"
-
 [filename."zutil-regression-test.tex"]
 ignored_issues = [
   # TODO probably temp, see https://github.com/Witiko/expltools/issues/227

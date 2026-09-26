@@ -1,4 +1,4 @@
-\ProvidesExplPackage {zutil} {2025-12-02} {0.7.0}
+\ProvidesExplPackage {zutil} {2026-09-26} {0.8.0}
   {Z's utilities}
 
 % shared temp variables
@@ -10,8 +10,8 @@
 % shared message for raising short and one-time messages
 \msg_new:nnn { zutil } { _shared } { #1 }
 
-% minimum required l3kernel version
-\IfExplAtLeastF { 2025-10-09 }
+% minimum required l3kernel version, for `\exp_after:w`
+\IfExplAtLeastF { 2026-09-09 }
   {
     \msg_critical:nne { zutil } { _shared }
       {

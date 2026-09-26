@@ -64,6 +64,10 @@
     }
   }
 
+\OMIT
+\cs_new_eq:NN \my_exp_after:wN \tex_expandafter:D
+\TIMO
+
 \TESTEXP{\zutil_cs_base_function:N variants}{
   % matrix: {defined, undefined} * {single argument, multiple arguments}
   [ \zutil_cs_base_function:N \tl_new:c ] \NEWLINE
@@ -71,7 +75,7 @@
   [ \zutil_cs_base_function:N \zutil_undefined:V ] \NEWLINE
   [ \zutil_cs_base_function:N \zutil_undefined:oVvfx ] \NEWLINE
   % invalid argument specifiers
-  [ \zutil_cs_base_function:N \exp_after:wN ] \NEWLINE
+  [ \zutil_cs_base_function:N \my_exp_after:wN ] \NEWLINE
   [ \zutil_cs_base_function:N \tex_undefined:D ] \NEWLINE
 }
 
@@ -106,7 +110,7 @@
 }
 
 \TEST{\zutil_cs_generate_variant:N invalid~specifier}{
-  \zutil_cs_generate_variant:N \exp_after:wc
+  \zutil_cs_generate_variant:N \my_exp_after:wc
   \zutil_cs_generate_variant:N \zutil_set:X
 }
 
