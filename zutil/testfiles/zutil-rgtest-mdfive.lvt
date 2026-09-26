@@ -13,7 +13,7 @@
 \str_const:Nn \c_test_mdfive_expected_str { 18D3BDA09A30D8BE7E8D759D1E4A0150 }
 \str_const:Nn \c_test_release_expected_str { 2026-09-09 }
 
-% remove version definitions which bumps per release
+% helper to remove version definitions which bumps per l3build release
 \cs_new:Npn \test_drop_FILEDATE:N #1
   {
     \exp_last_unbraced:NV \test_drop_FILEDATE_auxi:w #1
@@ -21,7 +21,7 @@
   }
 % #1: content before
 % #2: date string (YYYY-MM-DD) (if matched) or empty
-% #3: content after till the `\s_stop` delimiter
+% #3: content after, till the `\s_stop` delimiter
 \cs_new:Npn \test_drop_FILEDATE_auxi:w
     % the space (~) comes from newline character
     #1 \def \REGRESSIONTESTFILEDATE #2 ~
@@ -35,13 +35,16 @@
     #1 \def \REGRESSIONTESTFILEDATE #2 \q_stop
   { \exp_not:n { #1 } }
 
-% Moved out of \TEST to avoid a luatex-only log line created by \cctab_select:N
-%    \g__cctab_tmpii_cctab=\catcodetable...
-% in which the "ii" in "tmpii" stands for the current group level.
-% Read in file contents then compute its md5sum, so changes in comments
-% (e.g., the copyright line) do not affect the md5sum.
+% Set \c_test_mdfive_actual_str
+%
+% Read in file using document catcode (so md5sum is not affected by comment
+% changes, e.g., the copyright line), drop \REGRESSIONTESTFILEDATE definition,
+% and finally compute the md5sum.
 \file_get:nnN { regression-test.tex }
   {
+    % If running inside \TEST, \cctab_select:N will write extra log on LuaTeX
+    %    \g__cctab_tmpii_cctab=\catcodetable...
+    % in which the "ii" in "tmpii" stands for the current group level.
     \cctab_select:N \c_document_cctab
     \char_set_catcode_letter:N @
   }
@@ -78,11 +81,16 @@
       \PASSED
     }
     {
+      % Set \c_test_release_actual_str
+      %
+      % `zutil-regression-test.tex` doesn't provide `\REGRESSIONTESTFILEDATE`,
+      % so we have extract the l3build release date from `l3build.lua`.
+      %
       % helper
       \cs_new:Npn \test_extract_date:w #1"#2"#3 \scan_stop: { #2 }
       % Extract current l3build version from `l3build.lua` (the first one
-      % found by `kpsewhich'). This respects files in TEXMFHOME, while running
-      % `l3build --version' always executes the `l3build.lua` in the
+      % found by `kpsewhich`). This respects files in TEXMFHOME, while running
+      % `l3build --version` always executes the `l3build.lua` in the
       % TEXMFDIST, which might be outdated if a newer version of `l3build.lua`
       % is installed in other TDS trees like TEXMFHOME.
       % Note: Restricted by `TEXINPUTS.latex` setting in `texmf.cnf`, we
@@ -101,6 +109,7 @@
               \ior_map_break:
             }
         }
+
       \FAILWITH
         {
           l3build~file~'regression-test.tex'~has~been~modified.~
