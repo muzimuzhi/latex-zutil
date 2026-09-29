@@ -132,7 +132,7 @@ jobs:
         update-all-packages: ${{ inputs.update-texlive-packages || true }}
 
     - name: Setup mise
-      uses: jdx/mise-action@v4
+      uses: jdx/mise-action@v5
       with:
         # `rg` is used in "Install latest l3build" step below
         tool_versions: |
