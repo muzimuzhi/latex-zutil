@@ -155,5 +155,5 @@
   - `\FAILED` undefined, an alternative to `\ERROR`
   - `\FAILWITH{⟨content⟩}` short for `\TYPE{! Test Error: ⟨content⟩}\FAILED`, only available inside tests. Macro name is inspired by OCaml builtin function `failwith`.
 - deprecated
-  - test numbering
+  - test numbering (tests are still counted by `\g_zutil_test_cnt_int`)
   - `\REGRESSIONTESTFILEDATE`

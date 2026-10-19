@@ -153,6 +153,15 @@
       { ============================================================ }
   }
 
+% TODO: how should \TESTTITLE interact with error and check counting
+\cs_new_protected:Npn \TESTTITLE #1
+  {
+    \int_gincr:N \g_zutil_test_cnt_int
+    \SEPARATOR
+    \TYPE { TEST:~ \tl_to_str:n {#1} }
+    \SEPARATOR
+  }
+
 \cs_new_protected:Npn \BEGINTEST #1
   {
     \int_gincr:N \g_zutil_test_cnt_int
