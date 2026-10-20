@@ -149,6 +149,7 @@
   - log number of errors and passed checks at the end of each test and the entire test file
     - errors raised by `\errmessage` are all counted
     - checks issued by `\PASSED` and `\PASSEDEXP` are counted
+    - exceptions: `\TESTTITLE` which just logs a test title format
 - new commands
   - `\PASSED` steps the count for passed checks, only available inside tests. In `\TESTEXP`, `\PASSED` is the same as `\PASSEDEXP`.
   - `\PASSEDEXP` steps the count for passed checks in expansion-only context, only available inside tests
