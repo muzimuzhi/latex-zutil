@@ -141,6 +141,7 @@
 - new commands
   - `\beginunravel[⟨options⟩] ⟨code⟩ \endunravel`
     - equivalent to using `\unravel[max-action=1000,max-input=1000, max-output=1000,⟨options⟩]{⟨code⟩}`
+    - for easier input, unknown `unravel` keys are collected and forwarded to the `prompt-input` key
 
 ## `zutil-regression-test.tex` file
 - `l3build` `regression-test.tex` extended
