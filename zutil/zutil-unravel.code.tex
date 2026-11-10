@@ -1,7 +1,10 @@
-\ProvidesExplFile {zutil-unravel.code.tex} {2025-08-24} {0.1}
+\ProvidesExplFile {zutil-unravel.code.tex} {2025-11-10} {0.2}
   {Z's utilities, the unravel module}
 
 \RequirePackage {unravel}  % noqa: S204
+
+\tl_new:N \l__zutil_unravel_options_tl
+\seq_new:N \l__zutil_unravel_prompt_input_seq
 
 \NewDocumentCommand \beginunravel { O{} }  % noqa: S204
   {
@@ -9,8 +12,58 @@
   }
 \cs_new_protected:Npn \zutil_beginunravel:nw #1#2\endunravel
   {
-    \unravel:nn
-      { max-action=1000, max-input=1000, max-output=1000, #1 }
+    \tl_set:Nn \l__zutil_unravel_options_tl
+      { max-action=1000, max-input=1000, max-output=1000 }
+    \__zutil_unravel_process_options:n { #1 }
+    \exp_args:NV \unravel:nn
+      \l__zutil_unravel_options_tl
       { #2 }
   }
 \cs_new_eq:NN \endunravel \prg_do_nothing:
+
+\cs_new_protected:Npn \__zutil_unravel_process_options:n #1
+  {
+    \seq_clear:N \l__zutil_unravel_prompt_input_seq
+    \keyval_map_inline:nnn { #1 }
+      {
+        % key without value
+        \bool_case:nF
+          {
+            { \str_if_eq_p:nn { ##1 } { prompt-input } }
+              {}
+            { \keys_if_exist_p:nn { unravel } { ##1 } }
+              { \tl_put_right:Nn \l__zutil_unravel_options_tl { , {##1} } }
+          }
+          {
+            % treat unknown keys as `prompt-input` values
+            \seq_put_right:Nn \l__zutil_unravel_prompt_input_seq { ##1 }
+          }
+      }
+      {
+        % key with value
+        \bool_case:nF
+          {
+            { \str_if_eq_p:nn { ##1 } { prompt-input } }
+              {
+                \seq_put_right:Nn \l__zutil_unravel_prompt_input_seq { {##2} }
+              }
+            { \keys_if_exist_p:nn { unravel } { ##1 } }
+              {
+                \tl_put_right:Nn \l__zutil_unravel_options_tl
+                  { , {##1}={##2} }  % noqa: s204
+              }
+          }
+          {
+            % treat unknown keys as `prompt-input` values
+            \seq_put_right:Nn \l__zutil_unravel_prompt_input_seq { ##1=##2 }
+          }
+      }
+    \seq_if_empty:NF \l__zutil_unravel_prompt_input_seq
+      {
+        \tl_put_right:Ne \l__zutil_unravel_options_tl
+          {
+            , prompt-input =
+              { \seq_use:Nn \l__zutil_unravel_prompt_input_seq { , } }
+          }
+      }
+  }

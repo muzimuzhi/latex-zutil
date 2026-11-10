@@ -18,4 +18,10 @@
   \beginunravel[machine]\def\x{x}\endunravel
 }
 
+\TEST{unravel~short~options}{
+  \beginunravel[machine, number-steps, u\edef]
+  \def\x{x}\relax\edef\y{y}
+  \endunravel
+}
+
 \END
