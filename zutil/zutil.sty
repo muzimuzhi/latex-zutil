@@ -1,4 +1,4 @@
-\ProvidesExplPackage {zutil} {2026-09-26} {0.8.0}
+\ProvidesExplPackage {zutil} {2026-11-10} {0.9.0}
   {Z's utilities}
 
 % shared temp variables
@@ -32,7 +32,7 @@
       }
       {
         % NOTE may have dup keys
-        \seq_put_right:NV \l__zutil_presets_seq \l_keys_choice_str
+        \seq_put_right:Nn \l__zutil_presets_seq { #1 }
       }
   }
 
@@ -55,8 +55,8 @@
   {
     \DeclareKeys [ zutil ]
       {
-        #1 .code:n = { \__zutil_process_option:n { #1 } }
-      , #1 .value_required:n = false
+        #1 .code:n = { \exp_args:NV \__zutil_process_option:n \l_keys_key_str }
+      , #1 .value_forbidden:n = true
       , #1 .usage:n    = load
       }
   }
